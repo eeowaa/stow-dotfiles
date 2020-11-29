@@ -1,0 +1,22 @@
+#+TITLE: stow-dotfiles
+
+These are my dotfiles managed with GNU Stow. Use in conjunction with
+[[https://github.com/eeowaa/ansible-workstations][ansible-workstations]] for a complete setup.
+
+* Prerequisites
++ [[https://www.gnu.org/software/stow/][GNU Stow]]
+  - [[https://www.gnu.org/software/stow/manual/html_node/index.html][Online manual]]
+  - [[http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html][Example usage]]
+
+* Usage
+#+begin_src sh
+stow <package>
+#+end_src
+
+* Packages
++ [[file:macos-ssh][macos-ssh]] [fn:1]
+  - Keychain integration for private key passwords
+  - Automatically add keys to SSH Agent at launch
+
+* Reference
+[fn:1] [[https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x][https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x]]
