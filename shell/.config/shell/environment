@@ -1,0 +1,52 @@
+[ "$ZSH_VERSION" ] && echo >&2 "Sourcing: ${(%):-%N}"
+
+# Use Emacs-style line editing
+set +o vi
+set -o emacs
+
+# Terminal settings
+stty -ixon
+
+# Aliases (OK to use in POSIX shells for interactive use)
+alias p='pwd'
+alias j='jobs'
+alias e='echo $?'
+alias grep='grep --color=auto'
+alias ls='ls --color=auto --group-directories-first'
+alias ll='ls -l'
+alias pyref='$BROWSER file:///usr/share/doc/python2/html/index.html'
+alias a='acronym'
+
+# Functions for interactive use
+f() {
+    cd ${1+"$@"} && ls
+}
+g() {
+    local query=`echo "$*" | sed 's/ /%20/g'`
+    $BROWSER "https://www.google.com/search?q=$query"
+}
+up() {
+    [ $# -eq 0 ] && {
+        cd ..
+        return
+    }
+    expr "X$1" : 'X[0-9]\{1,\}$' >/dev/null 2>&1 || return 1
+    local count=$1 startdir=`pwd`
+    while [ $count -gt 0 ]; do
+        cd .. || break
+        count=`expr $count - 1`
+    done
+    OLDPWD=$startdir
+}
+cdsed() {
+    local dest=`pwd | sed "s|$1|$2|"`
+    cd "$dest"
+    pwd
+}
+
+# Source each environment script
+for environ in "$HOME/.environ.d"/*.sh
+do . "$environ"
+done
+
+# vim: set syntax=sh:
