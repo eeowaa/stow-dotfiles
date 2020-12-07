@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Grab the second `ls` in the $PATH (this script is the first)
+ls=`which -a ls | sed -n 2p`
+
+# Assume GNU `ls`
+$ls --color=auto --group-directories-first -A ${1+"$@"}
