@@ -21,5 +21,33 @@ stow <package>
   - Keychain integration for private key passwords
   - Automatically add keys to SSH Agent at launch
 
+* Discussion
+Dotfile can be managed in many different ways. Here are a few approaches:
+
+1. Have a git repo in =$HOME=
+2. Copied into place from a dotfile repo
+   #+begin_src sh
+vim local.conf # specify local configuration
+make           # construct dotfiles to specification
+make install   # copy dotfiles into place
+   #+end_src
+3. Symlinked into place (this repo)
+
+** TODO Discuss pros and cons of each approach
+- Portability
+  - Dependencies
+- Configurability
+  - Templates
+  - Includes
+- Maintainability
+  - Simplicity
+  - Modularity
+
+I believe that the GNU Stow approach strikes the best balance:
+- Very light and portable dependencies
+- No templates, but includes work for most dotfiles
+- Easily the most maintainable
+
+** TODO Explain my experience with and rationale for using each approach
 * Reference
 [fn:1] [[https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x][https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x]]
