@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Print normal output to stderr; discard original errors
+exec 1>&2 2>/dev/null
+
+# Fail when the index contains case-insensitive duplicate paths, as this
+# prevents trees from being completely checked-out to worktrees on
+# case-insensitive filesystems such as those on Microsoft Windows.
+[ "`git config --bool hooks.allowDupes`" = true ] || git ls-dupes || {
+    cat <<EOF
+
+*** REFUSING TO COMMIT ***
+Duplicate case-insensitive file paths found in index (see above).
+You can disable this check by setting hooks.allowDupes to true.
+EOF
+    exit 1
+}

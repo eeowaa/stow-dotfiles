@@ -1,0 +1,68 @@
+# Conventions
+[init]
+	defaultBranch = main
+
+# Input
+[interactive]
+	singleKey = true
+
+# Output
+[status]
+	relativePaths = false
+	short = true
+[diff]
+	ignoreSubmodules = dirty
+[advice]
+	detachedHead = false
+
+# Performance
+[core]
+	fscache = true
+[gc]
+	auto = 256
+
+# Safety
+[core]
+	logAllRefUpdates = always
+	hooksPath = ~/.config/git/hooks
+
+# Branching
+[pull]
+	ff = only
+[push]
+	default = simple
+[branch]
+	autosetuprebase = always
+
+# Filters
+[filter "gitignore"]
+	smudge = cat
+	clean = sed '/BEGIN GITIGNORE/,/END GITIGNORE/d'
+[filter "foldmarkers"]
+	smudge = cat
+	clean = grep -Ev \"^`printf '\\043'` [{}]{3}\"
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
+# Integrations
+[magit]
+	hideCampaign = true
+[github]
+	user = eeowaa
+
+# Identity
+[user]
+	name = eeowaa
+	email = 7460185+eeowaa@users.noreply.github.com
+[includeIf "gitdir:src/work/"]
+	path = config.d/work
+
+# Other stuff
+[include]
+	path = config.d/local
+	path = config.d/alias
+	path = config.d/credential
+	path = config.d/pretty

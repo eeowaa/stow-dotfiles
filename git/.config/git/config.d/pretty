@@ -1,0 +1,18 @@
+[pretty]
+	# Emulation of builtin pretty formats (see git-log.org)
+	oneline-x = %C(auto)%H%d %s
+	short-x = %C(auto)commit %H%d%nAuthor: %aN <%aE>%n%n    %s%n
+	medium-x = %C(auto)commit %H%d%nAuthor: %aN <%aE>%nDate:   %ad%n%n%w(0,4,4)%B%-C()%n
+	full-x = %C(auto)commit %H%d%nAuthor: %aN <%aE>%nCommit: %cN <%cE>%n%n%w(0,4,4)%B%-C()%n
+	fuller-x = %C(auto)commit %H%d%nAuthor:     %aN <%aE>%nAuthorDate: %ad%nCommit:     %cN <%cE>%nCommitDate: %cd%n%n%w(0,4,4)%B%-C()%n
+	email-x = From %H Mon Sep 17 00:00:00 2001%nFrom: %aN <%aE>%nDate: %aD%nSubject: [PATCH] %B%-C()%n
+
+	# Simple oneline context (with `tput cols` = 213)
+	# TODO: Add coloration to author name and date
+	# TODO: Move this into ~/.local/libexec/git/git-graph for dynamic width specification
+	# TODO: Replace %ar with %ad (allowing --date=format); will need to modify spacing
+	context = %C(auto)%<|(42,trunc)%H%d %<|(182,trunc)%s %>>|(199,ltrunc)%aN %>|(213,trunc)%ar
+
+	# TODO: Add another pretty format with the following features:
+	# - Emulation of `git log --source`
+	# - Date and author come first, and the hash comes last (if at all)

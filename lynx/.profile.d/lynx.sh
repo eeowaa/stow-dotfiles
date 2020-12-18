@@ -1,0 +1,3 @@
+BROWSER=lynx
+LYNX_CFG=$XDG_CONFIG_HOME/lynx/lynx.cfg
+export BROWSER LYNX_CFG

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Check for .gitattributes
+cd "`git rev-parse --show-toplevel`"
+test -f .gitattributes ||
+    echo >&2 'WARNING: missing .gitattributes file (consider adding)'
+
+# Display files whose line endings in the index are *not* linefeeds
+echo >&2 'INFO: the index should ALWAYS contain "lf" line endings'
+git ls-files --eol | grep --color=never -e '^i/mixed' -e '^i/crlf'

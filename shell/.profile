@@ -6,23 +6,26 @@ test ${__PROFILE_SOURCED+'X'} || {
 
 # Path variables
 # TODO: Add LDPATH, etc.  See the gcc(1) man page for inspiration.
-PATH="\
+PATH=\
 $HOME/.local/bin:\
 $HOME/.local/sbin:\
 /usr/local/bin:\
 /usr/local/sbin:\
 /usr/bin:\
 /usr/sbin:\
-$PATH" export PATH
+$PATH
+export PATH
 
 # Local directory variables
-TMPDIR=/tmp export TMPDIR
+TMPDIR=/tmp
+export TMPDIR
 
 # Editor variables (see also: ~/.profile.d/{vim,emacs}.sh)
 if test -f /usr/bin/ed
-then FCEDIT=/usr/bin/ed export FCEDIT
-else FCEDIT=/usr/bin/vi export FCEDIT
+then FCEDIT=/usr/bin/ed
+else FCEDIT=/usr/bin/vi
 fi
+export FCEDIT
 
 # XDG base directories
 XDG_CONFIG_HOME=$HOME/.config
@@ -54,10 +57,12 @@ do . "$profile"
 done
 
 # Let it be known that our profile has been sourced!
-__PROFILE_SOURCED=1 export __PROFILE_SOURCED
+__PROFILE_SOURCED=1
+export __PROFILE_SOURCED
 
 # Set environment to be sourced if in interactive mode
-ENV=$XDG_CONFIG_HOME/shell/environment export ENV
+ENV=$XDG_CONFIG_HOME/shell/environment
+export ENV
 
 # End include guard
 }

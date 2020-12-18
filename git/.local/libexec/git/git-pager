@@ -1,0 +1,70 @@
+#!/bin/sh
+# Invoke the correct pager based on rules described by the Git documentation.
+# Supporting quotes from git-config(1) are included in this script.
+OPTS_SPEC="\
+git pager [options] [<command>]
+--
+h,help      show the help
+n,dry-run   print the pager command instead of running it"
+parseopt=`echo "$OPTS_SPEC" | git rev-parse --parseopt -- ${1+"$@"}`
+eval "$parseopt"
+
+dry_run=0
+command_pager=
+while test $# -gt 0
+do
+    case $1 in
+    -h|--help)
+        # As of Git 2.17.0, if the help flag is accompanied by other options,
+        # it does *not* display help text.  We output a truncated version here.
+        echo >&2 'usage: git pager [options] [<command>]'
+        exit 1 ;;
+    -n|--dry-run)
+        dry_run=1 ;;
+    --|'')
+        ;;
+    *)
+# > One can specifically activate some flags for particular commands:
+# > for example, setting pager.blame `less -S' enables line truncation only
+# > for `git blame'.
+        command_pager=`git config --get "$1".pager` ;;
+    esac
+    shift
+done
+
+# > The order of preference is the GIT_PAGER environment variable, then
+# > core.pager configuration, then PAGER, and then the default chosen at
+# > compile time (usually 'less').
+for opt in \
+    "$command_pager" \
+    "$GIT_PAGER" \
+    "`git config --get core.pager`" \
+    "$PAGER" \
+    less
+do
+    test "X$opt" = X || {
+        pager=$opt
+        break
+    }
+done
+
+# > When the LESS environment variable is unset, Git sets it to "FRX"
+# > (if LESS environment variable is set, Git does not change it at all).
+test "${LESS+X}" || {
+    LESS=FRX
+    export LESS
+}
+
+# > Likewise, when the LV environment variable is unset, Git sets it
+# > to '-c'.
+test "${LV+X}" || {
+    LV=-c
+    export LV
+}
+
+if test $dry_run -eq 1
+then
+    echo "$pager"
+else
+    eval "$pager"
+fi

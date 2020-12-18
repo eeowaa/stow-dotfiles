@@ -1,0 +1,4 @@
+[MESSAGES CONTROL]
+
+# Ignore C0325 and C0103
+disable=superfluous-parens,invalid-name

@@ -1,0 +1,9 @@
+* DONE Figure out how to define the default Makefile recipe
+I just asked a question on StackOverflow:
+- https://stackoverflow.com/questions/65297474/gnu-make-how-to-specify-a-default-recipe-for-all-phony-rules
+
+* TODO Add submodule for Vim packages
+* TODO Flesh out the README for each Stow package
+* TODO Define dependencies between each target
+* TODO Profile the duration of sourcing .profile.d/* and .environ.d/* files
+There is room for speed improvements

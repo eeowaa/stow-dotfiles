@@ -1,0 +1,4 @@
+GOPATH=$HOME/.local/opt/go
+GOBIN=$GOPATH/bin
+PATH=$PATH:$GOBIN
+export GOPATH GOBIN PATH

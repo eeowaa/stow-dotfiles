@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# When used, `--dangling' must be the first argument
+test "X$1" = 'X--dangling' &&
+{
+    shift
+
+    # Gather the SHAs of all dangling commits
+    set -- `git fsck --no-reflog | sed -n 's/dangling commit //p'` ${1+"$@"}
+}
+
+# Simulate `git log --graph --pretty=context', fitting to the terminal width
+cols=`tput cols`
+git log --graph --pretty="\
+%C(auto)\
+%<|(42,trunc)%H%d \
+%<|(`expr $cols - 31`,trunc)%s \
+%>>|(`expr $cols - 14`,ltrunc)%aN \
+%>|($cols,trunc)%ar" ${1+"$@"}

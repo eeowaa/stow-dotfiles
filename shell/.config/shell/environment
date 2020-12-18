@@ -14,8 +14,6 @@ alias e='echo $?'
 alias grep='grep --color=auto'
 alias ls='ls --color=auto --group-directories-first'
 alias ll='ls -l'
-alias pyref='$BROWSER file:///usr/share/doc/python2/html/index.html'
-alias a='acronym'
 
 # Functions for interactive use
 f() {
@@ -42,6 +40,21 @@ cdsed() {
     local dest=`pwd | sed "s|$1|$2|"`
     cd "$dest"
     pwd
+}
+fixpath() {
+    # Remove duplicate entries from `PATH'
+    PATH=`echo "$PATH" | tr : '\n' | awk '
+    {
+        if (!($0 in y)) {
+            y[$0] = 1
+            x[++n] = $0
+        }
+    }
+    END {
+        for (i = 1; i <= n - 1; ++i)
+            printf x[i] ":"
+        print x[n]
+    }'` export PATH
 }
 
 # Source each environment script

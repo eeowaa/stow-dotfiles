@@ -1,0 +1,150 @@
+#!/bin/sh
+progname="git visit"
+usage="Usage: $progname [OPTION]... [FILE[:LINE]]"
+moreinfo="Try \`$progname -h' for more info"
+die() {
+    if test -t 0
+    then echo "$@"
+    else cat
+    fi >&2
+    exit 1
+}
+browse() {
+    case `uname -s` in
+    Linux)
+        xdg-open "$1" ;;
+    Darwin)
+        open "$1" ;;
+    CYGWIN_NT*)
+        cygstart -o "$1" ;;
+    MINGW*|MSYS*)
+        start '' "$1" ;;
+    *)  ${BROWSER:?} "$1" ;;
+    esac
+}
+browse_github() {
+    # Strip the trailing '.git' from the remote URL
+    remote_url=`expr "$remote_url" : '\(.*\)\.git$'`
+
+    # Determine default branch on remote
+    remote_HEAD=`git symbolic-ref refs/remotes/$remote/HEAD 2>/dev/null | sed 's#.*/##'`
+    test "X$remote_HEAD" = X && remote_HEAD='master'
+
+    # Determine what we want to visit
+    case $# in
+    0)  if test "X$branch" = "X$remote_HEAD"
+        then 
+            # Homepage of repo
+            url=$remote_url
+        else
+            # Tree of alternate branch
+            url=$remote_url/tree/$branch
+        fi ;;
+    1)  # TODO: Get relative path to git root
+        file=`echo "X$1" | sed -e 's/^X//' -e 's/:[0-9]*$//'`
+        line=`expr "X$1" : 'X.*:\([0-9]*\)$'`
+
+        # Specific file, potentially with line number
+        url="$remote_url/blob/$branch/$file"
+        test "X$line" = X || url="$url#L$line" ;;
+    *)  die <<EOF
+$usage
+$moreinfo
+EOF
+    esac
+
+    # Visit the darn thing!
+    browse "$url"
+}
+
+# Parse command line arguments
+remote= branch= file= line=
+while :
+do
+    case $1 in
+    -h)
+        cat <<EOF
+$usage
+
+OPTIONS
+  -h    Display this help and exit
+  -r, --remote=REMOTE (defaults: upstream, origin)
+  -b, --branch=BRANCH (defaults: HEAD, master)
+EOF
+        exit $? ;;
+    -r) shift && test $# -eq 0 && die <<EOF
+$progname: missing argument to \`-r'
+$moreinfo
+EOF
+        remote=$1 ;;
+    -r*)
+        remote=`expr "X$1" : 'X-r\(.*\)'` ;;
+    --remote=*)
+        remote=`expr "X$1" : 'X--remote=\(.*\)'` ;;
+    -b) shift && test $# -eq 0 && die <<EOF
+$progname: missing argument to \`-b'
+$moreinfo
+EOF
+        branch=$1 ;;
+    -b*)
+        branch=`expr "X$1" : 'X-b\(.*\)'` ;;
+    --branch=*)
+        branch=`expr "X$1" : 'X--branch=\(.*\)'` ;;
+    *)  break ;;
+    esac
+    shift
+done
+
+# Get default values for unsupplied arguments
+test "X$remote" = X && {
+    remote=`git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null | sed 's#/.*##'`
+    test "X$remote" = X && remote='origin'
+}
+test "X$branch" = X && {
+    branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
+    test "X$branch" = X && branch='master'
+}
+
+# Validate the arguments
+remote_url=`git remote get-url "$remote"`
+test "X$remote_url" = X && die "$moreinfo" # XXX TESTME XXX
+test -f "`git rev-parse --git-dir`/refs/remotes/$remote/$branch" || die <<EOF
+$progname: nonexistent ref: $remote/$branch
+EOF
+
+# Parse the URL; formats specified git-clone(1)
+case $remote_url in
+http*://*)
+    # http[s]://host.xz[:port]/path/to/repo.git/
+    case $remote_url in
+    http*://github.com/*.git)
+        browse_github ${1+"$@"} ;;
+    *)  die "unsupported HTTP remote: $remote_url" ;;
+    esac
+    ;;
+*@*)
+    # ssh://[user@]host.xz[:port]/[~[user]/]path/to/repo.git/
+    # [user@]host.xz:[/][~[user]/]path/to/repo.git/
+    case $remote_url in
+    git@github.com:*.git)
+        remote_url=`echo "$remote_url" | sed 's|^git@github.com:|https://github.com/|'`
+        browse_github ${1+"$@"} ;;
+    *)  die "unsupported SSH remote: $remote_url" ;;
+    esac
+    ;;
+git://*)
+    # git://host.xz[:port]/path/to/repo.git/
+    die 'Git-protocol remotes currently unsupported'
+    ;;
+/*|file:///*)
+    # /path/to/repo.git/
+    # file:///path/to/repo.git/
+    die 'File-protocol remotes currently unsupported'
+    ;;
+ftp*://*)
+    # ftp[s]://host.xz[:port]/path/to/repo.git/
+    die 'FTP remotes currently unsupported'
+    ;;
+*)  die 'Unrecognized remote protocol'
+    ;;
+esac

@@ -13,13 +13,13 @@ These are my dotfiles managed with GNU Stow. Use in conjunction with
 * Usage
 #+begin_src sh
 direnv allow . # optional, for development
-stow <package>
+stow --no-folding <package>
 #+end_src
 
 * Packages
-+ [[file:macos-ssh][macos-ssh]] [fn:1]
-  - Keychain integration for private key passwords
-  - Automatically add keys to SSH Agent at launch
++ [[file:macos][macos]] [fn:1]
+  - Keychain integration for SSH key passwords
+  - Automatically add SSH keys to SSH Agent at launch
 
 * Discussion
 Dotfile can be managed in many different ways. Here are a few approaches:

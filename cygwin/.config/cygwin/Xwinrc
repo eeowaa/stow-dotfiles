@@ -1,0 +1,4 @@
+# See XWinrc(5)
+STYLES {
+    oclock NOFRAME
+}

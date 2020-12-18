@@ -1,0 +1,5 @@
+# Make sure that Makefiles and C source code use tabs as indents
+*.[chi]       whitespace=indent-with-non-tab
+*[mM]akefile* whitespace=indent-with-non-tab
+*.mk          whitespace=indent-with-non-tab
+*.make        whitespace=indent-with-non-tab

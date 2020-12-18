@@ -1,0 +1,32 @@
+#!/bin/sh
+# Perform a specific git operation on every repository residing in a child
+# directory of the current working directory.
+
+# XXX: Hack to get to the cwd of the parent process
+test "X$GIT_PREFIX" = X || cd -- "$GIT_PREFIX"
+
+# Only return 0 if *everything* succeeds
+rc=0
+
+# Output a nice header to separate this command from the others
+cat <<EOF
+-------------------------------------------------------------------------------
+GIT BULK COMMAND STARTED: `date`
+-------------------------------------------------------------------------------
+EOF
+
+# For each child directory containing a `.git' entry
+ls -d */.git | while read x
+do
+    # This handles both repo directories and gitlink files
+    git rev-parse --resolve-git-dir "$x" >/dev/null 2>&1 || continue
+    repo=`dirname "$x"`
+    echo >&2 "=== $repo ==="
+
+    # Navigate to that directory and do something!
+    cd "$repo" && {
+        git "$@" || rc=1
+        cd ..
+    } || rc=1
+done
+exit $rc

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+[ $# -eq 2 ] || {
+    echo >&2 "Usage: $0 STACK1 STACK2"
+    exit 1
+}
+stack_params() {
+    aws cloudformation describe-stacks \
+        --query="Stacks[?StackName == '$1'].Parameters" \
+        --output=text | sort
+#       --output=text | sed -n $'s/^PARAMETERS\t//p' | sort
+}
+join -t $'\t' <(stack_params "$1") <(stack_params "$2") | awk '
+BEGIN { FS = OFS = "\t" }
+{
+    # Do the resolved values of the parameters match?
+    if ($2 == $4) printf "  "; else printf "* "
+
+    # Print parameter name and resolved values
+    print $1, $2, $4
+}'

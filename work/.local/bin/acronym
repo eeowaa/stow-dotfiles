@@ -1,0 +1,21 @@
+#!/bin/sh
+## Print definition(s) of domain-specific acronyms
+
+# Navigate to the directory containing acronym definition files so that
+# the filenames are easily printed without their path components [1]
+cd "$XDG_DATA_HOME/acronyms"
+
+# Ignore problems with character encoding and separate by tabs
+awk 2>/dev/null -F'\t' '
+
+# Match acronyms case-insensitively [2]
+tolower($1) == tolower(SYM) {
+
+    # 0. Base filename: corresponds to data source [1]
+    # 1. Case-sensitive acronym: good to know the "standard" casing [2]
+    # 2. Acronym definition: sometimes this differs between data sources
+    printf "%-20s %s: %s\n", "["FILENAME"]", $1, $2
+
+}' SYM="$*" *
+# - Combine all command line args into one argument
+# - Search all data sources

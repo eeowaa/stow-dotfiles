@@ -1,0 +1,22 @@
+#!/bin/bash
+# This does not work in ksh, which is why we need bash
+set -o pipefail
+
+git ls-files | awk '{
+    path = tolower($0)
+    dupes[path,$0]
+    if (count[path]++) {
+        error[path]
+        found_dupes = 1
+    }
+}
+END {
+    if (found_dupes) {
+        for (key in dupes) {
+            split(key, tuple, SUBSEP)
+            if (tuple[1] in error)
+                print tuple[2] > "/dev/stderr"
+        }
+        exit 1
+    }
+}' 2>&1 | sort -f

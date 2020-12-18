@@ -1,0 +1,15 @@
+# Machine-specific user configuration files
+/aws/.config/aws/
+/git/.config/git/config.d/local
+/git/.config/git/config.d/work
+/lynx/.config/lynx/lynx-site.cfg
+/macos/.ssh/conf.d/
+/work/.local/etc/hourly-rate
+
+# Machine-specific user data
+/lynx/.config/lynx/bookmarks.html
+/work/.local/share/acronyms/
+
+# Machine-specific environments, profiles, and scripts should be placed in
+# ~/.environ.d, ~/.profile.d, and ~/.local/bin, respectively.  Just don't add
+# them to this repository.

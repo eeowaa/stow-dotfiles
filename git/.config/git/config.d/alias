@@ -1,0 +1,19 @@
+[alias]
+	# Git command wrappers
+	consider = update-index --no-assume-unchanged
+	empty-tree-sha1 = hash-object -t tree /dev/null
+
+	# External commands
+	graph = !~/.local/libexec/git/git-graph
+	bulk = !~/.local/libexec/git/git-bulk
+	plop = !~/.local/libexec/git/git-plop
+	show-config = !~/.local/libexec/git/git-show-config
+	ws-error-summary = !~/.local/libexec/git/git-ws-error-summary
+	visit = !~/.local/libexec/git/git-visit
+	graphviz = !~/.local/libexec/git/git-graphviz
+	ignored = !~/.local/libexec/git/git-ignored
+	pager = !~/.local/libexec/git/git-pager
+	ls-dupes = !~/.local/libexec/git/git-ls-dupes
+
+	# Git-related shell functions that must execute in the current process
+	# should be defined and wired in ~/.environ.d/git.sh

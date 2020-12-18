@@ -1,0 +1,60 @@
+#!/bin/sh -e
+#
+# `git-grab' is like `git-am', except:
+# - It always takes "their" version (does not merge, just "grabs").
+# - It can move files between any two repos; they do not have to be remotes.
+#
+# Another advantage: SRCDIR and DESTDIR do not have to point to the root
+# directories of their respective repos.  This provides even more flexibility.
+#
+# See `gitrevisions(7)' for instructions on how to specify RANGE.
+#
+test $# -lt 3 && {
+    echo >&2 'Usage: git grab SRCDIR RANGE DESTDIR'
+    exit 1
+}
+
+# Get directory arguments all figured out
+startdir=`pwd` srcdir=`readlink -f "$1"` range=$2 destdir=`readlink -f "$3"`
+cd "$srcdir"  &&  srctop=`git rev-parse --show-toplevel`
+cd "$destdir" && desttop=`git rev-parse --show-toplevel`
+cd "$startdir"
+shift; shift
+srcrel=`readlink -f "$srcdir" | sed "s|$srctop/\{0,1\}||"`
+
+# For each commit in given range
+git --git-dir="$srctop/.git" rev-list --reverse "$range" | while read commit
+do
+    # Make arguments easier to work with inside this loop
+    GIT_DIR=$srctop/.git export GIT_DIR
+    shift; set -- $commit ${1+"$@"}
+    git --work-tree="$srctop" checkout $commit
+
+    # Collect metadata for the commit (TODO: optimize this)
+    author=`git show -s --format='%an <%ae>' "$@"`
+ timestamp=`git show -s --format='%ad' "$@"`
+   message=`git show -s --format=short "$@" | sed -e '1,3d' -e '4,$s/^    //'`
+
+    # For each relevant file in the commit
+    git show --oneline --name-status --relative="$srcrel" "$@" | sed -e 1d | \
+    while read status name
+    do
+        GIT_DIR=$desttop/.git export GIT_DIR
+        subdir=`dirname "$name"`
+
+        # "Plop" the file into place (or delete it) in the destination repo
+        case $status in
+        [AM])
+            mkdir -p "$destdir/$subdir"
+            cp -p "$srcdir/$name" "$destdir/$name"
+            git add "$destdir/$name" ;;
+        D)  git rm -rf "$destdir/$name" ;;
+        *)  echo >&2 "Unsupported: $status $name"
+            exit 1;
+        esac
+    done
+
+    # Commit the changes and move on to the next commit
+    git --git-dir="$desttop/.git" commit \
+        --author="$author" --date="$timestamp" --message="$message"
+done

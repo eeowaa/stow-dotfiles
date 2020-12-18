@@ -1,0 +1,14 @@
+BoldAsFont=no
+CursorType=block
+CursorBlinks=no
+Term=xterm-256color
+Scrollbar=none
+Columns=191
+Rows=62
+BellType=0
+Transparency=off
+ForegroundColour=255,255,255
+BackgroundColour=0,0,0
+BellTaskbar=no
+Font=Lucida Console
+FontSmoothing=default

@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+## Simple counter to calculate money earned over time
+
+# Read decimal hourly rate from local config file
+my $filename = "$ENV{HOME}/.local/etc/hourly-rate";
+my $encoding = ':encoding(UTF-8)';
+my $handle = undef;
+open($handle, "< $encoding", $filename)
+    || die "$0: can't open $filename for reading: $!";
+my $hourly_rate = <$handle>;
+$hourly_rate =~ s/^\$//; # remove leading dollar sign if there is one
+
+# Set timer parameters
+my @start_time = (0, 0); # hours and minutes
+my $update_interval = 1; # seconds
+
+# Set internal variables
+my $minute_rate = $hourly_rate / 60;
+my $second_rate = $hourly_rate / 3600;
+my $total = ($start_time[0] * $hourly_rate) + ($start_time[1] * $minute_rate);
+my $step = $second_rate * $update_interval;
+
+# Set an interrupt (^C) handler
+$SIG{INT} = sub {
+    # Restore the cursor and print a newline
+    system 'tput cnorm';
+    printf "\n";
+    exit 1;
+};
+
+# Clear the screen and hide the cursor
+system 'clear; echo; tput civis';
+
+# Unbuffer <STDOUT>
+$| = 1;
+
+while (1) {
+    # Overwrite the current line ('\r' returns to beginning)
+    printf "\r\$%.3f", $total += $step;
+    sleep $update_interval;
+}

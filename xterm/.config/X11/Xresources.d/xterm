@@ -1,0 +1,25 @@
+! Use 256 colors
+xterm*termName: xterm-256color
+
+! Support UTF-8 characters
+xterm*locale: true
+
+! Mod1 sends ^[
+xterm*metaSendsEscape: true
+xterm*eightBitInput: false
+
+! Backspace sends ^?
+xterm*backarrowKey: false
+xterm*ttyModes: erase ^?
+
+! Lengthen the scrollback buffer
+xterm*saveLines: 4096
+
+! White foreground on black background
+xterm*reverseVideo: on
+
+! Disable toolbar
+! xterm*toolBar: false
+
+! Open new windows as maximized
+xterm*maximized: true

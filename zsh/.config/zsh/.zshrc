@@ -1,6 +1,6 @@
 echo >&2 "Sourcing: ${(%):-%N}"
 
-# Initialize command completion (needed by ~/.environ.d/awscli.sh)
+# Initialize command completion
 autoload -Uz compinit
 compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
@@ -14,6 +14,10 @@ ENV=$XDG_CONFIG_HOME/shell/environment
 autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
+
+# <https://unix.stackexchange.com/questions/167582/why-zsh-ends-a-line-with-a-highlighted-percent-symbol>
+# Prevent "%" symbols from showing in Emacs terminals (specifically vterm)
+unsetopt prompt_cr prompt_sp
 
 # ZSH prompt string
 # TODO:

@@ -1,0 +1,44 @@
+# Vim swap files
+*.sw[a-p]
+
+# Emacs autosave files
+\#*#
+.#*
+
+# Emacs project settings
+.bookmarks
+desktop-save.*
+.emacs.desktop
+*.window-layout
+
+# Jetbrains IDE project settings
+.idea/
+
+# Various backup files
+*.bak
+*~
+*.~[1-9]~
+
+# Scratch files
+/scratch*
+*.scratch*
+
+# CTags and CScope
+TAGS
+cscope.*
+
+# GNU Global
+GTAGS
+GRTAGS
+GPATH
+/HTML
+
+# IPython Notebook (Jupyter) checkpoint directories
+.ipynb_checkpoints/
+
+# Python byte code / optimized byte code / DLLs
+__pycache__/
+*.py[cod]
+
+# Python virtual environments
+*venv/

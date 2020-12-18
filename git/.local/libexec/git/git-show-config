@@ -1,0 +1,47 @@
+#!/usr/bin/perl -wn
+
+BEGIN {
+
+    # Separate records by nulls instead of newlines
+    $/ = "\0";
+
+    # Initialize printf field widths to zero
+    $origin_width = $key_width = $value_width = 0;
+
+    # Pipe a machine-readable list of git config variables to STDIN
+    open(STDIN, 'git config --list --show-origin -z |') or die;
+}
+
+if ($odd = !$odd) {
+
+    # Every odd-numbered record has an origin
+    $origin = $_;
+
+    # Abbreviate the full path to $HOME as ~ (shortens output lines)
+    $origin =~ s/$ENV{'HOME'}/~/;
+
+} else {
+
+    # Every even-numbered record has a key-value pair
+    ($key, $value) = split("\n");
+
+    # Store the origin and value against the key
+    $origin{$key} = $origin;
+     $value{$key} = $value;
+
+    # Store maximum field lengths to use as printf widths
+    $origin_width = length $origin if length $origin > $origin_width;
+       $key_width = length $key    if length $key    >    $key_width;
+     $value_width = length $value  if length $value  >  $value_width;
+}
+
+END {
+
+    # Print the results as an ASCII table (both machine- and human-readable)
+    for my $k (keys %origin) {
+        printf "%-*s | %-*s | %s\n",
+            $origin_width, $origin{$k},
+               $key_width, $k,
+                           $value{$k};
+    }
+}

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Determine the password label
+if [ $# -eq 0 ]
+then
+    # Normally, select the password label interactively
+    label=`
+        security dump-keychain |
+        awk -F= '/0x00000007/ && $2 != "<NULL>" {print substr($2, 2, length($2) - 2)}' |
+        sort -u | fzf
+    `
+else
+    # Concatenate command line arguments into a password label
+    label=$*
+fi
+
+# Obtain the password from the keychain
+security find-generic-password -w -l "$label" | tr -d '\n' |
+if [ -t 1 ]
+then
+    # Normally, copy the password to the clipboard and output the label
+    pbcopy
+    echo "\"$label\" password saved to clipboard"
+else
+    # Write the password to STDOUT if /dev/stdout is redirected or piped
+    cat
+fi
