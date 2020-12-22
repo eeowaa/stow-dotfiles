@@ -1,0 +1,223 @@
+" Runtime {{{
+" XXX set undodir=$XDG_CACHE_HOME/vim/undo
+" XXX set directory=$XDG_CACHE_HOME/vim/swap
+" XXX set backupdir=$XDG_CACHE_HOME/vim/backup
+" XXX set viminfo+='1000,n$XDG_CACHE_HOME/vim/viminfo
+" XXX set runtimepath=$XDG_CONFIG_HOME/vim,$XDG_CONFIG_HOME/vim/after,$VIMRUNTIME
+" }}}
+" Plugins {{{
+syntax enable
+filetype plugin on
+"runtime macros/matchit.vim
+nnoremap <silent> <F9> :TagbarToggle<CR>
+let g:table_mode_corner='|'
+let g:bookmark_sign='>>'
+let g:bookmark_annotation_sign='##'
+let g:lisp_rainbow=1
+let g:surround_35="**\r**"
+" XXX let g:netrw_home="$XDG_CACHE_HOME/vim"
+" }}}
+" Environment {{{
+set nocompatible
+behave mswin
+if has('gui_running')
+    set go-=T go-=m go-=l go-=L go-=r go-=R
+        \ gcr+=a:block-Cursor gcr+=a:blinkon0
+        \ novb t_vb=
+    colorscheme tomorrow-night
+    if has('gui_win32')
+        set guifont=Lucida\ Console:h10
+        set grepprg=ack\ -k
+    endif
+else
+    set lazyredraw
+    " -- BLACK
+    " colorscheme default " builtin
+    " colorscheme elflord " builtin
+    " colorscheme pablo   " builtin
+    " colorscheme maroloccio
+    " colorscheme vibrantink
+    " -- DARK GRAY
+    " colorscheme calmar256-dark
+    " colorscheme inkpot
+    " colorscheme jellybeans
+    " colorscheme lettuce
+    " -- LIGHT GRAY
+    colorscheme mustang
+    " colorscheme desert256
+    " colorscheme herald
+    " colorscheme molokai
+    " -- WHITE
+    " colorscheme summerfruit256
+    set grepprg=git\ grep\ -in
+endif
+" }}}
+" Languages {{{
+noremap \m :make<cr>
+" ASP.NET {{{
+autocmd BufNewFile,BufRead *.{master,as[pc]x,snippet} set
+    \ syntax=html filetype=html
+" }}}
+" Bash {{{
+autocmd BufNewFile,BufRead /tmp/bash-fc.*,bash_{profile,logout},*.cygport
+    \ let g:is_bash=1 | set
+    \ syntax=sh filetype=sh
+" }}}
+" Bourne Shell {{{
+autocmd BufNewFile,BufRead profile,environment set
+    \ syntax=sh filetype=sh
+" }}}
+" Git Config {{{
+autocmd BufNewFile,BufRead */git/config.d/* set
+    \ syntax=gitconfig filetype=gitconfig
+" }}}
+" Groovy {{{
+autocmd BufNewFile,BufRead *Jenkinsfile* set
+    \ syntax=groovy filetype=groovy
+" }}}
+" JSON {{{
+autocmd BufNewFile,BufRead *.{json,ipynb} set
+    \ syntax=json filetype=json
+    \ tabstop=2 shiftwidth=2 expandtab
+    \ foldmethod=indent foldenable
+" }}}
+" Markdown {{{
+autocmd BufNewFile,BufRead *.{md,markdown} set
+    \ syntax=markdown filetype=markdown
+    \ makeprg=pandoc\ -f\ markdown\ -t\ html\ -o\ '%<.html'\ '%'
+" }}}
+" VB.NET {{{
+autocmd BufNewFile,BufRead *.vb set
+    \ filetype=vbnet
+" }}}
+" Xdefaults {{{
+autocmd BufNewFile,BufRead */Xresources.d/* set
+    \ syntax=xdefaults filetype=xdefaults
+    \ makeprg=xrdb\ -merge\ '%'
+" }}}
+" Xkb {{{
+autocmd BufNewFile,BufRead */xkb/* set
+    \ syntax=xkb filetype=xkb
+" }}}
+" YAML {{{
+autocmd BufNewFile,BufRead *.y{a,}ml set
+    \ syntax=yaml filetype=yaml
+    \ tabstop=2 shiftwidth=2 expandtab
+    \ foldmethod=indent foldenable
+" }}}
+" See help text:
+"   1. write-compiler-plugin
+"   2. makeprg
+"   3. errorformat
+"   4. makeef
+"   5. make
+"   6. compiler
+" See also:
+"   1. https://github.com/tpope/vim-dispatch
+"   2. http://stackoverflow.com/questions/9990219/vim-whats-the-difference-between-let-and-set
+" }}}
+" Backups {{{
+set nobackup nowritebackup
+" }}}
+" Working Directory {{{
+" Change directory to that of current file
+nmap \c :cd %:p:h<CR>
+set noautochdir
+" }}}
+" Operational Keys {{{
+" Colon {{{
+noremap <space> :
+vnoremap <space> :
+" }}}
+" Escape {{{
+noremap <m-;> <esc>
+vnoremap <m-;> <esc>
+cmap <m-;> <esc>
+imap <m-;> <esc>
+" }}}
+" Enter {{{
+nmap <c-j> <cr>
+" }}}
+" Backspace {{{
+set backspace=indent,eol,start
+" }}}
+" Tab {{{
+set expandtab tabstop=4 shiftwidth=4
+" }}}
+" }}}
+" Emacs Keys {{{
+" TODO <c-u> and <c-k>
+cmap <c-a> <home>
+cmap <c-e> <end>
+cmap <c-d> <delete>
+cmap <c-f> <right>
+cmap <c-b> <left>
+imap <c-a> <home>
+imap <c-e> <end>
+imap <c-d> <delete>
+imap <c-f> <right>
+imap <c-b> <left>
+" }}}
+" Formatting {{{
+set fileformat=unix fileformats=unix
+set smartindent autoindent
+set linebreak textwidth=79
+set formatoptions+=nj " formatoptions+=a
+" Headers {{{
+nmap [1 yyPv$r=
+nmap ]1 yypv$r=
+nmap [2 yyPv$r-
+nmap ]2 yypv$r-
+nmap [3 I### <esc>A ###<esc>
+nmap ]3 :s/### \(.*\) ###/\1/<cr>
+" }}}
+" }}}
+" Wrapping {{{
+set nowrap
+noremap j gj
+noremap k gk
+" }}}
+" Folding {{{
+set foldmethod=marker
+nnoremap <silent> <leader>zj :call NextClosedFold('j')<cr>
+nnoremap <silent> <leader>zk :call NextClosedFold('k')<cr>
+function! NextClosedFold(dir)
+    let cmd = 'norm!z' . a:dir
+    let view = winsaveview()
+    let [l0, l, open] = [0, view.lnum, 1]
+    while l != l0 && open
+        exe cmd
+        let [l0, l] = [l, line('.')]
+        let open = foldclosed(l) < 0
+    endwhile
+    if open
+        call winrestview(view)
+    endif
+endfunction
+" }}}
+" Windowing {{{
+set splitright splitbelow
+nnoremap = <c-w>+
+nnoremap - <c-w>-
+nnoremap _ <C-w><
+nnoremap + <C-w>>
+" }}}
+" Searching {{{
+set ignorecase smartcase incsearch
+" }}}
+" Saving & Quitting {{{
+noremap \\ :w!<cr>
+noremap \<bar> :wa!<cr>
+noremap \q :q!<cr>
+noremap \Q :qa!<cr>
+" }}}
+
+" Fix annoyances
+nnoremap Y y$
+inoremap # X#
+set noerrorbells
+set noesckeys
+
+" Define helpful macros
+let @a = 'mz0R***`z'
+let @d = 'mz0R   `z'

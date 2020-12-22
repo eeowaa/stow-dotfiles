@@ -1,0 +1,4 @@
+[submodule "vim-packages"]
+	path = vim/.vim/pack/eeowaa
+	url = git@github.com:eeowaa/vim-plugins.git
+	branch = master
