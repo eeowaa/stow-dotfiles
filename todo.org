@@ -2,8 +2,11 @@
 I just asked a question on StackOverflow:
 - https://stackoverflow.com/questions/65297474/gnu-make-how-to-specify-a-default-recipe-for-all-phony-rules
 
-* TODO Add submodule for Vim packages
-* TODO Flesh out the README for each Stow package
+* DONE Add submodule for Vim packages
+* TODO Modify the ~stow~ invocation to allow this repo to be cloned anywhere
+I would rather clone to ~/src/life/stow-dotfiles than to ~/stow-dotfiles
+
+* TODO Flesh out =README.org= for each Stow package
 * TODO Define dependencies between each target
-* TODO Profile the duration of sourcing .profile.d/* and .environ.d/* files
+* TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
 There is room for speed improvements

@@ -1,0 +1,15 @@
+#!/bin/sh
+## Fix symlinks pointing to an old home directory
+
+# Example:
+# OLD: ~/foo -> /cygdrive/c/Users/old/Documents/foo
+# NEW: ~/foo -> /cygdrive/c/Users/new/Documents/foo
+
+OLDUSER='old'
+broken-links | xargs ls -l | awk '$NF ~ /'"$OLDUSER"'/ {
+    print gensub(/'"$OLDUSER"'/, "'"`whoami`"'", 1, $(12)), $(10)
+}' | while read x y
+     do rm "$y"
+        echo ln -s "$x" "$y"
+        ln -s "$x" "$y"
+     done

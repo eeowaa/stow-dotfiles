@@ -1,0 +1,19 @@
+#!/bin/sh
+## Symlink *.org files to ~/Documents/org and remove broken links
+
+ORGDIR=$HOME/Documents/org
+
+mkdir -p "$ORGDIR"
+cd "$ORGDIR"
+
+# Add new symlinks
+find .. -type f -name '*.org' -exec ln -sf '{}' . \;
+
+# Remove broken links
+for x in *
+do
+    test -h "$x" && {
+        y=`readlink "$x"`
+        test -f "$y" || rm "$x"
+    }
+done

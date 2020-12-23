@@ -1,0 +1,19 @@
+#!/bin/sh
+
+id=$1
+test "X$id" = X && exit 1
+
+while :
+do
+    # Find cryptographic hash of parent
+    sum=`docker inspect "$id" | jq '.[0].Parent' | sed -e '/^""$/d' -e 's/^.*://' -e 's/"$//'`
+
+    # If it's empty, we've reached the root ancestor
+    test "X$sum" = X && exit 0
+
+    # Otherwise, let's trim the hash to 12 characters to make it an ID
+    id=`echo "$sum" | cut -c1-12`
+
+    # Print the ID
+    echo $id
+done

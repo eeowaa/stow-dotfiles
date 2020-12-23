@@ -221,3 +221,6 @@ set noesckeys
 " Define helpful macros
 let @a = 'mz0R***`z'
 let @d = 'mz0R   `z'
+
+" Local vimrc file(s)
+runtime after/vimrc

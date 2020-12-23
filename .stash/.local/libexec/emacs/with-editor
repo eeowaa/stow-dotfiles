@@ -1,0 +1,10 @@
+#!/bin/sh
+echo "WITH-EDITOR: $$ OPEN $1 IN `pwd`"
+
+sleep 604800 &
+sleep=$!
+
+trap "kill $sleep; exit 0" USR1
+trap "kill $sleep; exit 1" USR2
+
+wait $sleep

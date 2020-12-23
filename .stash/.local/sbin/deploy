@@ -1,0 +1,67 @@
+#!/bin/sh
+
+# Make sure the required directories exist
+mkdir -p "$HOME"/.init.d "$HOME"/.profile.d "$HOME"/.environ.d
+
+# Activate a module by setting up symlinks
+activate() {
+    mod=$1
+
+    # Navigate to its source directory
+    cd "$HOME"/.local/opt/$mod
+
+    # For each shell profile (e.g. profile.sh and profile.csh)...
+    for p in profile.*
+    do
+        # Empty glob match => nothing to do
+        test "$p" = 'profile.*' && break
+
+        # Link the profile to HOME's profile.d
+        ext=`expr $p : 'profile\.\(.*\)'`
+        ln -sf "`pwd`"/$p "$HOME"/.profile.d/$mod'.'$ext
+    done
+
+    # For each shell environment (e.g. environ.sh and environ.csh)...
+    for e in environ.*
+    do
+        # Empty glob match => nothing to do
+        test "$e" = 'environ.*' && break
+
+        # Link the environment to HOME's environ.d
+        ext=`expr $e : 'environ\.\(.*\)'`
+        ln -sf "`pwd`"/$e "$HOME"/.environ.d/$mod'.'$ext
+    done
+
+    # Install daemon shell script, if any
+    # TODO: Use LSB Init utilities from ~/.local/src/jackwagon
+    test -f init.sh && ln -sf "`pwd`"/init.sh "$HOME"/.init.d/$mod'.sh'
+
+    # Do post-installation steps, such as creating symlinks
+    # TODO: Replace with postinstall/preremove system
+    test -x config && ./config
+}
+
+# Deactivate a module by removing symlinks
+deactivate() {
+    mod=$1
+
+    # Don't think too hard about this
+    rm -f "$HOME"/.profile.d/$mod'.'*
+    rm -f "$HOME"/.environ.d/$mod'.'*
+    rm -f "$HOME"/.init.d/$mod'.'*
+}
+
+# For each module...
+"$HOME"/.local/sbin/modules | while read module enabled
+do
+    case $enabled in
+    '') # Deactivate disabled modules
+        echo deactivate $module
+        deactivate $module
+        ;;
+    *)  # Activate enabled modules
+        echo activate $module
+        activate $module
+        ;;
+    esac
+done

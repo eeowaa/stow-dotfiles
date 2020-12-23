@@ -1,0 +1,23 @@
+#!/bin/sh -e
+## Browse an S3 URL
+progname=`basename "$0"`
+
+case $# in
+1)
+    case $1 in
+    -h|--help)
+        cat <<EOF
+Usage: $progname [-h | --help] BUCKET/PREFIX
+EOF
+        exit 0 ;;
+    *)
+        : ${AWS_DEFAULT_REGION:?'Missing required variable'}
+        firefox "https://s3.console.aws.amazon.com/s3/buckets/$1/?region=$AWS_DEFAULT_REGION&tab=overview" ;;
+    esac ;;
+*)
+    cat >&2 <<EOF
+$progname: Wrong number of arguments
+Usage: $progname [-h | --help] S3_URL
+EOF
+    exit 1 ;;
+esac

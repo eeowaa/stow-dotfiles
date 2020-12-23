@@ -1,0 +1,59 @@
+#!/bin/sh
+## Compare canonicalized versions of two XML files
+base=`basename "$0"`
+usage="Usage: $base [OPTION]... FILE1 FILE2"
+
+keep=0 f1= f2=
+while test $# -gt 0
+do
+    case $1 in
+    -h*|--help)
+        cat <<EOF
+$usage
+
+OPTIONS
+  -h, --help   Display this help and exit
+  -k, --keep   Keep temporary canonicalized (c14n) files
+EOF
+        exit $? ;;
+    -k*|--keep)
+        keep=1 ;;
+    *)
+        test -f "$1" || {
+            cat >&2 <<EOF
+$1: not a file
+Try \`$base --help' for more information
+EOF
+            exit 1
+        }
+        if test "X$f1" = X
+        then
+            f1=$1 d1=`dirname "$1"`
+        else
+            f2=$1 d2=`dirname "$1"`
+        fi ;;
+    esac
+    shift
+done
+test "X$f2" = X && {
+    echo >&2 "$usage"
+    exit 1
+}
+
+test -d "$TMPDIR" || TMPDIR=/tmp
+cache=$TMPDIR/$base-c14n-$$
+mkdir -p "$cache/$d1" "$cache/$d2"
+
+xmllint --format --exc-c14n "$f1" | tr -d '\n' | >"$cache/$f1"
+xmllint --format --exc-c14n "$f2" | tr -d '\n' | >"$cache/$f2"
+
+cmp "$cache/$f1" "$cache/$f2"
+rc=$?
+
+if test $keep -eq 0
+then
+    rm -rf "$cache"
+else
+    echo >&2 "$base: c14n files retained: $cache"
+fi
+exit $rc

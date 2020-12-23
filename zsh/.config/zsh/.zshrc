@@ -13,7 +13,8 @@ ENV=$XDG_CONFIG_HOME/shell/environment
 # Use C-x C-e to edit the current command line in $EDITOR
 autoload -Uz edit-command-line
 zle -N edit-command-line
-bindkey "^X^E" edit-command-line
+bindkey '^X^E' edit-command-line
+bindkey '^U' backward-kill-line
 
 # <https://unix.stackexchange.com/questions/167582/why-zsh-ends-a-line-with-a-highlighted-percent-symbol>
 # Prevent "%" symbols from showing in Emacs terminals (specifically vterm)

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Load custom modifier key map
+test -f "$XDG_CONFIG_HOME/X11/Xmodmap" \
+    && xmodmap "$XDG_CONFIG_HOME/X11/Xmodmap"
+
+# TESTME Load custom resources (i.e. application settings)
+for resource in "$XDG_CONFIG_HOME/X11/Xresources.d"/*
+do test -f "$resource" && xrdb -merge "$resource"
+done
+
+# Start Xterm if available
+if which xterm >/dev/null 2>&1
+then xterm &
+else echo >&2 'xterm not available... quitting now'
+fi

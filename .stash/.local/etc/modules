@@ -1,0 +1,59 @@
+# Operating systems {{{
+cygwin
+# darwin
+# }}}
+# Shells {{{
+shell # Required by everything
+bash
+zsh
+# }}}
+# Editors and IDEs {{{
+vim
+emacs
+# }}}
+# Development tools {{{
+git
+gtags
+# }}}
+# Programming languages {{{
+perl
+python
+# go
+# dotnet
+# }}}
+# Documentation {{{
+less
+info
+# }}}
+# Terminal {{{
+terminfo
+tmux
+# }}}
+# X11 applications {{{
+xinit
+# gimp
+# }}}
+# Network tools {{{
+wget
+lynx
+mail
+# irc
+# }}}
+# Security {{{
+gnupg
+openssl
+pinentry
+ssh-agent
+# }}}
+# Filesystem {{{
+locate   # Deps: updatedb
+updatedb # Deps: locate
+# }}}
+# {{{ Infrastructure
+awscli    # Deps: python
+# ansible # Deps: python
+# }}}
+# Math and science {{{
+units
+# espa
+# }}}

@@ -1,0 +1,35 @@
+#!/bin/sh -e
+progname=`basename "$0"`
+action='-delete'
+
+case $1 in
+-h|--help)
+    # Print help text when requested
+    cat <<EOF
+Usage: $progname [-h | --help] [-n | --dry-run]
+Cleans files in \$TMPDIR (default = /tmp) older than the uptime.
+The -n/--dry-run option shows stale entries without deleting them.
+EOF
+    exit $? ;;
+-n|--dry-run)
+    # Do not delete files when performing a dry run
+    action= ;;
+esac
+
+# Find the temporary directory
+: ${TMPDIR='/tmp'}
+test -d "$TMPDIR" || {
+    echo >&2 "$progname: not a directory: $TMPDIR"
+    exit 1
+}
+
+# System uptime (yyyy-mm-dd HH:MM:SS)
+inittime=`uptime -s`
+
+# Remove stale files and directories in $TMPDIR (last modified before system
+# initialization), but keep stale directories if they contain fresh files
+find "$TMPDIR" -depth \
+     \! -newermt "$inittime" \( \
+         \( \! -type d -printf '%t %p\n' \) -o \
+         \( -empty -printf '%t %p/\n' \) \
+     \) $action

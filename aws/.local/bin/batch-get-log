@@ -1,0 +1,52 @@
+#!/bin/sh -eu
+progname=`basename "$0"`
+
+# Parse command line arguments
+[ $# -eq 1 ] || {
+    echo >&2 "Usage: $progname ARRAY_JOB_ID"
+    exit 1
+}
+array_job_id=$1
+
+# Assumptions:
+# 1. We only ever care about array jobs (we rarely ever submit single jobs)
+# 2. We only ever care about failed jobs (why else would we want the log?)
+# 3. `list-jobs' only ever returns a single job (observed behavior)
+# 4. `describe-jobs' only ever returns a single attempt (observed behavior)
+
+echo -n >&2 'Retrieving the job ID from the supplied array job ID: '
+job_id=`
+    aws batch list-jobs --array-job-id $array_job_id --job-status FAILED |
+    jq -r '.jobSummaryList[0].jobId'
+`
+echo $job_id
+
+echo -n >&2 'Retreiving the log stream ID: '
+log_stream=`
+    aws batch describe-jobs --jobs $job_id |
+    jq -r '.jobs[0].attempts[0].container.logStreamName'
+`
+echo $log_stream
+
+###############################################################################
+
+outdir=/tmp/batch-logs
+mkdir -p "$output"
+cd "$outdir"
+
+tab='	' # literal tab character
+aws "logs get-log-events \
+--log-group-name '/aws/batch/job' \
+--log-stream-name "$log_stream" \
+--output 'text'" | cut -f3- | sed "s/$tab[^$tab]\{1,\}$//" > "$array_job_id-combined.log"
+
+sed -n '/^------------------------------$/,$p' "$array_job_id-combined.log" |
+grep -v '^+' > "$array_job_id.log"
+
+grep -e '^+' "$array_job_id-combined.log" > "$array_job_id-trace.log"
+
+cat >&2 <<EOF
+  Without trace: $outdir/$array_job_id.log
+     Just trace: $outdir/$array_job_id-trace.log
+Combined output: $outdir/$array_job_id-combined.log
+EOF

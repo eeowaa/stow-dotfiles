@@ -10,7 +10,6 @@ $HOME/AppData/LocalLow/Temp
 *)  cygdirs= ;;
 esac
 
-mkdir -p "$XDG_CACHE_HOME/locate"
 /usr/bin/env updatedb --prunefs= \
     --findoptions='-false -o' \
     --localpaths="$HOME" \

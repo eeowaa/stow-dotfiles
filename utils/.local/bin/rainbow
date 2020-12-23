@@ -1,0 +1,97 @@
+#!/bin/sh
+## Colorize fields from line-based standard input
+base=`basename "$0"`
+delimiter='[ \t]+'
+die()
+{
+    case $# in
+    0) test -t 0 || cat ;;
+    *) echo "$*" ;;
+    esac >&2
+    exit 1
+}
+
+# Parse user input
+while test $# -gt 0
+do
+    case $1 in
+    -h|--help)
+        cat <<EOF
+Usage: $base [-h | --help] [DELIMITER]
+DELIMITER is an awk-style regex field separator (default = '[ \t]+')
+EOF
+        exit ;;
+    *)  delimiter=$1 ;;
+    esac
+    shift
+done
+
+# Validate user input
+awk "/$delimiter/" </dev/null 2>&0 \
+    || die "$base: invalid field separator: $delimiter"
+
+# Randomly generate a 32-character string from a set of 68 characters having no
+# metasyntatic meaning within awk regular expressions.  The number of possibile
+# strings exceeds 4.36e58, so the chance of a collision within given textual
+# input is virtually impossible.  Using this string as the field separator in
+# an awk program, we can disable automatic field splitting across awk
+# implementations in a very portable manner.
+pool=
+for f in /dev/urandom /dev/random
+do
+    test -e "$f" && {
+        pool=$f
+        break
+    }
+done
+test "X$pool" = X && die "$base: could not find random number pool"
+uncommon_string=`\
+head "$pool" | tr -dc \''"\`/<>:;,~!@#%&=A-Za-z0-9' | cut -c1-32`
+
+# Colorize standard input
+awk -F "$uncommon_string" '{
+
+    # Initialize color code
+    # 31 = red
+    # 32 = green
+    # 33 = yellow
+    # 34 = blue
+    # 35 = magenta
+    # 36 = cyan
+    color = 31
+
+    # Store input line in string variable
+    s = $0
+
+    # For each field...
+    while (length(s)) {
+
+        # Determine next delimiter string (if there is one)
+        delim = substr(s, match(s, /'"$delimiter"'/), RLENGTH)
+
+        # 1. Determine field before delimiter (field may be null)
+        # 2. Trim field and delimiter from start of line
+        if (RSTART == 0) {
+            field = s
+            s = ""
+        } else {
+            field = (RSTART == 1) ? "" : substr(s, 1, RSTART - 1)
+            s = substr(s, RSTART + RLENGTH)
+        }
+
+        # 1. Print field in color
+        # 2. Increment color for next field
+        printf "\033[1;%sm%s", color, field
+        color = ((color - 30) % 6) + 31
+
+        # Print delimiter in "bright black" (grey)
+        printf "\033[1;30m%s", delim
+   }
+
+   # End the line
+   printf "\n"
+}
+END {
+    # Reset all text attributes (return to normal mode)
+    printf "\033[0;;m"
+}'

@@ -1,10 +1,3 @@
-case `uname -s` in
-Darwin)
-    MONOPATH=/Library/Frameworks/Mono.framework/Versions/Current/bin
-    export MONOPATH ;;
-*)
-    # TODO: Add support for operating systems
-esac
-
+# No more Mono! .NET Core practically absorbed it in 2020
 DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_CLI_TELEMETRY_OPTOUT

@@ -22,14 +22,14 @@ stow --no-folding <package>
   - Automatically add SSH keys to SSH Agent at launch
 
 * Discussion
-Dotfile can be managed in many different ways. Here are a few approaches:
+Dotfiles can be managed in many different ways. Here are a few approaches:
 
 1. Have a git repo in =$HOME=
 2. Copied into place from a dotfile repo
    #+begin_src sh
-vim local.conf # specify local configuration
-make           # construct dotfiles to specification
-make install   # copy dotfiles into place
+   vim local.conf # specify local configuration
+   make           # construct dotfiles to specification
+   make install   # copy dotfiles into place
    #+end_src
 3. Symlinked into place (this repo)
 
@@ -48,6 +48,36 @@ I believe that the GNU Stow approach strikes the best balance:
 - No templates, but includes work for most dotfiles
 - Easily the most maintainable
 
+** TODO Explain why the XDG base directory specification is used
+Currently, dotfiles and data for each package are organized according to the XDG
+base directory specification [[https://wiki.archlinux.org/index.php/XDG_Base_Directory][where feasible]]. This is mostly a holdover from when
+I managed dotfiles without Stow, but now I don't see as much value in deviating
+from default legacy paths, considering how Stow organizes everything.
+
+There are only a few potential benefits in keeping with the XDG base directory
+specification to organize dotfiles, in addition to using Stow:
+
+1. Dotfiles not already managed by Stow /might/ be more discoverable if grouped
+   under =$XDG_CONFIG_HOME= (however, an opposing argument could be made for a
+   flat structure in =$HOME= -- it boils down to opinion)
+2. One could argue that the XDG base directory specification is the future of
+   dotfile organization, so one might as well stay ahead of the curve (however,
+   support for legacy organization is unlikely to be dropped for most projects)
+3. Custom and local config files corresponding to standard dotfiles would have
+   a clear place to go under =$XDG_CONFIG_HOME= (however, =$HOME/.local/share=
+
+Additionally, many common programs  Due to widespread abuse of `$XDG_CONFIG_HOME` by
+programs that cache their runtime data there, and 
+
 ** TODO Explain my experience with and rationale for using each approach
+** TODO Explain why this repo doesn't use folding with Stow
+When directories are folded (symlinked back to Stow), files installed into
+those directories by other processes on the system physically live in Stow,
+which is the wrong place for them.
+
+The main downside to _not_ folding directories is that when they are unstowed,
+the target directories are not removed even if they are empty. This doesn't
+hurt anything, though, unless the filesystem is running out of inodes.
+
 * Reference
 [fn:1] [[https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x][https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x]]

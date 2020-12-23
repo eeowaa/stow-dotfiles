@@ -1,0 +1,36 @@
+#!/bin/sh
+## Print the "Hostname" corresponding to a "Host" in ~/.ssh/config
+test $# -eq 0 && {
+    progname=`basename "$0"`
+    echo >&2 "Usage: $progname HOST..."
+    exit 1
+}
+for host
+do
+    host=`echo "$host" | sed 's/\..*//'`
+    if
+        awk '
+            tolower($1) == "host" && index(tolower($2), tolower(HOST)) {
+                x = 1
+                next
+            }
+            x && tolower($1) == "hostname" {
+                print $2
+                exit
+            }' HOST=$host "$HOME/.ssh/config" |
+        grep .
+    then
+        : TRANSLATED HOST TO HOSTNAME
+    else
+        tac "$HOME/.ssh/config" |
+        awk '
+            tolower($1) == "hostname" && index(tolower($2), tolower(HOSTNAME)) {
+                x = 1
+                next
+            }
+            x && tolower($1) == "host" {
+                print $2
+                exit
+            }' HOSTNAME=$host
+    fi
+done

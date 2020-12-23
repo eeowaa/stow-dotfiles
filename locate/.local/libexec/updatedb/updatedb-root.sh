@@ -5,7 +5,6 @@ CYGWIN_NT*)
 *)  cygdrive= ;;
 esac
 
-mkdir -p "$XDG_CACHE_HOME/locate"
 /usr/bin/env updatedb --prunefs= \
     --prunepaths="$cygdrive /tmp /usr/tmp /var/tmp /var/lock /var/run /run /media /mnt /proc" \
     --findoptions='( -type d -name .git -print0 -prune ) -o' \

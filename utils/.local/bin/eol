@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $file = shift or die "Missing file argument\n";
+-f $file or die "Not a file: $file\n";
+open my $fh, "<", $file or die "Cannot open file: $file\n";
+
+my ($LF, $CR, $CRLF);
+while (defined (my $c = getc $fh)) {
+    if ($c eq "\r") {
+        $c = getc $fh;
+        if ($c eq "\n") {
+            print "CRLF\n" unless $CRLF;
+            $CRLF = 1;
+        } else {
+            print "CR\n" unless $CR;
+            $CR = 1;
+        }
+    } elsif ($c eq "\n") {
+        print "LF\n" unless $LF;
+        $LF = 1;
+    }
+}

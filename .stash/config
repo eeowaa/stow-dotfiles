@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Config symlinks
+ln -sf "$XDG_CONFIG_HOME/emacs" "$HOME/.emacs.d"
+ln -sf "$XDG_CONFIG_HOME/emacs/emacs" "$HOME/.emacs"

@@ -1,0 +1,103 @@
+#!/bin/sh
+## Lookup HTTP response code
+base=`basename "$0"`
+usage="Usage: $base [OPTION]... CODE"
+table=$XDG_DATA_HOME/httpcodes
+
+# Simplified argument interface
+interface()
+{
+    case $1 in
+    -h) cat <<EOF
+$usage
+
+OPTIONS
+  -h, --help                        Display this help text and exit
+  -c, --category                    Print category of response code
+  -t, --type                        Same as \`--category'
+  -s, --short, --short-description  Print short description of code (default)
+  -l, --long, --long-description    Print long description of response code
+  -p, --protocol                    Print available protocols for response code
+EOF
+        exit $? ;;
+    -c) category=1 ;;
+    -s) short=1 ;;
+    -l) long=1 ;;
+    -p) protocol=1 ;;
+     *) code=$1 ;;
+    esac
+}
+
+# Command line argument parser
+category=0 short=0 long=0 protocol=0
+while test $# -gt 0
+do
+    case $1 in
+    --help|-h|-h?*)
+        interface -h ;;
+    --category|--type|-[ct])
+        interface -c ;;
+    -[ct]?*)
+        interface -c
+        __tmp=`expr "X$1" : 'X-[ct]\(.*\)'`
+        shift
+        set -- "-$__tmp" ${1+"$@"}
+        continue ;;
+    --short|--short-description|-s)
+        interface -s ;;
+    -s?*)
+        interface -s
+        __tmp=`expr "X$1" : 'X-s\(.*\)'`
+        shift
+        set -- "-$__tmp" ${1+"$@"}
+        continue ;;
+    --long|--long-description|-l)
+        interface -l ;;
+    -l?*)
+        interface -l
+        __tmp=`expr "X$1" : 'X-l\(.*\)'`
+        shift
+        set -- "-$__tmp" ${1+"$@"}
+        continue ;;
+    --protocol|-p)
+        interface -p ;;
+    -p?*)
+        interface -p
+        __tmp=`expr "X$1" : 'X-p\(.*\)'`
+        shift
+        set -- "-$__tmp" ${1+"$@"}
+        continue ;;
+    *)
+        interface "$1" ;;
+    esac
+    shift
+done
+
+# Error handler
+die()
+{
+    case $# in
+    0) test -t 0 || cat ;;
+    *) echo "$*" ;;
+    esac >&2
+    exit 1
+}
+
+# Ensure we have a code to work with
+test "X$code" = X && die <<EOF
+$base: no code provided
+$usage
+EOF
+
+# Check for HTTP response code table; each line looks like this:
+# <code>|<category>|<short-description>|<long-description>|<protocol>
+test -f "$table" || die "$table: not a file"
+
+# Print information corresponding to HTTP code
+test $category$short$long$protocol = 0000 && short=1
+awk -F\| "\$1 == $code {
+if ($category) print \$2
+if ($short) print \$3
+if ($long) print \$4
+if ($protocol) print \$5
+}" "$table" | fold -sw`tput cols`

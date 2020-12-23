@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Each user has their own directory for storing Emacs server sockets
+server_socket_dir=${TMPDIR-'/tmp'}/emacs`id -u`
+
+case "$*"
+in     	 -l        	   \
+| *[\ \	]-l*       	   \
+|      	 --list    	   \
+| *[\ \	]--list    	   \
+|      	 --list[\ \	]* \
+| *[\ \	]--list[\ \	]* \
+)
+   # Each socket corresponds to a different Emacs server
+   ls -1 "$server_socket_dir" | sed -e "s|^|$server_socket_dir/|" | grep .
+   exit $?
+esac
+
+# We default to the socket named `server', but that can be overridden
+emacsclient -a '' -s "$server_socket_dir/server" ${1+"$@"}

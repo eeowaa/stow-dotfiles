@@ -1,0 +1,19 @@
+# Exclude everything by default
+# /*
+
+# Repository stuff
+# !/README.org
+# !/TODO.org
+# !/.gitattributes
+# !/.gitignore
+# !/.gitmodules
+
+# Content to include
+# !/.config
+# !/.local
+
+# Content to exclude
+# *credentials*
+# /.config/gnupg
+# /.config/lynx/bookmarks.html
+# /.local/etc/hourly-rate

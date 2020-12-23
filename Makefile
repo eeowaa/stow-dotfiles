@@ -1,34 +1,62 @@
 .DEFAULT_GOAL := all
+srcdir := .
 
 # Operating Systems
-targets += linux macos cygwin
-cygwin: locate
+packages += linux macos cygwin
+gitlinks += $(srcdir)/cygwin/.local/opt/cygtools/.git
+cygwin: linux locate mintty $(srcdir)/cygwin/.local/opt/cygtools/.git
+
+# Graphics
+packages += X11
+
+# WMs and DEs
+packages += i3 # doesn't necessarily need X11
 
 # Terminals
-targets += xterm iterm2 mintty tmux
-tmux: shell
+packages += xterm mintty tmux
+xterm: X11
 
 # Shells
-targets += shell bash zsh
+packages += shell bash zsh
 bash: shell
 zsh: shell
 
 # Editors
-targets += vim emacs doom
+packages += emacs doom vim
+gitlinks += $(srcdir)/vim/.vim/pack/eeowaa/.git
 doom: emacs
+vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
 
 # Languages
-targets += go node perl python
+packages += dotnet go node perl python
 
 # Browsers
-targets += lynx
+packages += lynx
 
-# Other
-targets += aws direnv git X11 i3
+# Uncategorized
+packages += aws direnv gimp git gnupg info irc less locate ssh-agent units utils wget work
+gitlinks += $(srcdir)/utils/.local/opt/mailconvert/.git
+utils: $(srcdir)/utils/.local/opt/mailconvert/.git
 
-.PHONY: $(targets)
-$(targets):
+# Composite
+.PHONY: all submodules
+all: $(packages)
+submodules: $(gitlinks)
+
+# Meta
+.PHONY: list
+null :=
+space := $(null) $(null)
+define newline
+
+
+endef
+list:
+	@: $(info $(subst $(space),$(newline),$(sort $(packages))))
+
+# Recipes
+.PHONY: $(packages)
+$(packages):
 	stow --no-folding $@
-
-.PHONY: all
-all: $(targets)
+$(gitlinks):
+	git submodule update --init --recursive $(@D)

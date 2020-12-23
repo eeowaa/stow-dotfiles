@@ -1,0 +1,64 @@
+#!/usr/bin/sed -f
+## Colorize diff input with ANSI color escape codes
+
+###############
+###  Input  ###
+###############
+
+# All formats
+/^Binary files.*differ$/bf
+/^Only in.*/bf
+/^diff .*/bd
+
+# Classic diff
+/^< .*/br
+/^> .*/ba
+/^---$/bc
+/^[0-9]\{1,\}a[0-9]\{1,\}\(,[0-9]\{1,\}\)\{0,1\}$/bc
+/^[0-9]\{1,\}\(,[0-9]\{1,\}\)\{0,1\}d[0-9]\{1,\}$/bc
+/^[0-9]\{1,\}\(,[0-9]\{1,\}\)\{0,1\}c[0-9]\{1,\}\(,[0-9]\{1,\}\)\{0,1\}$/bc
+
+# Combined diff
+/^\*\{15\}$/bs
+/^\([*-]\)\{3\} .* \1\{4\}$/bc
+/^[*-]\{3\} .*/bd
+/^! .*/bm
+
+# Unified diff
+/^[-+]\{3\} .*/bd
+/^-.*/br
+/^+.*/ba
+/^@@ -[0-9]\{1,\},[0-9]\{1,\} +[0-9]\{1,\},[0-9]\{1,\} @@$/bc
+
+################
+###  Output  ###
+################
+
+# 30 = black
+# 31 = red
+# 32 = green
+# 33 = yellow
+# 34 = blue
+# 35 = magenta
+# 36 = cyan
+
+# File difference
+:f;s//[1;30m&[0m/;t
+
+# Removed line
+:r;s//[31m&[0m/;t
+
+# Added line
+:a;s//[32m&[0m/;t
+
+# Descriptor
+:d;s//[33m&[0m/;t
+
+# Modified line
+:m;s//[34m&[0m/;t
+
+# Separator line
+:s;s//[35m&[0m/;t
+
+# Context marker
+:c;s//[36m&[0m/;t

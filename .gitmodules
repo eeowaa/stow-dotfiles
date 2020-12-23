@@ -2,3 +2,23 @@
 	path = vim/.vim/pack/eeowaa
 	url = git@github.com:eeowaa/vim-plugins.git
 	branch = master
+[submodule "cygtools"]
+	path = cygwin/.local/opt/cygtools
+	url = git@github.com:eeowaa/cygtools.git
+	branch = master
+[submodule "mailconvert"]
+	path = utils/.local/opt/mailconvert
+	url = git@github.com:eeowaa/mailconvert.git
+	branch = master
+[submodule "logparse"]
+	path = .stash/.local/opt/logparse
+	url = git@github.com:eeowaa/logparse.git
+	branch = master
+[submodule "jackwagon"]
+	path = .stash/.local/opt/jackwagon
+	url = git@github.com:eeowaa/jackwagon.git
+	branch = master
+[submodule "vanilla-emacs"]
+	path = .stash/.config/emacs
+	url = git@github.com:eeowaa/vanilla-emacs.git
+	branch = master
