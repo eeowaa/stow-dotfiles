@@ -6,5 +6,4 @@ echo >&2 "Sourcing: ${(%):-%N}"
 # Source generic Bourne Shell profile
 [[ -f ~/.profile ]] && source ~/.profile
 
-# ZSH-specific profile
-export HISTFILE=$XDG_CACHE_HOME/zsh/history
+# ZSH-specific profile (currently empty)
