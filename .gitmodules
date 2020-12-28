@@ -22,3 +22,7 @@
 	path = .stash/.config/emacs
 	url = git@github.com:eeowaa/vanilla-emacs.git
 	branch = master
+[submodule "doom-emacs"]
+	path = doom/.config/doom
+	url = git@github.com:eeowaa/doomdir.git
+	branch = main

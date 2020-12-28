@@ -49,7 +49,7 @@ discovering dependencies.
 I just asked a question on StackOverflow:
 - https://stackoverflow.com/questions/65297474/gnu-make-how-to-specify-a-default-recipe-for-all-phony-rules
 
-* Dotfiles [2/10]
+* Dotfiles [3/10]
 ** STRT Fix XDG Base Directory compliance for ZSH
 |   | From                    | To                                | How           |
 |---+-------------------------+-----------------------------------+---------------|
@@ -80,7 +80,6 @@ case where I use the default =$HOME/.vim/= and don't even try to fight it
 
 https://vi.stackexchange.com/questions/14357/moving-viminfo-file-to-vim-dir
 
-** TODO Add submodule for Doom Emacs config
 ** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
 There is room for speed improvements. I think that ~npx~ might have something to
 do with the slowness.
@@ -100,3 +99,5 @@ Any newly-added program dotfiles should just use default paths.
 |---+-------------------------+----------------------------------+--------------|
 | N | =$HOME/.python_history= | =$XDG_CACHE_HOME/python/history= |              |
 | Y | =$HOME/.pylint.d/=      | =$XDG_CONFIG_HOME/pylint/=       | ~PYLINTHOME~ |
+
+** DONE Add submodule for Doom Emacs config

@@ -23,8 +23,8 @@ zsh: shell
 
 # Editors
 packages += emacs doom vim
-gitlinks += $(srcdir)/vim/.vim/pack/eeowaa/.git
-doom: emacs
+gitlinks += $(srcdir)/doom/.config/doom/.git $(srcdir)/vim/.vim/pack/eeowaa/.git
+doom: emacs $(srcdir)/doom/.config/doom/.git
 vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
 
 # Languages
