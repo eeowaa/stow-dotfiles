@@ -1,12 +1,102 @@
-* DONE Figure out how to define the default Makefile recipe
+* README [1/3]
+** TODO Discuss dotfile management systems
+*** TODO Discuss pros and cons of each approach
+- Portability
+  - Dependencies
+- Configurability
+  - Templates
+  - Includes
+- Maintainability
+  - Simplicity
+  - Modularity
+
+I believe that the GNU Stow approach strikes the best balance:
+- Very light and portable dependencies
+- No templates, but includes work for most dotfiles
+- Easily the most maintainable
+
+*** TODO Explain my experience with and rationale for using each approach
+** HOLD Describe each Stow package
+I would like to reorganize the =Makefile= targets first, so that my
+documentation can mirror the =Makefile=.
+
+** DONE Discuss the XDG Base Directory specification
+* Makefile [1/5]
+** TODO Modify the ~stow~ invocation to ignore temporary files
+#+begin_src gitignore
+# Vim swap files
+*.sw[a-p]
+
+# Emacs autosave files
+\#*#
+.#*
+
+# Various backup files
+*.bak
+*~
+*.~[1-9]~
+#+end_src
+
+** TODO Modify the ~stow~ invocation to allow this repo to be cloned anywhere
+I would rather clone to =~/src/life/stow-dotfiles= than to =~/stow-dotfiles=
+
+** TODO Reorganize =Makefile= targets according to =.stash/.local/etc/modules=
+** HOLD Define dependencies between each target
+I would like to reorganize the =Makefile= targets first, which might help in
+discovering dependencies.
+
+** DONE Figure out how to define the default Makefile recipe
 I just asked a question on StackOverflow:
 - https://stackoverflow.com/questions/65297474/gnu-make-how-to-specify-a-default-recipe-for-all-phony-rules
 
-* DONE Add submodule for Vim packages
-* TODO Modify the ~stow~ invocation to allow this repo to be cloned anywhere
-I would rather clone to ~/src/life/stow-dotfiles than to ~/stow-dotfiles
+* Dotfiles [2/10]
+** STRT Fix XDG Base Directory compliance for ZSH
+|   | From                    | To                                | How           |
+|---+-------------------------+-----------------------------------+---------------|
+| Y | =$ZDOTDIR/.zsh_history= | =$XDG_CACHE_HOME/zsh/history=     | ~HISTFILE~    |
+| ? | =$ZDOTDIR/.zcompdump=   | =$XDG_CACHE_HOME/zsh/zcompdump=   | ~compinit -d~ |
+|   | =$ZDOTDIR/.zcompcache/= | =$XDG_CACHE_HOME/zsh/zcompcache/= |               |
 
-* TODO Flesh out =README.org= for each Stow package
-* TODO Define dependencies between each target
-* TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
-There is room for speed improvements
+** STRT Fix XDG Base Directory compliance for Bash
+|   | From                  | To                             | How        |
+|---+-----------------------+--------------------------------+------------|
+| ? | =$HOME/.bash_history= | =$XDG_CACHE_HOME/bash/history= | ~HISTFILE~ |
+
+** STRT Fix XDG Base Directory compliance for Node
+|   | From                          | To                                     | How                 |
+|---+-------------------------------+----------------------------------------+---------------------|
+| X | =$HOME/.npm/=                 | other various directories              | Arch Wiki           |
+| X | =$HOME/.node_repl_history=    | =$XDG_CACHE_HOME/node/repl_history=    | ~NODE_REPL_HISTORY~ |
+|   | =$HOME/.ts_node_repl_history= | =$XDG_CACHE_HOME/ts_node/repl_history= |                     |
+
+** STRT Group Vim files
+Because Vim doesn't load packages from =$XDG_CONFIG_HOME/vim/pack/=, this is one
+case where I use the default =$HOME/.vim/= and don't even try to fight it
+(although I could symlink that directory to =$XDG_CONFIG_HOME/vim/=).
+
+|   | From             | To                   | How            |
+|---+------------------+----------------------+----------------|
+| ? | =$HOME/.viminfo= | =$HOME/.vim/viminfo= | See link below |
+
+https://vi.stackexchange.com/questions/14357/moving-viminfo-file-to-vim-dir
+
+** TODO Add submodule for Doom Emacs config
+** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
+There is room for speed improvements. I think that ~npx~ might have something to
+do with the slowness.
+
+** HOLD Move history files from =$XDG_CACHE_HOME= to =$XDG_DATA_HOME=
+This is the standard. But first I'd like to finish fumbling through it the
+"wrong" way I've been doing, for consistency's sake.
+
+** HOLD Remove XDG Base Directory compliance
+Before I get to this, I'd like to finish compliance across all the programs I
+/currently/ have dotfiles for (I'm closer to achieving that than backing out).
+Any newly-added program dotfiles should just use default paths.
+
+** DONE Add submodule for Vim packages
+** DONE Fix XDG Base Directory compliance for Python
+|   | From                    | To                               | How          |
+|---+-------------------------+----------------------------------+--------------|
+| N | =$HOME/.python_history= | =$XDG_CACHE_HOME/python/history= |              |
+| Y | =$HOME/.pylint.d/=      | =$XDG_CONFIG_HOME/pylint/=       | ~PYLINTHOME~ |
