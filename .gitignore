@@ -1,5 +1,6 @@
 # Machine-specific user config
 /aws/.config/aws/
+/doom/.config/doom/custom.el
 /git/.config/git/config.d/local
 /git/.config/git/config.d/work
 /lynx/.config/lynx/lynx-site.cfg
