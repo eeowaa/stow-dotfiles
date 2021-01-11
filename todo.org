@@ -49,7 +49,7 @@ discovering dependencies.
 I just asked a question on StackOverflow:
 - https://stackoverflow.com/questions/65297474/gnu-make-how-to-specify-a-default-recipe-for-all-phony-rules
 
-* Dotfiles [3/10]
+* Dotfiles [4/11]
 ** STRT Fix XDG Base Directory compliance for ZSH
 |   | From                    | To                                | How           |
 |---+-------------------------+-----------------------------------+---------------|
@@ -79,7 +79,6 @@ case where I use the default =$HOME/.vim/= and don't even try to fight it
 | ? | =$HOME/.viminfo= | =$HOME/.vim/viminfo= | See link below |
 
 https://vi.stackexchange.com/questions/14357/moving-viminfo-file-to-vim-dir
-
 ** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
 There is room for speed improvements. I think that ~npx~ might have something to
 do with the slowness.
@@ -92,6 +91,11 @@ This is the standard. But first I'd like to finish fumbling through it the
 Before I get to this, I'd like to finish compliance across all the programs I
 /currently/ have dotfiles for (I'm closer to achieving that than backing out).
 Any newly-added program dotfiles should just use default paths.
+
+** DONE Ignore specific ~shellcheck~ violations
+- SC1007 :: https://github.com/koalaman/shellcheck/wiki/SC1007
+- SC1090 :: https://github.com/koalaman/shellcheck/wiki/SC1090
+- SC2006 :: https://github.com/koalaman/shellcheck/wiki/SC2006
 
 ** DONE Add submodule for Vim packages
 ** DONE Fix XDG Base Directory compliance for Python

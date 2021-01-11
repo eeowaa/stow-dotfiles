@@ -27,7 +27,7 @@ browse_github() {
     remote_url=`expr "$remote_url" : '\(.*\)\.git$'`
 
     # Determine default branch on remote
-    remote_HEAD=`git symbolic-ref refs/remotes/$remote/HEAD 2>/dev/null | sed 's#.*/##'`
+    remote_HEAD=`git symbolic-ref "refs/remotes/$remote/HEAD" 2>/dev/null | sed 's#.*/##'`
     test "X$remote_HEAD" = X && remote_HEAD='master'
 
     # Determine what we want to visit

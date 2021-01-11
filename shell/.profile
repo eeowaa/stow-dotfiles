@@ -48,7 +48,7 @@ XDG_PICTURES_DIR \
 XDG_VIDEOS_DIR
 
 # XDG application runtime
-: ${XDG_RUNTIME_DIR='/tmp'}
+: "${XDG_RUNTIME_DIR=/tmp}"
 export XDG_RUNTIME_DIR
 
 # Source each profile script
