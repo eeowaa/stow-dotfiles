@@ -43,22 +43,36 @@
 # 36 = cyan
 
 # File difference
-:f;s//[1;30m&[0m/;t
+:f
+s//[1;30m&[0m/
+t
 
 # Removed line
-:r;s//[31m&[0m/;t
+:r
+s//[31m&[0m/
+t
 
 # Added line
-:a;s//[32m&[0m/;t
+:a
+s//[32m&[0m/
+t
 
 # Descriptor
-:d;s//[33m&[0m/;t
+:d
+s//[33m&[0m/
+t
 
 # Modified line
-:m;s//[34m&[0m/;t
+:m
+s//[34m&[0m/
+t
 
 # Separator line
-:s;s//[35m&[0m/;t
+:s
+s//[35m&[0m/
+t
 
 # Context marker
-:c;s//[36m&[0m/;t
+:c
+s//[36m&[0m/
+t
