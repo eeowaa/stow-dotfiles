@@ -79,6 +79,7 @@ case where I use the default =$HOME/.vim/= and don't even try to fight it
 | ? | =$HOME/.viminfo= | =$HOME/.vim/viminfo= | See link below |
 
 https://vi.stackexchange.com/questions/14357/moving-viminfo-file-to-vim-dir
+
 ** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
 There is room for speed improvements. I think that ~npx~ might have something to
 do with the slowness.
