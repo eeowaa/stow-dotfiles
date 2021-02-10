@@ -44,8 +44,14 @@ test -d "$TMPDIR" || TMPDIR=/tmp
 cache=$TMPDIR/$base-c14n-$$
 mkdir -p "$cache/$d1" "$cache/$d2"
 
-xmllint --format --exc-c14n "$f1" | tr -d '\n' | >"$cache/$f1"
-xmllint --format --exc-c14n "$f2" | tr -d '\n' | >"$cache/$f2"
+case `uname -s` in
+Linux)
+    xmllint --format --exc-c14n "$f1" | tr -d '\n' | >"$cache/$f1"
+    xmllint --format --exc-c14n "$f2" | tr -d '\n' | >"$cache/$f2" ;;
+Darwin)
+    xmllint --format --c14n "$f1" >"$cache/$f1"
+    xmllint --format --c14n "$f2" >"$cache/$f2" ;;
+esac
 
 cmp "$cache/$f1" "$cache/$f2"
 rc=$?
