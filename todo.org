@@ -21,8 +21,20 @@ I would like to reorganize the =Makefile= targets first, so that my
 documentation can mirror the =Makefile=.
 
 ** DONE Discuss the XDG Base Directory specification
-* Makefile [1/5]
-** TODO Modify the ~stow~ invocation to ignore temporary files
+* Makefile [2/5]
+** TODO Modify the ~stow~ invocation to allow this repo to be cloned anywhere
+I would rather clone to =~/src/life/stow-dotfiles= than to =~/stow-dotfiles=
+
+** TODO Reorganize =Makefile= targets according to =.stash/.local/etc/modules=
+** HOLD Define dependencies between each target
+I would like to reorganize the =Makefile= targets first, which might help in
+discovering dependencies.
+
+** DONE Figure out how to define the default Makefile recipe
+I just asked a question on StackOverflow:
+- https://stackoverflow.com/questions/65297474/gnu-make-how-to-specify-a-default-recipe-for-all-phony-rules
+
+** DONE Modify the ~stow~ invocation to ignore temporary files
 #+begin_src gitignore
 # Vim swap files
 *.sw[a-p]
@@ -36,18 +48,6 @@ documentation can mirror the =Makefile=.
 *~
 *.~[1-9]~
 #+end_src
-
-** TODO Modify the ~stow~ invocation to allow this repo to be cloned anywhere
-I would rather clone to =~/src/life/stow-dotfiles= than to =~/stow-dotfiles=
-
-** TODO Reorganize =Makefile= targets according to =.stash/.local/etc/modules=
-** HOLD Define dependencies between each target
-I would like to reorganize the =Makefile= targets first, which might help in
-discovering dependencies.
-
-** DONE Figure out how to define the default Makefile recipe
-I just asked a question on StackOverflow:
-- https://stackoverflow.com/questions/65297474/gnu-make-how-to-specify-a-default-recipe-for-all-phony-rules
 
 * Dotfiles [4/11]
 ** STRT Fix XDG Base Directory compliance for ZSH

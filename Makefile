@@ -55,8 +55,12 @@ list:
 	@: $(info $(subst $(space),$(newline),$(sort $(packages))))
 
 # Recipes
+ignore_vim    := .*\.sw[a-p]
+ignore_emacs  := \#.*\#|\.\#.*
+ignore_backup := .*\.bak|.*~|.*\.~[1-9]~
+ignore_pcre   := ^($(ignore_vim)|$(ignore_emacs)|$(ignore_backup))$$
 .PHONY: $(packages)
 $(packages):
-	stow --no-folding $@
+	stow --no-folding --ignore '$(ignore_pcre)' $@
 $(gitlinks):
 	git submodule update --init --recursive $(@D)
