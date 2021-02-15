@@ -6,7 +6,7 @@
 /lynx/.config/lynx/lynx-site.cfg
 /macos/.ssh/conf.d/
 /work/.local/etc/hourly-rate
-/vim/.config/vim/after/vimrc
+/vim/.vim/after/vimrc
 
 # Machine-specific user data
 /lynx/.config/lynx/bookmarks.html
