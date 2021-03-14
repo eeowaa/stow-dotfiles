@@ -2,9 +2,24 @@
 srcdir := .
 
 # Operating Systems
-packages += linux macos cygwin
-gitlinks += $(srcdir)/cygwin/.local/opt/cygtools/.git
-cygwin: linux locate mintty $(srcdir)/cygwin/.local/opt/cygtools/.git
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+MACOS := 1
+packages := macos
+else ifeq ($(UNAME_S),Linux)
+LINUX := 1
+packages := linux
+else ifneq (,$(findstring CYGWIN,$(UNAME_S))) # e.g. CYGWIN_NT-10.0
+# Do not override the standard CYGWIN environment variable
+# <https://cygwin.com/cygwin-ug-net/using-cygwinenv.html>
+ifndef CYGWIN
+CYGWIN := 1
+unexport CYGWIN
+endif
+packages := cygwin linux
+gitlinks := $(srcdir)/cygwin/.local/opt/cygtools/.git
+cygwin: linux $(srcdir)/cygwin/.local/opt/cygtools/.git
+endif
 
 # Graphics
 packages += X11
@@ -13,7 +28,10 @@ packages += X11
 packages += i3 # doesn't necessarily need X11
 
 # Terminals
-packages += xterm mintty tmux
+packages += xterm tmux
+ifdef CYGWIN
+packages += mintty
+endif
 xterm: X11
 
 # Shells
@@ -23,6 +41,10 @@ zsh: shell
 
 # Editors
 packages += emacs doom vim
+ifdef MACOS
+gitlinks += $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
+emacs: $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
+endif
 gitlinks += $(srcdir)/doom/.config/doom/.git $(srcdir)/vim/.vim/pack/eeowaa/.git
 doom: emacs $(srcdir)/doom/.config/doom/.git
 vim: $(srcdir)/vim/.vim/pack/eeowaa/.git

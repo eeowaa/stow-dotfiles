@@ -26,3 +26,7 @@
 	path = doom/.config/doom
 	url = git@github.com:eeowaa/doomdir.git
 	branch = main
+[submodule "build-emacs-for-macos"]
+	path = emacs/.local/src/build-emacs-for-macos
+	url = git@github.com:jimeh/build-emacs-for-macos.git
+	branch = master
