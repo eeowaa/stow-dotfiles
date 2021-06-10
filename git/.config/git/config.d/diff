@@ -1,0 +1,17 @@
+# Contents stolen from the configuration for emacs.git:
+# <https://git.savannah.gnu.org/cgit/emacs.git/tree/autogen.sh>
+
+[diff "elisp"]
+	xfuncname = ^\\([^[:space:]]*def[^[:space:]]+[[:space:]]+([^()[:space:]]+)
+
+[diff "m4"]
+	xfuncname = ^((m4_)?define|A._DEFUN(_ONCE)?)\\([^),]*
+
+[diff "make"]
+	xfuncname = ^([$.[:alnum:]_].*:|[[:alnum:]_]+[[:space:]]*([*:+]?[:?]?|!?)=|define .*)
+
+[diff "shell"]
+	xfuncname = ^([[:space:]]*[[:alpha:]_][[:alnum:]_]*[[:space:]]*\\(\\)|[[:alpha:]_][[:alnum:]_]*=)
+
+[diff "texinfo"]
+	xfuncname = ^@node[[:space:]]+([^,[:space:]][^,]+)

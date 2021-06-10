@@ -65,4 +65,5 @@
 	path = config.d/local
 	path = config.d/alias
 	path = config.d/credential
+	path = config.d/diff
 	path = config.d/pretty

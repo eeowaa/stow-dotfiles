@@ -1,5 +1,22 @@
-# Make sure that Makefiles and C source code use tabs as indents
-*.[chi]       whitespace=indent-with-non-tab
-*[mM]akefile* whitespace=indent-with-non-tab
-*.mk          whitespace=indent-with-non-tab
-*.make        whitespace=indent-with-non-tab
+# Shell
+*.sh diff=shell
+
+# Elisp
+*.el diff=elisp
+
+# C
+*.[chi] whitespace=indent-with-non-tab
+
+# Make
+*[mM]akefile* whitespace=indent-with-non-tab diff=make
+*.mk          whitespace=indent-with-non-tab diff=make
+*.make        whitespace=indent-with-non-tab diff=make
+
+# M4
+*.m4 diff=m4
+
+# Texinfo
+*.texi diff=texinfo
+
+# TODO
+# Typescript: <https://github.com/microsoft/TypeScript/issues/36185>
