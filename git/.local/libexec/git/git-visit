@@ -4,7 +4,7 @@ usage="Usage: $progname [OPTION]... [FILE[:LINE]]"
 moreinfo="Try \`$progname -h' for more info"
 die() {
     if test -t 0
-    then echo "$@"
+    then echo "$*"
     else cat
     fi >&2
     exit 1
