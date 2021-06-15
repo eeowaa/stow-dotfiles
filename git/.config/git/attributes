@@ -1,3 +1,27 @@
+# Git system settings
+# $(prefix)/etc/gitconfig
+etc/gitconfig   whitespace=indent-with-non-tab
+
+# Git global settings
+# $HOME/.gitconfig
+# $XDG_CONFIG_HOME/git/config
+# $XDG_CONFIG_HOME/git/ignore
+.gitconfig      whitespace=indent-with-non-tab
+git/config      whitespace=indent-with-non-tab
+git/ignore      whitespace=indent-with-non-tab
+
+# Git local settings
+# $GIT_DIR/config
+# $GIT_DIR/info/attributes
+# $GIT_DIR/info/exclude
+config          whitespace=indent-with-non-tab
+info/attributes whitespace=indent-with-non-tab
+info/exclude    whitespace=indent-with-non-tab
+
+# Git repo settings
+.gitattributes  whitespace=indent-with-non-tab
+.gitignore      whitespace=indent-with-non-tab
+
 # Shell
 *.sh diff=shell
 
