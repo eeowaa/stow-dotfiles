@@ -23,7 +23,7 @@ do
 
     # Add the man pages to the front of MANPATH
     test -d "$__libexec_prefix/gnuman" &&
-        MANPATH=$__libexec_prefix/gnuman:$MANPATH
+        MANPATH=$__libexec_prefix/gnuman${MANPATH:+":$MANPATH"}
 done
 export PATH MANPATH
 
