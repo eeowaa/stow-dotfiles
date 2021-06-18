@@ -21,6 +21,7 @@ info/exclude    whitespace=indent-with-non-tab
 # Git repo settings
 .gitattributes  whitespace=indent-with-non-tab
 .gitignore      whitespace=indent-with-non-tab
+.gitmodules     whitespace=indent-with-non-tab
 
 # Shell
 *.sh diff=shell
