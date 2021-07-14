@@ -1,0 +1,6 @@
+#!/bin/sh
+## Output elisp setenv statements with all envvars
+env | sed \
+  -e 's/\\/\\\\/g' \
+  -e 's/"/\\"/g' \
+  -e 's/^\([^=]\{1,\}\)=\(.*\)$/(setenv "\1" "\2")/'
