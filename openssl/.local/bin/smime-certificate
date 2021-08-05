@@ -1,0 +1,106 @@
+#!/bin/sh -x
+# https://www.dalesandro.net/create-self-signed-smime-certificates/
+
+### BEGIN CONFIGURATION ###
+ca_private_key_cipher=aes256
+ca_private_key_bits=4096
+ca_private_key_name=ca.key
+
+ca_certificate_validity=3652 # 10 years (counting 2 leap days)
+ca_certificate_name=ca.crt
+
+smime_private_key_cipher=aes256
+smime_private_key_bits=4096
+smime_private_key_name=smime_test_user.key
+
+smime_csr_name=smime_test_user.csr
+
+smime_certificate_name_x509=smime_test_user.crt
+smime_certificate_name_pkcs12=smime_test_user.p12
+### END CONFIGURATION ###
+
+progname=`basename "$0"`
+die() {
+    case $# in
+    0) [ -t 0 ] || cat ;;
+    *) echo "$*" ;;
+    esac >&2
+    exit 1
+}
+
+: 'Step 0: Make sure that OpenSSL is installed'
+openssl version >/dev/null 2>&1 ||
+    die "$progname: openssl is not installed"
+
+: 'Step 1: Create and navigate to a temporary directory'
+template=${TMPDIR:='/tmp/'}/$progname.XXXXXXXXX
+tmpdir=`mktemp -d "$template"`
+cd "$tmpdir"
+
+: 'Step 2: Create an OpenSSL config file for S/MIME'
+OPENSSL_CONF=$tmpdir/smime.cnf
+export OPENSSL_CONF
+cat >"$OPENSSL_CONF" /etc/ssl/openssl.cnf <<EOF
+
+[smime]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+subjectAltName = email:copy
+extendedKeyUsage = emailProtection
+EOF
+
+: 'Step 3: Generate an RSA private key and self-signed certificate for the CA'
+# `-nodes` means "no DES encryption of private key"
+openssl req -new -x509 \
+    -nodes \
+    -keyout "$ca_private_key_name" \
+    -out "$ca_certificate_name" \
+    -days "$ca_certificate_validity" <<EOF
+US
+CA State
+CA Locality
+CA Organization Name
+CA Organizational Unit Name
+CA Common Name
+CA Email Address
+EOF
+
+: 'Step 4: Generate an RSA private key for the personal email certificate'
+openssl genrsa -$smime_private_key_cipher \
+    -out "$smime_private_key_name" \
+    $smime_private_key_bits
+
+: 'Step 5: Create the certificate signing request (use a different common name)'
+openssl req -new \
+    -key "$smime_private_key_name" \
+    -out "$smime_csr_name" <<EOF
+US
+User State
+User Locality
+User Organization Name
+User Organizational Unit Name
+EOF
+
+: 'Step 6: Sign the certificate using the CA'
+openssl x509 -req \
+    -days 3650 \
+    -in "$smime_csr_name" \
+    -CA "$ca_certificate_name" \
+    -CAkey "$ca_private_key_name" \
+    -set_serial 1 \
+    -out "$smime_certificate_name_x509" \
+    -addtrust emailProtection \
+    -addreject clientAuth \
+    -addreject serverAuth \
+    -trustout \
+    -extfile "$OPENSSL_CONF" \
+    -extensions smime
+
+: 'Step 7: Package the certificate into PKCS#12 Format'
+openssl pkcs12 -export \
+    -in "$smime_certificate_name_x509" \
+    -inkey "$smime_private_key_name" \
+    -out "$smime_certificate_name_pkcs12" \
+    -password pass: # empty password
