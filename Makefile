@@ -53,7 +53,7 @@ vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
 packages += dotnet go node perl python
 
 # Browsers
-packages += lynx
+packages += lynx firefox
 
 # Uncategorized
 packages += aws direnv gimp git gnupg info irc ldap less locate ssh-agent units utils wget work
