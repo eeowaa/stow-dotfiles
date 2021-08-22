@@ -145,7 +145,7 @@ emacs_keys=off
 # or sending mail.  If no editor is specified, then file editing is disabled
 # unless it is activated from the command line, and the built-in line editor
 # will be used for sending mail.
-file_editor=/usr/bin/vim -u NONE
+file_editor=/usr/bin/vim
 
 # The file_sorting_method specifies which value to sort on when viewing
 # file lists such as FTP directories.  The options are:
@@ -154,6 +154,12 @@ file_editor=/usr/bin/vim -u NONE
 #    BY_SIZE     -- sorts on the size of the file
 #    BY_DATE     -- sorts on the date of the file
 file_sorting_method=BY_FILENAME
+
+# Normally disabled.  See ENABLE_LYNXRC in lynx.cfg
+force_cookie_prompt=yes
+
+# Normally disabled.  See ENABLE_LYNXRC in lynx.cfg
+force_ssl_prompt=yes
 
 #    ROT13'd keyboard layout
 #    JCUKEN Cyrillic, for AT 101-key kbd
