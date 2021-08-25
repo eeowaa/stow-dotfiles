@@ -20,8 +20,17 @@ f() {
     cd ${1+"$@"} && ls
 }
 g() {
-    local query=`echo "$*" | sed 's/ /%20/g'`
-    $BROWSER "https://www.google.com/search?q=$query"
+    # URL-encoded query string
+    local query='q='`echo "$*" | sed 's/ /%20/g'`
+
+    # DuckDuckGo-specific query parameters
+    # See <https://duckduckgo.com/params>
+    query="$query&kl=us-en"        # Region = US English
+    query="$query&k1=-1"           # Advertisements = OFF
+    query="$query&kam=google-maps" # Directions source = Google Maps
+
+    # Perform the query
+    $BROWSER "https://duckduckgo.com?$query"
 }
 up() {
     [ $# -eq 0 ] && {
