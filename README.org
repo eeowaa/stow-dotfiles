@@ -11,7 +11,7 @@ These are my dotfiles managed with GNU Stow. Use in conjunction with
   - [[https://github.com/direnv/direnv#docs][Online documentation]]
 
 * Usage
-#+begin_src sh
+#+begin_src sh :eval no
 direnv allow . # optional, for development
 make <package> # calls `stow --no-folding <package>` with dependencies
 #+end_src
@@ -27,7 +27,7 @@ Dotfiles be managed in many different ways. Here are a few approaches:
 
 1. Have a git repo in =$HOME=
 2. Copied into place from a dotfile repo
-   #+begin_src sh
+   #+begin_src sh :eval no
    vim local.conf # specify local configuration
    make           # construct dotfiles to specification
    make install   # copy dotfiles into place
