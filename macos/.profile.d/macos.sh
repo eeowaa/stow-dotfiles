@@ -32,3 +32,19 @@ HOMEBREW_NO_ANALYTICS=1
 #HOMEBREW_CACHE=$XDG_CACHE_HOME/homebrew
 #HOMEBREW_LOGS=$XDG_CACHE_HOME/homebrew/log
 export HOMEBREW_NO_ANALYTICS # HOMEBREW_CACHE HOMEBREW_LOGS
+
+###############################################################################
+
+# Depending on how Emacs.app is installed, we need to create an `emacs` script
+if [ -d /Applications/Emacs.app/Contents/MacOS/bin ]
+then
+    [ -f /Applications/Emacs.app/Contents/MacOS/bin/emacs ] || {
+        cat >/Applications/Emacs.app/Contents/MacOS/bin/emacs <<'EOF'
+#!/bin/sh
+exec /Applications/Emacs.app/Contents/MacOS/Emacs ${1+"$@"}
+EOF
+        chmod +x /Applications/Emacs.app/Contents/MacOS/bin/emacs
+    }
+    PATH=/Applications/Emacs.app/Contents/MacOS/bin:$PATH
+    export PATH
+fi
