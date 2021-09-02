@@ -14,7 +14,8 @@ git() {
 # Wrapper for cd with useful git-related shortcuts
 git_cd() {
     usage="\
-usage: git cd git
+usage: git cd [jump]
+   or: git cd git
    or: git cd common
    or: git cd top
    or: git cd super
@@ -24,6 +25,39 @@ usage: git cd git
     -h|--help)
         echo "$usage"
         return $? ;;
+    ''|jump)
+        # This subcommand requires a nonstandard program
+        which fzf >/dev/null || {
+            echo >&2 'Error: missing command: fzf'
+            return 1
+        }
+
+        # Literal tab characters are more predictably reliable than "\t"
+        tab='	'
+
+        # Temporary file I/O is more predictably reliable in this complex case
+        # than variable assignment from command substitution
+        tmpfile=`mktemp`
+
+        # `git-ls-tree` is used instead of `git-ls-files` because the latter
+        # will not output directories if they contain no files (i.e. if they
+        # only contain other directories). Unfortunately, `git-ls-tree` does
+        # not accept a `--recurse-submodules` flag, so `git-submodule foreach`
+        # must be used to find directories in submodules.
+        {
+            git ls-tree --full-tree -rt HEAD :/
+            git submodule --quiet foreach "
+                echo \"<mode> tree <object>$tab\$sm_path\"
+                git ls-tree --full-tree -rt HEAD | sed \"s|$tab|$tab\$sm_path/|\"
+            "
+        } | awk '$2 == "tree"' | cut -f2 | fzf >"$tmpfile" || {
+            rm -f "$tmpfile"
+            return 1
+        }
+        filepath=`cat "$tmpfile"`
+        rm -f "$tmpfile"
+
+        target=`git rev-parse --show-toplevel`/$filepath ;;
     git)
         target=`git rev-parse --git-dir` ;;
     common)
