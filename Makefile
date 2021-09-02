@@ -60,6 +60,14 @@ packages += aws direnv gimp git gnupg info irc ldap less locate ssh-agent units 
 gitlinks += $(srcdir)/utils/.local/opt/mailconvert/.git
 utils: $(srcdir)/utils/.local/opt/mailconvert/.git
 
+# Local Configuration
+localconf := $(srcdir)/local.mk
+ifneq (,$(wildcard $(localconf)))
+include $(localconf)
+else
+$(warning WARNING: File does not exist: $(localconf))
+endif
+
 # Composite
 .PHONY: all submodules
 all: $(packages)

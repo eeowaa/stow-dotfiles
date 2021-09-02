@@ -1,3 +1,6 @@
+# Local Makefile configuration
+/local.mk
+
 # Machine-specific user config
 /aws/.config/aws/
 /doom/.config/doom/custom.el
