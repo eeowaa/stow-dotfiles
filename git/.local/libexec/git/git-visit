@@ -40,12 +40,11 @@ browse_github() {
             # Tree of alternate branch
             url=$remote_url/tree/$branch
         fi ;;
-    1)  # TODO: Get relative path to git root
-        file=`echo "X$1" | sed -e 's/^X//' -e 's/:[0-9]*$//'`
+    1)  file=`echo "X$1" | sed -e 's/^X//' -e 's/:[0-9]*$//'`
         line=`expr "X$1" : 'X.*:\([0-9]*\)$'`
 
         # Specific file, potentially with line number
-        url="$remote_url/blob/$branch/$file"
+        url=$remote_url/blob/$branch/$GIT_PREFIX$file
         test "X$line" = X || url="$url#L$line" ;;
     *)  die <<EOF
 $usage
@@ -127,7 +126,7 @@ http*://*)
     # [user@]host.xz:[/][~[user]/]path/to/repo.git/
     case $remote_url in
     git@github.com:*.git)
-        remote_url=`echo "$remote_url" | sed 's|^git@github.com:|https://github.com/|'`
+        remote_url=`echo "$remote_url" | sed 's|^git@github\.com:|https://github.com/|'`
         browse_github ${1+"$@"} ;;
     *)  die "unsupported SSH remote: $remote_url" ;;
     esac
