@@ -28,7 +28,7 @@ browse_github() {
 
     # Determine default branch on remote
     remote_HEAD=`git symbolic-ref "refs/remotes/$remote/HEAD" 2>/dev/null | sed 's#.*/##'`
-    test "X$remote_HEAD" = X && remote_HEAD='master'
+    test "X$remote_HEAD" = X && remote_HEAD='main'
 
     # Determine what we want to visit
     case $# in
@@ -69,7 +69,7 @@ $usage
 OPTIONS
   -h    Display this help and exit
   -r, --remote=REMOTE (defaults: upstream, origin)
-  -b, --branch=BRANCH (defaults: HEAD, master)
+  -b, --branch=BRANCH (defaults: HEAD, main)
 EOF
         exit $? ;;
     -r) shift && test $# -eq 0 && die <<EOF
@@ -102,7 +102,7 @@ test "X$remote" = X && {
 }
 test "X$branch" = X && {
     branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
-    test "X$branch" = X && branch='master'
+    test "X$branch" = X && branch='main'
 }
 
 # Validate the arguments
