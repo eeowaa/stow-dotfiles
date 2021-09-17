@@ -139,8 +139,8 @@ test "X$branch" = X && {
 
 # Validate the arguments
 remote_url=`git remote get-url "$remote"`
-test "X$remote_url" = X && die "$moreinfo" # XXX TESTME XXX
-test -f "`git rev-parse --git-dir`/refs/remotes/$remote/$branch" || die <<EOF
+test "X$remote_url" = X && die "$moreinfo"
+git show-ref -q --verify "refs/remotes/$remote/$branch" || die <<EOF
 $progname: nonexistent ref: $remote/$branch
 EOF
 
