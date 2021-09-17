@@ -55,6 +55,9 @@ EOF
     # Visit the darn thing!
     browse "$url"
 }
+browse_gitlab() {
+    : stub
+}
 browse_bitbucket() {
     # Strip the trailing '.git' from the remote URL
     remote_url=`expr "$remote_url" : '\(.*\)\.git$'`
@@ -87,6 +90,13 @@ EOF
 
     # Visit the darn thing!
     browse "$url"
+}
+browse_codecommit() {
+    : stub
+}
+browse_cgit() {
+    : stub
+    # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 }
 
 # Parse command line arguments
