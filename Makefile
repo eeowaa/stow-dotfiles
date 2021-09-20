@@ -56,8 +56,9 @@ packages += dotnet go node perl python
 packages += lynx firefox
 
 # Uncategorized
-packages += aws direnv gimp git gnupg info irc ldap less locate ssh-agent units utils wget work
-gitlinks += $(srcdir)/utils/.local/opt/mailconvert/.git
+packages += aws direnv gimp git gnupg info irc ldap less locate org ssh-agent units utils wget work
+gitlinks += $(srcdir)/org/org/.git $(srcdir)/utils/.local/opt/mailconvert/.git
+org: $(srcdir)/org/org/.git
 utils: $(srcdir)/utils/.local/opt/mailconvert/.git
 
 # Local Configuration

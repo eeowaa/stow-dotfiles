@@ -30,3 +30,7 @@
 	path = emacs/.local/src/build-emacs-for-macos
 	url = git@github.com:jimeh/build-emacs-for-macos.git
 	branch = master
+[submodule "org"]
+	path = org/org
+	url = git@github.com:eeowaa/org.git
+	branch = main
