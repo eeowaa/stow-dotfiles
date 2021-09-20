@@ -1,0 +1,44 @@
+#!/bin/sh -e
+progname='git show-upstream'
+usage="Usage: $progname [-h | --help] [BRANCH]"
+moreinfo="Try \`$progname -h' for more info"
+die() {
+    case $# in
+    0)  cat ;;
+    *)  echo "$*" ;;
+    esac >&2
+    exit 1
+}
+
+# Parse arguments
+case $# in
+0)  ref=HEAD ;;
+1)  case $1 in
+    -h|--help)
+        cat >&2 <<EOF
+$usage
+BRANCH defaults to the branch referenced by \`HEAD'
+EOF
+        exit $? ;;
+    *)  ref=$1 ;;
+    esac ;;
+*)  die <<EOF
+$usage
+$moreinfo
+EOF
+esac
+
+# If the ref is symbolic, resolve it
+ref=`git symbolic-ref --short -q "$ref" || echo "$ref"`
+
+# If the ref is a detached HEAD, spit an error
+test "X$ref" = XHEAD \
+    && die "fatal: ref HEAD is not a symbolic ref"
+
+# If the ref is not a local branch, spit an error
+headname=`git rev-parse --abbrev-ref "$ref" 2>/dev/null || true`
+git show-ref -q --verify -- "refs/heads/$headname" \
+    || die "fatal: ref $ref is not a local branch"
+
+# Display the upstream branch
+git for-each-ref --format='%(upstream:short)' "refs/heads/$headname"

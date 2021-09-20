@@ -8,6 +8,7 @@
 	bulk = !~/.local/libexec/git/git-bulk
 	plop = !~/.local/libexec/git/git-plop
 	show-config = !~/.local/libexec/git/git-show-config
+	show-upstream = !~/.local/libexec/git/git-show-upstream
 	ws-error-summary = !~/.local/libexec/git/git-ws-error-summary
 	visit = !~/.local/libexec/git/git-visit
 	graphviz = !~/.local/libexec/git/git-graphviz
