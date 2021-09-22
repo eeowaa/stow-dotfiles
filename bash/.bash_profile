@@ -23,9 +23,6 @@ case $- in
     export PROMPT_COMMAND=my_ps1
     export PROMPT_DIRTRIM=2
 
-    # Start authentication agents
-    # TODO: gpg-agent(1)
-
     # Load other user preferences
     [[ -f ~/.bashrc ]] && source ~/.bashrc
 esac
