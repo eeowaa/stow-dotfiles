@@ -54,7 +54,9 @@ fixpath() {
     # Remove duplicate entries from `PATH'
     PATH=`echo "$PATH" | tr : '\n' | awk '
     {
-        if (!($0 in y)) {
+        if ($0 in y) {
+            print "Removing duplicate PATH entry:", $0 > "/dev/stderr"
+        } else {
             y[$0] = 1
             x[++n] = $0
         }
