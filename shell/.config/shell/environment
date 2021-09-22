@@ -1,4 +1,11 @@
-[ "$ZSH_VERSION" ] && echo >&2 "Sourcing: ${(%):-%N}"
+if [ "$DEBUG" ]
+then if [ "$BASH_VERSION" ]
+     then echo "Sourcing: $BASH_SOURCE"
+     elif [ "$ZSH_VERSION" ]
+     then echo "Sourcing: ${(%):-%N}"
+     else echo "Sourcing: shell environment"
+     fi >&2
+fi
 
 # Use Emacs-style line editing
 set +o vi
@@ -70,7 +77,8 @@ fixpath() {
 
 # Source each environment script
 for environ in "$HOME/.environ.d"/*.sh
-do . "$environ"
+do if [ "$DEBUG" ]; then echo >&2 "Sourcing: $environ"; fi
+   . "$environ"
 done
 
 # vim: set syntax=sh:

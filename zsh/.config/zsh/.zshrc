@@ -1,4 +1,4 @@
-echo >&2 "Sourcing: ${(%):-%N}"
+if [ "$DEBUG" ]; then echo >&2 "Sourcing: ${(%):-%N}"; fi
 
 # Initialize command completion
 autoload -Uz compinit

@@ -1,7 +1,7 @@
 # This file *does not always get run*, in particular when running zsh as an
 # interactive NON-LOGIN shell.
 
-echo >&2 "Sourcing: ${(%):-%N}"
+if [ "$DEBUG" ]; then echo >&2 "Sourcing: ${(%):-%N}"; fi
 
 # Source generic Bourne Shell profile
 [[ -f ~/.profile ]] && source ~/.profile
