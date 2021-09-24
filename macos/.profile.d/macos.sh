@@ -12,7 +12,7 @@
 __HOMEBREW_PREFIX=`brew --prefix`
 
 # For each specified GNU utility installed by Homebrew
-for gnubrew in coreutils findutils grep gawk gnu-units
+for gnubrew in coreutils findutils make grep gawk gnu-units
 do
     # Reference the packaged files _without_ "g" prefixes
     __libexec_prefix=$__HOMEBREW_PREFIX/opt/$gnubrew/libexec
