@@ -17,11 +17,6 @@ direnv allow . # optional, for development
 make <package> # calls `stow --no-folding <package>` with dependencies
 #+end_src
 
-* Packages
-+ [[file:macos][macos]] [fn:1]
-  - Keychain integration for SSH key passwords
-  - Automatically add SSH keys to SSH Agent at launch
-
 * Discussion
 ** Dotfile management systems
 Dotfiles be managed in many different ways. Here are a few approaches:
@@ -101,6 +96,3 @@ which is the wrong place for them.
 The main downside to /not/ folding directories is that when they are unstowed,
 the target directories are not removed even if they are empty. This doesn't
 hurt anything, though, unless the filesystem is running out of inodes.
-
-* Reference
-[fn:1] [[https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x][https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x]]

@@ -1,0 +1,18 @@
+#+TITLE: macOS
+
+* Features
++ Homebrew
+  - Disable telemetry
++ SSH [fn:1]
+  - Keychain integration for SSH key passwords
+  - Automatically add SSH keys to SSH Agent at launch
++ GNU utils
+  - Update ~PATH~ and ~MANPATH~ with GNU utilities
++ Bug fixes
+  - Ignore errors when reading ~whatis~ database
+  - Ensure that Emacs.app is on ~PATH~
++ Scripts
+  - [[file:.local/bin/getpw][getpw]] - Retrieve passwords from Keychain.app
+
+* Reference
+[fn:1] [[https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x][https://www.getpagespeed.com/work/proper-use-of-ssh-client-in-mac-os-x]]

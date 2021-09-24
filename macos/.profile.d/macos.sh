@@ -9,7 +9,10 @@
 # For now, I prefer the third option, as I see this as being slightly easier
 # to document my configuration.
 
+# Homebrew configuration
 __HOMEBREW_PREFIX=`brew --prefix`
+HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_ANALYTICS
 
 # For each specified GNU utility installed by Homebrew
 for gnubrew in coreutils findutils make grep gawk gnu-units
@@ -26,12 +29,6 @@ do
         MANPATH=$__libexec_prefix/gnuman${MANPATH:+":$MANPATH"}
 done
 export PATH MANPATH
-
-# TODO Homebrew configuration
-HOMEBREW_NO_ANALYTICS=1
-#HOMEBREW_CACHE=$XDG_CACHE_HOME/homebrew
-#HOMEBREW_LOGS=$XDG_CACHE_HOME/homebrew/log
-export HOMEBREW_NO_ANALYTICS # HOMEBREW_CACHE HOMEBREW_LOGS
 
 ###############################################################################
 
