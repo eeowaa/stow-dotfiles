@@ -26,7 +26,8 @@ srcrel=`readlink -f "$srcdir" | sed "s|$srctop/\{0,1\}||"`
 git --git-dir="$srctop/.git" rev-list --reverse "$range" | while read commit
 do
     # Make arguments easier to work with inside this loop
-    GIT_DIR=$srctop/.git export GIT_DIR
+    GIT_DIR=$srctop/.git
+    export GIT_DIR
     shift; set -- $commit ${1+"$@"}
     git --work-tree="$srctop" checkout $commit
 
@@ -39,7 +40,8 @@ do
     git show --oneline --name-status --relative="$srcrel" "$@" | sed -e 1d | \
     while read status name
     do
-        GIT_DIR=$desttop/.git export GIT_DIR
+        GIT_DIR=$desttop/.git
+        export GIT_DIR
         subdir=`dirname "$name"`
 
         # "Plop" the file into place (or delete it) in the destination repo

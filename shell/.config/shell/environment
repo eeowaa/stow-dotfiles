@@ -73,7 +73,8 @@ fixpath() {
         for (i = 1; i <= n - 1; ++i)
             printf x[i] ":"
         print x[n]
-    }'` export PATH
+    }'`
+    export PATH
 }
 
 # Source each environment script
