@@ -1,10 +1,11 @@
-if [ "$DEBUG" ]
-then if [ "$BASH_VERSION" ]
-     then echo "Sourcing: $BASH_SOURCE"
-     elif [ "$ZSH_VERSION" ]
-     then echo "Sourcing: ${(%):-%N}"
-     else echo "Sourcing: shell profile"
-     fi >&2
+if [ "$DEBUG" ]; then
+    if [ "$BASH_VERSION" ]; then
+        echo "Sourcing: $BASH_SOURCE"
+    elif [ "$ZSH_VERSION" ]; then
+        echo "Sourcing: ${(%):-%N}"
+    else
+        echo "Sourcing: shell profile"
+    fi >&2
 fi
 
 # Include guard to prevent PATH-like variables set here and in ~/.profile.d/*
@@ -60,8 +61,11 @@ export XDG_RUNTIME_DIR
 
 # Source each profile script
 for profile in "$HOME/.profile.d"/*.sh
-do if [ "$DEBUG" ]; then echo >&2 "Sourcing: $profile"; fi
-   . "$profile"
+do
+    if [ "$DEBUG" ]; then
+        echo >&2 "Sourcing: $profile"
+    fi
+    . "$profile"
 done
 
 # Let it be known that our profile has been sourced!
