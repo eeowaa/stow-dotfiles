@@ -42,12 +42,14 @@ zsh: shell
 
 # Editors
 packages += emacs doom vim
+nonstandard += doom # invoke stow(1) without the --no-folding flag
 ifdef MACOS
 gitlinks += $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
 emacs: $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
 endif
 gitlinks += $(srcdir)/doom/.config/doom/.git $(srcdir)/vim/.vim/pack/eeowaa/.git
 doom: emacs $(srcdir)/doom/.config/doom/.git
+	stow -d $(srcdir) -t $(prefix) --ignore '$(ignore_pcre)' $@
 vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
 
 # Languages
@@ -92,7 +94,7 @@ ignore_emacs  := \#.*\#|\.\#.*
 ignore_backup := .*\.bak|.*~|.*\.~[1-9]~
 ignore_pcre   := ^($(ignore_vim)|$(ignore_emacs)|$(ignore_backup))$$
 .PHONY: $(packages)
-$(packages):
+$(filter-out $(nonstandard),$(packages)):
 	stow -d $(srcdir) -t $(prefix) --no-folding --ignore '$(ignore_pcre)' $@
 $(gitlinks):
 	git -C $(srcdir) submodule update --init --recursive $(patsubst $(srcdir)/%,%,$(@D))
