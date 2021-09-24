@@ -21,10 +21,7 @@ I would like to reorganize the =Makefile= targets first, so that my
 documentation can mirror the =Makefile=.
 
 ** DONE Discuss the XDG Base Directory specification
-* Makefile [2/5]
-** TODO Modify the ~stow~ invocation to allow this repo to be cloned anywhere
-I would rather clone to =~/src/life/stow-dotfiles= than to =~/stow-dotfiles=
-
+* Makefile [3/5]
 ** TODO Reorganize =Makefile= targets according to =.stash/.local/etc/modules=
 ** HOLD Define dependencies between each target
 I would like to reorganize the =Makefile= targets first, which might help in
@@ -48,6 +45,9 @@ I just asked a question on StackOverflow:
 *~
 *.~[1-9]~
 #+end_src
+
+** DONE Modify the ~stow~ invocation to allow this repo to be cloned anywhere
+I would rather clone to =~/src/life/stow-dotfiles= than to =~/stow-dotfiles=
 
 * Dotfiles [4/11]
 ** STRT Fix XDG Base Directory compliance for ZSH

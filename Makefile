@@ -1,5 +1,6 @@
 .DEFAULT_GOAL := all
 srcdir := .
+prefix := $(HOME)
 
 # Operating Systems
 UNAME_S := $(shell uname -s)
@@ -92,6 +93,6 @@ ignore_backup := .*\.bak|.*~|.*\.~[1-9]~
 ignore_pcre   := ^($(ignore_vim)|$(ignore_emacs)|$(ignore_backup))$$
 .PHONY: $(packages)
 $(packages):
-	stow --no-folding --ignore '$(ignore_pcre)' $@
+	stow -d $(srcdir) -t $(prefix) --no-folding --ignore '$(ignore_pcre)' $@
 $(gitlinks):
-	git submodule update --init --recursive $(@D)
+	git -C $(srcdir) submodule update --init --recursive $(patsubst $(srcdir)/%,%,$(@D))
