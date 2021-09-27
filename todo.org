@@ -17,14 +17,14 @@ I believe that the GNU Stow approach strikes the best balance:
 
 *** TODO Explain my experience with and rationale for using each approach
 ** HOLD Describe each Stow package
-I would like to reorganize the =Makefile= targets first, so that my
-documentation can mirror the =Makefile=.
+I would like to reorganize the =GNUmakefile= targets first, so that my
+documentation can mirror the =GNUmakefile=.
 
 ** DONE Discuss the XDG Base Directory specification
 * Makefile [3/5]
 ** TODO Reorganize =Makefile= targets according to =.stash/.local/etc/modules=
 ** HOLD Define dependencies between each target
-I would like to reorganize the =Makefile= targets first, which might help in
+I would like to reorganize the =GNUmakefile= targets first, which might help in
 discovering dependencies.
 
 ** DONE Figure out how to define the default Makefile recipe

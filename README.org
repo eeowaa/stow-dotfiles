@@ -96,3 +96,37 @@ which is the wrong place for them.
 The main downside to /not/ folding directories is that when they are unstowed,
 the target directories are not removed even if they are empty. This doesn't
 hurt anything, though, unless the filesystem is running out of inodes.
+
+Considering the above two points, the =GNUmakefile= disables directory folding
+by default. In the odd case where a package requires directory folding (e.g. the
+~doom~ package), its =GNUmakefile= rule should contain a target-specific
+variable assignment to ~STOWFLAGS~ to remove the ~--no-folding~ flag.
+
+** Package-specific documentation
+Each package can have a top-level ~README.*~ file which will not get stowed.
+This is due to Stow's builtin ignore list, as defined in the [[https://www.gnu.org/software/stow/manual/html_node/Types-And-Syntax-Of-Ignore-Lists.html][Stow manual]]:
+
+#+begin_example
+# Comments and blank lines are allowed.
+
+RCS
+.+,v
+
+CVS
+\.\#.+       # CVS conflict files / emacs lock files
+\.cvsignore
+
+\.svn
+_darcs
+\.hg
+
+\.git
+\.gitignore
+
+.+~          # emacs backup files
+\#.*\#       # emacs autosave files
+
+^/README.*
+^/LICENSE.*
+^/COPYING
+#+end_example

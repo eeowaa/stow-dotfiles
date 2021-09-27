@@ -3,10 +3,11 @@ srcdir := .
 prefix := $(HOME)
 
 # Command flags
+# Patterns are added to Stow's builtin ignore list
+# <https://www.gnu.org/software/stow/manual/html_node/Types-And-Syntax-Of-Ignore-Lists.html>
 ignore_vim    := .*\.sw[a-p]
-ignore_emacs  := \#.*\#|\.\#.*
-ignore_backup := .*\.bak|.*~|.*\.~[1-9]~
-ignore_pcre   := ^($(ignore_vim)|$(ignore_emacs)|$(ignore_backup))$$
+ignore_backup := .*\.bak|.*\.~[1-9]~
+ignore_pcre   := ^($(ignore_vim)|$(ignore_backup))$$
 STOWFLAGS     := --no-folding --ignore '$(ignore_pcre)'
 
 # Operating Systems
