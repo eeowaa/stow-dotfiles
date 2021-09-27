@@ -6,7 +6,7 @@
 	# External commands
 	graph = !~/.local/libexec/git/git-graph
 	bulk = !~/.local/libexec/git/git-bulk
-	plop = !~/.local/libexec/git/git-plop
+	grab = !~/.local/libexec/git/git-grab
 	show-config = !~/.local/libexec/git/git-show-config
 	show-upstream = !~/.local/libexec/git/git-show-upstream
 	ws-error-summary = !~/.local/libexec/git/git-ws-error-summary
