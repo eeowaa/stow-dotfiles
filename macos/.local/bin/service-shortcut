@@ -1,0 +1,135 @@
+#!/usr/bin/env osascript
+(*
+USAGE
+    keyboard-shortcut <serviceName> <modifierKeys> <regularKey>
+
+ARGUMENTS
+    serviceName - defines the name of the target service under:
+        System Preferences > Keyboard > Shortcuts > Services
+
+    modifierKeys - defines the modifier keys to be pressed;
+        1 = {command down}
+        2 = {shift down, command down}
+        3 = {control down, command down}
+        4 = {option down, command down}
+        5 = {control down, option down, command down}
+        6 = {shift down, control down, command down}
+        7 = {shift down, option down, command down}
+        8 = {shift down, control down, option down, command down}
+
+    regularKey - defines the regular key to press
+
+EXAMPLE
+    # Open a URL with Control+Command+U (⌃⌘U)
+    keyboard-shortcut 'Open URL' 3 u
+
+SEE ALSO
+    1. <https://stackoverflow.com/a/62032412/2985129>
+    2. <https://forum.keyboardmaestro.com/t/command-line-applescript-run-read-arguments-print-exit/6142>
+*)
+
+on run args
+    set serviceName  to item 1 of args
+    set modifierKeys to item 2 of args
+    set regularKey   to item 3 of args
+    my SetChangeServicesKeyboardShortcut(serviceName, modifierKeys, regularKey)
+end
+
+on SetChangeServicesKeyboardShortcut(serviceName, modifierKeys, regularKey)
+    -- Need to start with System Preferences closed.
+    if running of application "System Preferences" then
+        try
+            tell application "System Preferences" to quit
+        on error
+            do shell script "killall 'System Preferences'"
+        end try
+    end if
+    repeat while running of application "System Preferences" is true
+        delay 0.1
+    end repeat
+    -- Open System Preferences to the target pane.
+    tell application "System Preferences"
+        activate
+        reveal pane id "com.apple.preference.keyboard"
+    end tell
+    -- Navigate to Shortcuts > Services and select the
+    -- target service, then change/set its keyboard shortcut.
+    tell application "System Events"
+        tell application process "System Preferences"
+            tell its window 1
+                -- Wait until the Shortcuts tab can be clicked.
+                repeat until exists (radio buttons of tab group 1)
+                    delay 0.1
+                end repeat
+                -- Click the Shortcuts tab.
+                click radio button "Shortcuts" of tab group 1
+                -- Wait until Services can be selected.
+                repeat until exists ¬
+                    (rows of table 1 of scroll areas of splitter group 1 of tab group 1 ¬
+                        whose name of static text 1 is equal to "Services")
+                    delay 0.1
+                end repeat
+                -- Select Services.
+                try
+                    select (rows of table 1 of scroll area 1 of splitter group 1 of tab group 1 ¬
+                        whose name of static text 1 is equal to "Services")
+                end try
+                tell outline 1 of scroll area 2 of splitter group 1 of tab group 1
+                    -- Wait until the services under Services are available.
+                    repeat until exists (row 1)
+                        delay 0.01
+                    end repeat
+                    -- Set focus to the first item of Services.
+                    repeat 2 times
+                        key code 48 -- tab key
+                        delay 0.25
+                    end repeat
+                    -- Get the name of every service under Services.
+                    set serviceNames to (get name of UI element 2 of rows)
+                    -- Get the row number of the target service under Services.
+                    set countRows to (count serviceNames)
+                    repeat with i from 1 to countRows
+                        if contents of item i of serviceNames is equal to serviceName then
+                            set rowNumber to i
+                            exit repeat
+                        end if
+                    end repeat
+                    -- Select the row of the target target service under Services.
+                    select (row rowNumber)
+                    -- Change/Set the keyboard shortcut of the target service under Services.
+                    if exists (button "Add Shortcut" of UI element 2 of row rowNumber) then
+                        click button "Add Shortcut" of UI element 2 of row rowNumber
+                        my shortcutKeystrokes(regularKey, modifierKeys)
+                    else
+                        key code 36 -- return key
+                        my shortcutKeystrokes(regularKey, modifierKeys)
+                    end if
+                    select (row 1)
+                end tell
+            end tell
+        end tell
+    end tell
+    quit application "System Preferences"
+end SetChangeServicesKeyboardShortcut
+
+on shortcutKeystrokes(regularKey, modifierKeys)
+    tell application "System Events"
+        if modifierKeys is equal to "1" then
+            keystroke regularKey using {command down}
+        else if modifierKeys is equal to "2" then
+            keystroke regularKey using {shift down, command down}
+        else if modifierKeys is equal to "3" then
+            keystroke regularKey using {control down, command down}
+        else if modifierKeys is equal to "4" then
+            keystroke regularKey using {option down, command down}
+        else if modifierKeys is equal to "5" then
+            keystroke regularKey using {control down, option down, command down}
+        else if modifierKeys is equal to "6" then
+            keystroke regularKey using {shift down, control down, command down}
+        else if modifierKeys is equal to "7" then
+            keystroke regularKey using {shift down, option down, command down}
+        else if modifierKeys is equal to "8" then
+            keystroke regularKey using {shift down, control down, option down, command down}
+        end if
+    end tell
+end shortcutKeystrokes
