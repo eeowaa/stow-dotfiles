@@ -1,4 +1,4 @@
-IRCSERVER=irc.freenode.net
+IRCSERVER=irc.libera.chat
 IRCNICK=eeowaa
 IRCNAME=nobody
 export IRCSERVER IRCNICK IRCNAME
