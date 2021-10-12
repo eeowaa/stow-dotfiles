@@ -1,5 +1,6 @@
 [alias]
 	# Git command wrappers
+    ff = merge --ff-only
 	consider = update-index --no-assume-unchanged
 	empty-tree-sha1 = hash-object -t tree /dev/null
 
