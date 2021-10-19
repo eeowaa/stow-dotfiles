@@ -11,7 +11,7 @@ fi
 aws() {
     local subcommand=$1
     case $subcommand in
-    prompt|whoami|hostname|login|account-name)
+    prompt|whoami|hostname|login|creds|account-name)
         shift
         eval aws_`echo $subcommand | tr - _` ${1+"$@"} ;;
     *)
@@ -47,6 +47,27 @@ aws_login() {
 
         { set +x; } 2>/dev/null
     }
+}
+
+# Output credentials for an SSO session into environment variables
+aws_creds() {
+    local access_key_last4=`
+        command aws configure list |
+        awk '$1 == "access_key" { print substr($2, length($2) - 3) }'
+    `
+    [ "X$access_key_last4" = X ] && return 1
+    local cache_file=`grep -l \
+        '"ProviderType": "sso".*"AccessKeyId": "[^"]*'"$access_key_last4\"" \
+        "$HOME"/.aws/cli/cache/*
+    `
+    [ `echo "$cache_file" | wc -l` -eq 1 ] || {
+        echo >&2 'Internal error: could not determine cache file'
+        return 1
+    }
+    jq -r ".Credentials | \
+\"export AWS_ACCESS_KEY_ID='\" + .AccessKeyId + \"'\", \
+\"export AWS_SECRET_ACCESS_KEY='\" + .SecretAccessKey + \"'\", \
+\"export AWS_SESSION_TOKEN='\" + .SessionToken + \"'\"" "$cache_file"
 }
 
 # Translate an exact account ID into its name (as stored in the global AWS
