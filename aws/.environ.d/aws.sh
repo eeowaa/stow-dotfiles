@@ -11,7 +11,7 @@ fi
 aws() {
     local subcommand=$1
     case $subcommand in
-    prompt|whoami|hostname|login|creds|account-name)
+    prompt|whoami|hostname|log|login|creds|account-name)
         shift
         eval aws_`echo $subcommand | tr - _` ${1+"$@"} ;;
     *)
@@ -113,6 +113,33 @@ alias aws_whoami='aws sts get-caller-identity'
 
 # For some reason, `aws iam list-account-aliases` doesn't work (should it?)
 alias aws_hostname='aws account-name `aws whoami --query Account --output text`'
+
+aws_log() {
+    local logfile=$XDG_CACHE_HOME/aws/log/${AWS_PROFILE:-'default'}.log
+    [ -f "$logfile" ] || {
+        echo >&2 "File not found: $logfile"
+        return 1
+    }
+    case $1 in
+    -h|--help)
+        cat >&2 <<EOF
+Usage: aws log [-h | --help] [-p | --path] [OPTION]...
+Options:
+  -h, --help    Display this help text and exit.
+  -p, --path    Show the path to the profile-specific log file and exit.
+  [OPTION]...   Options to pass to the \`tail' command.
+
+If no OPTION is given, \`cat' is used instead of \`tail' to display the log.
+EOF
+        return 1 ;;
+    -p|--path)
+        echo "$logfile" ;;
+    '')
+        cat "$logfile" ;;
+    *)
+        tail "$@" "$logfile" ;;
+    esac
+}
 
 # Wrapper for `aws sso login`
 aws_login() {
