@@ -62,7 +62,7 @@ aws() {
 set log [open \"$tmpfile\" w]
 
 # Run our command, hoping for the best with shell quoting
-spawn command aws $*
+spawn command aws --no-cli-pager $*
 
 # Wait for two consecutive carriage returns from the user
 interact \"\r\r\" return
@@ -71,7 +71,7 @@ interact \"\r\r\" return
 send \"\r\"
 send \"\r\"
 
-# Capture the command prompt to show up
+# Wait for the command prompt and then capture it
 expect -re \"(> aws .*)\n\" {
     append output \$expect_out(0,string)
 }
@@ -90,7 +90,7 @@ expect {
 # Write to our temporary file
 puts \$log \$output" 
 
-            # Remove control codes from the output
+            # Remove control codes from the output and append to the log
             # Magic courtesy of <https://unix.stackexchange.com/a/18979>
             perl -pe '
 s/ \e[ #%()*+\-.\/]. |
