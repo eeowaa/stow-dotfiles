@@ -11,7 +11,7 @@ fi
 aws() {
     local subcommand=$1
     case $subcommand in
-    prompt|whoami|hostname|log|login|creds|account-name)
+    prompt|whoami|hostname|log|download-lambda|login|creds|account-name)
         shift
         eval aws_`echo $subcommand | tr - _` ${1+"$@"} ;;
     *)
@@ -139,6 +139,27 @@ EOF
     *)
         tail "$@" "$logfile" ;;
     esac
+}
+
+aws_download_lambda() {
+    # Interactively select a lambda function if one wasn't supplied
+    if [ $# -eq 0 ]
+    then local lambda=`
+         command aws lambda list-functions \
+             --query 'Functions[].FunctionName' \
+             --output text | tr '\t' '\n' | fzf`
+    else local lambda=$*
+    fi
+    [ "X$lambda" = X ] && return 1
+    local url=`
+        aws lambda get-function \
+            --function-name "$lambda" \
+            --query Code.Location \
+            --output text`
+    wget -O "$lambda".zip "$url"
+    unzip -d "$lambda" "$lambda".zip
+    rm "$lambda".zip
+    echo "Downloaded to directory: $lambda"
 }
 
 # Wrapper for `aws sso login`
