@@ -123,17 +123,20 @@ aws_log() {
     case $1 in
     -h|--help)
         cat >&2 <<EOF
-Usage: aws log [-h | --help] [-p | --path] [OPTION]...
+Usage: aws log [-h | --help] [-p | --path] [rm] [OPTION]...
 Options:
   -h, --help    Display this help text and exit.
   -p, --path    Show the path to the profile-specific log file and exit.
   [OPTION]...   Options to pass to the \`tail' command.
 
+Use \`aws log rm' to remove the profile-specific log file, if it exists.
 If no OPTION is given, \`cat' is used instead of \`tail' to display the log.
 EOF
         return 1 ;;
     -p|--path)
         echo "$logfile" ;;
+    rm)
+        rm -f "$logfile" ;;
     '')
         cat "$logfile" ;;
     *)
