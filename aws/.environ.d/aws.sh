@@ -189,11 +189,26 @@ aws_login() {
 
 # Output credentials for an SSO session into environment variables
 aws_creds() {
+    local format=shell
+    case $1 in
+    -h|--help)
+        cat >&2 <<EOF
+Usage: aws creds [OPTION]...
+Options:
+  -h, --help    Display this help text and exit
+  -s, --shell   Convert SSO creds to Bourne-compatible \`export' statement (default)
+  -e, --emacs   Convert SSO creds to Emacs \`(progn (setenv ...) ...)' statement
+EOF
+        return 0 ;;
+    -s|--shell) format=shell ;;
+    -e|--emacs) format=emacs ;;
+    esac
+    # Will equal "<not" when there are no credentials
     local access_key_last4=`
         command aws configure list |
         awk '$1 == "access_key" { print substr($2, length($2) - 3) }'
     `
-    [ "X$access_key_last4" = X ] && return 1
+    [ "X$access_key_last4" = 'X<not' ] && return 1
     local cache_file=`grep -l \
         '"ProviderType": "sso".*"AccessKeyId": "[^"]*'"$access_key_last4\"" \
         "$HOME"/.aws/cli/cache/*
@@ -202,10 +217,25 @@ aws_creds() {
         echo >&2 'Internal error: could not determine cache file'
         return 1
     }
-    jq -r ".Credentials | \
-\"export AWS_ACCESS_KEY_ID='\" + .AccessKeyId + \"'\", \
-\"export AWS_SECRET_ACCESS_KEY='\" + .SecretAccessKey + \"'\", \
-\"export AWS_SESSION_TOKEN='\" + .SessionToken + \"'\"" "$cache_file"
+    set -- `
+        jq -r '.Credentials | .AccessKeyId, .SecretAccessKey,.SessionToken' \
+            "$cache_file"
+    `
+    case $format in
+    shell)
+        cat <<EOF ;;
+export AWS_ACCESS_KEY_ID='$1'
+export AWS_SECRET_ACCESS_KEY='$2'
+export AWS_SESSION_TOKEN='$3'
+EOF
+    emacs)
+        cat <<EOF ;;
+(progn
+  (setenv "AWS_ACCESS_KEY_ID" "$1")
+  (setenv "AWS_SECRET_ACCESS_KEY" "$2")
+  (setenv "AWS_SESSION_TOKEN" "$3"))
+EOF
+    esac
 }
 
 # Translate an exact account ID into its name (as stored in the global AWS
