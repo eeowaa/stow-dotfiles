@@ -1,0 +1,54 @@
+#!/bin/sh
+## Wrapper around various system-specific clipboard commands
+
+case `uname -s` in
+Darwin)
+    if [ -t 0 ]
+    then pbpaste
+    else perl -pe 'chomp if eof' | pbcopy
+    fi
+    exit ;;
+CYGWIN_NT*|MINGW*|MSYS*)
+    if [ -t 0 ]
+    then cat /dev/clipboard
+    else perl -pe 'chomp if eof' >/dev/clipboard
+    fi
+    exit ;;
+esac
+
+# WSL
+case `uname -r` in
+*-Microsoft)
+    if [ -t 0 ]
+    then powershell.exe -noprofile -command Get-Clipboard
+    else perl -pe 'chomp if eof' | clip.exe
+    fi
+    exit ;;
+esac
+
+if which xclip >/dev/null; then
+    [ "X$DISPLAY" != X ] &&
+    if [ -t 0 ]
+    then xclip -o -selection
+    else perl -pe 'chomp if eof' | xclip -selection
+    fi
+elif which xsel >/dev/null; then
+    [ "X$DISPLAY" != X ] &&
+    if [ -t 0 ]
+    then xsel -o --clipboard
+    else perl -pe 'chomp if eof' | xsel -i --clipboard
+    fi
+elif which wl-copy >/dev/null; then
+    [ "X$WAYLAND_DISPLAY" != X ] &&
+    if [ -t 0 ]
+    then wl-paste -n
+    else perl -pe 'chomp if eof' | wl-copy
+    fi
+elif which termux-clipboard-get >/dev/null; then
+    if [ -t 0 ]
+    then termux-clipboard-set
+    else perl -pe 'chomp if eof' | termux-clipboard-get
+    fi
+else
+    exit 1
+fi
