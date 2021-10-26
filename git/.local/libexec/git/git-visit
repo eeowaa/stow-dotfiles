@@ -26,10 +26,6 @@ browse_github() {
     # Strip the trailing '.git' from the remote URL
     remote_url=`expr "$remote_url" : '\(.*\)\.git$'`
 
-    # Determine default branch on remote
-    remote_HEAD=`git symbolic-ref "refs/remotes/$remote/HEAD" 2>/dev/null | sed 's#.*/##'`
-    test "X$remote_HEAD" = X && remote_HEAD='main'
-
     # Determine what we want to visit
     case $# in
     0)  if test "X$branch" = "X$remote_HEAD"
@@ -61,10 +57,6 @@ browse_gitlab() {
 browse_bitbucket() {
     # Strip the trailing '.git' from the remote URL
     remote_url=`expr "$remote_url" : '\(.*\)\.git$'`
-
-    # Determine default branch on remote
-    remote_HEAD=`git symbolic-ref "refs/remotes/$remote/HEAD" 2>/dev/null | sed 's#.*/##'`
-    test "X$remote_HEAD" = X && remote_HEAD='main'
 
     # Determine what we want to visit
     case $# in
@@ -100,7 +92,7 @@ browse_cgit() {
 }
 
 # Parse command line arguments
-remote= branch= file= line=
+branch= remote= file= line=
 while :
 do
     case $1 in
@@ -110,19 +102,10 @@ $usage
 
 OPTIONS
   -h    Display this help and exit
-  -r, --remote=REMOTE (defaults: upstream, origin)
   -b, --branch=BRANCH (defaults: HEAD, main)
+  -r, --remote=REMOTE (defaults: upstream, origin)
 EOF
         exit $? ;;
-    -r) shift && test $# -eq 0 && die <<EOF
-$progname: missing argument to \`-r'
-$moreinfo
-EOF
-        remote=$1 ;;
-    -r*)
-        remote=`expr "X$1" : 'X-r\(.*\)'` ;;
-    --remote=*)
-        remote=`expr "X$1" : 'X--remote=\(.*\)'` ;;
     -b) shift && test $# -eq 0 && die <<EOF
 $progname: missing argument to \`-b'
 $moreinfo
@@ -132,19 +115,77 @@ EOF
         branch=`expr "X$1" : 'X-b\(.*\)'` ;;
     --branch=*)
         branch=`expr "X$1" : 'X--branch=\(.*\)'` ;;
+    -r) shift && test $# -eq 0 && die <<EOF
+$progname: missing argument to \`-r'
+$moreinfo
+EOF
+        remote=$1 ;;
+    -r*)
+        remote=`expr "X$1" : 'X-r\(.*\)'` ;;
+    --remote=*)
+        remote=`expr "X$1" : 'X--remote=\(.*\)'` ;;
     *)  break ;;
     esac
     shift
 done
 
 # Get default values for unsupplied arguments
+test "X$branch" = X && {
+
+    branch=$(
+        # HEAD is attached (refers to a local branch)
+        git symbolic-ref -q --short HEAD ||
+
+        # HEAD is detached at a local branch head
+        git for-each-ref --format='%(refname:short)' --points-at HEAD refs/heads ||
+
+        # Default to 'main' or 'master'
+        for head in main master
+        do
+            git show-ref --verify -q refs/heads/$head && {
+                echo $head
+                break
+            }
+        done
+    )
+    if
+    then
+        : use the branch
+    elif git for-each-ref --points-at HEAD refs/heads | grep -q .
+    then # HEAD is detached at a local branch head
+        if :
+        then #
+            :
+        else
+            :
+        fi
+    elif git for-each-ref --points-at HEAD refs/remotes | grep -q .
+    else # HEAD is detached at a remote-tracking branch head
+        :
+    fi
+
+    # If the ref is not a local branch, spit an error
+    headname=`git rev-parse --abbrev-ref "$ref" 2>/dev/null || true`
+    git show-ref -q --verify -- "refs/heads/$headname" \
+        || die "fatal: ref $ref is not a local branch"
+
+# Display the upstream branch
+git for-each-ref --format='%(upstream:short)' "refs/heads/$headname"
+    # Branch should be determined by HEAD:
+    #
+    # If HEAD refers to a local branch
+    #    If the local branch has an upstream branch
+    set -- (
+        # If HEAD is referencing a branch, use that branch
+        git symbolic-ref -q HEAD ||
+        git for-each-ref --contains HEAD --format='%(refname)' refs/heads
+    )
+    branch=`git symbolic-ref -q --short HEAD || echo 'main'`
+    test "X$branch" = X && branch='main'
+}
 test "X$remote" = X && {
     remote=`git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null | sed 's#/.*##'`
     test "X$remote" = X && remote='origin'
-}
-test "X$branch" = X && {
-    branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
-    test "X$branch" = X && branch='main'
 }
 
 # Validate the arguments
@@ -153,6 +194,10 @@ test "X$remote_url" = X && die "$moreinfo"
 git show-ref -q --verify "refs/remotes/$remote/$branch" || die <<EOF
 $progname: nonexistent ref: $remote/$branch
 EOF
+
+# Determine default branch on remote
+remote_HEAD=`git symbolic-ref "refs/remotes/$remote/HEAD" 2>/dev/null | sed 's#.*/##'`
+test "X$remote_HEAD" = X && remote_HEAD='main'
 
 # Parse the URL; formats specified git-clone(1)
 case $remote_url in
