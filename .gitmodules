@@ -1,7 +1,18 @@
+# Heavy "daily driver" submodules
+[submodule "org"]
+	path = org/org
+	url = git@github.com:eeowaa/org.git
+	branch = main
+[submodule "doom-emacs"]
+	path = doom/.config/doom
+	url = git@github.com:eeowaa/doomdir.git
+	branch = main
 [submodule "vim-packages"]
 	path = vim/.vim/pack/eeowaa
 	url = git@github.com:eeowaa/vim-plugins.git
 	branch = master
+
+# Tool collections
 [submodule "cygtools"]
 	path = cygwin/.local/opt/cygtools
 	url = git@github.com:eeowaa/cygtools.git
@@ -10,6 +21,8 @@
 	path = utils/.local/opt/mailconvert
 	url = git@github.com:eeowaa/mailconvert.git
 	branch = master
+
+# Reference repos
 [submodule "logparse"]
 	path = .stash/.local/opt/logparse
 	url = git@github.com:eeowaa/logparse.git
@@ -22,10 +35,8 @@
 	path = .stash/.config/emacs
 	url = git@github.com:eeowaa/vanilla-emacs.git
 	branch = master
-[submodule "doom-emacs"]
-	path = doom/.config/doom
-	url = git@github.com:eeowaa/doomdir.git
-	branch = main
+
+# Reference Doom Emacs configurations
 [submodule "hlissner/doom-emacs-private"]
 	path = doom/.local/src/hlissner/doom-emacs-private
 	url = git@github.com:hlissner/doom-emacs-private.git
@@ -34,11 +45,9 @@
 	path = doom/.local/src/tecosaur/emacs-config
 	url = git@github.com:tecosaur/emacs-config.git
 	branch = master
+
+# For native-comp Emacs on macOS
 [submodule "build-emacs-for-macos"]
 	path = emacs/.local/src/build-emacs-for-macos
 	url = git@github.com:jimeh/build-emacs-for-macos.git
 	branch = master
-[submodule "org"]
-	path = org/org
-	url = git@github.com:eeowaa/org.git
-	branch = main
