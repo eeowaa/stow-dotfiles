@@ -97,7 +97,7 @@ all: $(packages)
 submodules: $(gitlinks)
 
 # Meta
-.PHONY: list
+.PHONY: list test
 null :=
 space := $(null) $(null)
 define newline
@@ -106,6 +106,8 @@ define newline
 endef
 list:
 	@: $(info $(subst $(space),$(newline),$(sort $(packages))))
+test:
+	stow -d $(srcdir) -t $(prefix) $(STOWFLAGS) -nv $(packages)
 
 # Recipes
 .PHONY: $(packages)
