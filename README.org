@@ -13,8 +13,8 @@ These are my dotfiles managed with GNU Stow. Use in conjunction with
 
 * Usage
 #+begin_src sh :eval no
-direnv allow . # optional, for development
-make <package> # calls `stow --no-folding <package>` with dependencies
+make configure    # Decide which packages you want
+make [PACKAGE]... # Install specified packages and their dependencies
 #+end_src
 
 * Discussion
@@ -22,13 +22,8 @@ make <package> # calls `stow --no-folding <package>` with dependencies
 Dotfiles be managed in many different ways. Here are a few approaches:
 
 1. Have a git repo in =$HOME=
-2. Copied into place from a dotfile repo
-   #+begin_src sh :eval no
-   vim local.conf # specify local configuration
-   make           # construct dotfiles to specification
-   make install   # copy dotfiles into place
-   #+end_src
-3. Symlinked into place (this repo)
+2. Generate dotfiles from templates and copy into place
+3. Symlink into place (this repo)
 
 *** TODO Discuss pros and cons of each approach
 - Portability

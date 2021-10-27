@@ -72,7 +72,19 @@ org: $(srcdir)/org/org/.git
 utils: $(srcdir)/utils/.local/opt/mailconvert/.git
 
 # Local Configuration
-localconf := $(srcdir)/local.mk
+.PHONY: dist configure
+exampleconf := $(srcdir)/example-local.mk
+localconf   := $(srcdir)/local.mk
+dist:
+	printf '# Override packages\npackages := \\\n' >$(exampleconf)
+	ls -l $(srcdir) \
+	| awk '/^d/ && $$NF !~ /^\./ { printf $$NF " " }' \
+	| fmt \
+	| sed -e 's/$$/ \\/' -e '$$s/ \\$$//' >>$(exampleconf)
+configure:
+	-direnv allow .
+	-cp -n $(exampleconf) $(localconf)
+	$(EDITOR) $(localconf)
 ifneq (,$(wildcard $(localconf)))
 include $(localconf)
 else
