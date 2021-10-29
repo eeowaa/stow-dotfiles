@@ -1,5 +1,5 @@
 #!/bin/sh
-## Output elisp setenv statements corresponding to Bourne shell equivalents
+## Output elisp setenv statements corresponding to Bourne Shell equivalents
 progname=`basename "$0"`
 
 case $1 in
@@ -56,6 +56,8 @@ else
     # Envvars from stdin
     grep -vFf "$cleanenv" "$userenv"
     rm -f "$cleanenv" "$userenv"
+
+    # Sort and translate from Bourne Shell to Elisp
 fi | sort \
    | sed -e 's/\\/\\\\/g' \
          -e 's/"/\\"/g' \
