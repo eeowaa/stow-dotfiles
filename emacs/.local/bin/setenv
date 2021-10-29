@@ -1,6 +1,64 @@
 #!/bin/sh
-## Output elisp setenv statements with all envvars
-env | sed \
-  -e 's/\\/\\\\/g' \
-  -e 's/"/\\"/g' \
-  -e 's/^\([^=]\{1,\}\)=\(.*\)$/(setenv "\1" "\2")/'
+## Output elisp setenv statements corresponding to Bourne shell equivalents
+progname=`basename "$0"`
+
+case $1 in
+-h|--help)
+    cat <<HELP
+Usage: $progname [-h | --help]
+Example 1: Translate all environment variables
+
+    \$ $progname
+    (progn
+      (setenv "BROWSER" "lynx")
+      (setenv "EDITOR" "vim")
+      ...
+
+Example 2: Translate only environment variables given on STDIN
+(Note that shell variables are ignored)
+
+    \$ $progname <<----
+    export A=1
+    B=2 export B
+    C=3 D=4 E=5
+    export D F=6
+        ---
+    (progn
+      (setenv "A" "1")
+      (setenv "B" "2")
+      (setenv "D" "4")
+      (setenv "F" "6"))
+HELP
+    exit
+esac
+
+# Make sure we have a temporary directory to write files to
+: ${TMPDIR='/tmp'}
+test -d "$TMPDIR" || {
+    echo >&2 "$progname: not a directory: $TMPDIR"
+    exit 1
+}
+
+echo '(progn'
+if [ -t 0 ]
+then
+    # All envvars
+    env
+else
+    # Envvars from clean shell + envvars from stdin
+    userenv=`mktemp`
+    env -i sh -c "`sed -e '$s/;*$//'`; env" >"$userenv"
+
+    # Envvars from clean shell
+    cleanenv=`mktemp`
+    env -i sh -c 'env' >"$cleanenv"
+
+    # Envvars from stdin
+    grep -vFf "$cleanenv" "$userenv"
+    rm -f "$cleanenv" "$userenv"
+fi | sort \
+   | sed -e 's/\\/\\\\/g' \
+         -e 's/"/\\"/g' \
+         -e 's/^\([^=]\{1,\}\)=\(.*\)$/  (setenv "\1" "\2")/' \
+   | perl -pe 'chomp if eof'
+echo ')'
