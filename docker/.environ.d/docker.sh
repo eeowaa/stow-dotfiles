@@ -8,6 +8,18 @@
 # machine-independent and synced across machines.
 
 docker() {
+    # Implement a helper script wrapper
+    local libexecdir=$HOME/.local/libexec/docker
+    local subcommand=$1
+    for helper in "$libexecdir"/docker-*
+    do
+        if [ "X$subcommand" = "X${helper#*docker-}" ]; then
+            shift
+            $helper ${1+"$@"}
+            return $?
+        fi
+    done
+
     # Use perl to modify the argument list, avoiding bashisms
     perl -e '
 for my $i (0 .. $#ARGV) {

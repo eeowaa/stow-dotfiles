@@ -1,7 +1,11 @@
 #!/bin/sh
+## Print all parent IDs of a Docker object
 
 id=$1
-test "X$id" = X && exit 1
+test "X$id" = X && {
+    echo >&2 "Usage: docker parents [ID | NAME]"
+    exit 1
+}
 
 while :
 do
