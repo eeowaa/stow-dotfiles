@@ -1,5 +1,6 @@
 #!/bin/sh
 ## Output elisp setenv statements corresponding to Bourne Shell equivalents
+## Requires: perl
 progname=`basename "$0"`
 
 case $1 in

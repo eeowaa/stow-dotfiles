@@ -1,4 +1,5 @@
 #!/bin/sh -eu
+## Requires: awscli jq
 progname=`basename "$0"`
 
 # Parse command line arguments

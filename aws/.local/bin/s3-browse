@@ -1,5 +1,6 @@
 #!/bin/sh -e
 ## Browse an S3 URL
+## Requires: firefox
 progname=`basename "$0"`
 
 case $# in

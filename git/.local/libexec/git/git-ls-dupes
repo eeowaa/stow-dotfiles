@@ -1,4 +1,6 @@
 #!/bin/bash
+## Requires: git bash
+
 # This does not work in ksh, which is why we need bash
 set -o pipefail
 

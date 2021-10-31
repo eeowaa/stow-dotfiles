@@ -1,3 +1,4 @@
+## Requires: tput
 # Root directory for custom terminfo entries
 TERMINFO=$XDG_CONFIG_HOME/terminfo
 export TERMINFO

@@ -1,4 +1,5 @@
 #!/bin/sh -x
+## Requires: openssl
 # https://www.dalesandro.net/create-self-signed-smime-certificates/
 
 ### BEGIN CONFIGURATION ###

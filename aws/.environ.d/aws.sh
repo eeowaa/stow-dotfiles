@@ -1,3 +1,4 @@
+## Requires: awscli expect perl wget unzip fzf jq coreutils
 # https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-completion.html
 if [ "$BASH_VERSION" ] || {
     [ "$ZSH_VERSION" ] && autoload bashcompinit && bashcompinit

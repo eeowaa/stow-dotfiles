@@ -1,3 +1,4 @@
+## Requires: pipx
 # See documentation output from `pipx completion`
 if [ "$BASH_VERSION" ] || {
     [ "$ZSH_VERSION" ] && autoload bashcompinit && bashcompinit

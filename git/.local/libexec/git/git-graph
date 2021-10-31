@@ -1,4 +1,5 @@
 #!/bin/sh
+## Requires: git tput
 
 # When used, `--dangling' must be the first argument
 test "X$1" = 'X--dangling' &&

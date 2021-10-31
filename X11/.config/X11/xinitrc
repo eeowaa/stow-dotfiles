@@ -1,4 +1,5 @@
 #!/bin/sh
+## Requires: xmodmap xrdb
 
 # Load custom modifier key map
 test -f "$XDG_CONFIG_HOME/X11/Xmodmap" \

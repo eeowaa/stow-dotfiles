@@ -1,5 +1,6 @@
 #!/bin/sh
 ## Print the "Hostname" corresponding to a "Host" in ~/.ssh/config
+## Requires: coreutils
 test $# -eq 0 && {
     progname=`basename "$0"`
     echo >&2 "Usage: $progname HOST..."

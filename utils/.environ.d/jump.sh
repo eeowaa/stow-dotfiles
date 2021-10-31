@@ -1,3 +1,4 @@
+## Requires: fd fzf
 jump() {
     case $1 in
     -l) [ "X$JUMPLIST" = X ] || echo "X$JUMPLIST" | cut -c2- | tr : '\n'

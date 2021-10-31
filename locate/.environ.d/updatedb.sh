@@ -1,3 +1,4 @@
+## Requires: grep
 updatedb() {
     { . "$HOME/.local/libexec/updatedb/updatedb-docs.sh" &
       . "$HOME/.local/libexec/updatedb/updatedb-home.sh" &

@@ -1,4 +1,5 @@
 #!/bin/sh
+## Requires: git
 progname="git visit"
 usage="Usage: $progname [OPTION]... [FILE[:LINE]]"
 moreinfo="Try \`$progname -h' for more info"

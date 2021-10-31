@@ -1,5 +1,6 @@
 #!/bin/sh
 ## Wrapper around various system-specific clipboard commands
+## Requires: perl
 
 case `uname -s` in
 Darwin)

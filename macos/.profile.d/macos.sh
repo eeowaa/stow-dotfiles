@@ -1,3 +1,4 @@
+## Requires: brew
 # By default, Homebrew installs GNU utilities by prefixing each of their
 # installed files with "g", thus avoiding name conflicts with existing tools.
 #

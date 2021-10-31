@@ -1,4 +1,5 @@
 #!/bin/sh
+## Requires: xev
 xev | awk -F'[ )]+' '
 /^KeyPress/ {
     a[NR + 2]

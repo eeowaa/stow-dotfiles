@@ -1,4 +1,5 @@
 #!/bin/sh -e
+## Requires: git
 #
 # `git-grab' is like `git-am', except:
 # - It always takes "their" version (does not merge, just "grabs").

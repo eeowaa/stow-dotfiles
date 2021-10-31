@@ -1,6 +1,6 @@
 #!/bin/sh
-# Perform a specific git operation on every repository residing in a child
-# directory of the current working directory.
+## Run a git operation in every subdirectory with a git repo
+## Requires: git
 
 # XXX: Hack to get to the cwd of the parent process
 test "X$GIT_PREFIX" = X || cd -- "$GIT_PREFIX"

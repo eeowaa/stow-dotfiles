@@ -1,3 +1,4 @@
+## Requires: direnv
 if [ "$BASH_VERSION" ]; then
     eval "`direnv hook bash`"
 elif [ "$ZSH_VERSION" ]; then

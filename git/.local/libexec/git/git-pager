@@ -1,6 +1,7 @@
 #!/bin/sh
-# Invoke the correct pager based on rules described by the Git documentation.
-# Supporting quotes from git-config(1) are included in this script.
+## Invoke the correct pager based on rules described by the Git documentation.
+## Supporting quotes from git-config(1) are included in this script.
+## Requires: git
 OPTS_SPEC="\
 git pager [options] [<command>]
 --

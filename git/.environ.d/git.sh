@@ -1,4 +1,5 @@
 #!/bin/sh
+## Requires: git fzf
 
 # Thin wrapper for git command
 git() {

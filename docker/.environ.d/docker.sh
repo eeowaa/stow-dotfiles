@@ -1,3 +1,5 @@
+## Requires: docker perl
+
 # Rather than adding a detachKeys setting to ~/.docker/config.json, I've
 # wrapped the docker command with a function that adds the equivalent
 # --detach-keys flag to the appropriate subcommands (docker will fail if the

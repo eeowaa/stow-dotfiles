@@ -1,5 +1,6 @@
 #!/bin/sh
 ## Fix symlinks pointing to an old home directory
+## Requires: gawk
 
 # Example:
 # OLD: ~/foo -> /cygdrive/c/Users/old/Documents/foo

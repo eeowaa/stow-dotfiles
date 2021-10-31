@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 ## Simple counter to calculate money earned over time
+## Requires: tput
 
 # Read decimal hourly rate from local config file
 my $filename = "$ENV{HOME}/.local/etc/hourly-rate";

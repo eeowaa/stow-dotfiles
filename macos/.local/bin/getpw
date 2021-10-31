@@ -1,4 +1,5 @@
 #!/bin/sh
+## Requires: fzf
 
 # Determine the password label
 if [ $# -eq 0 ]
@@ -19,7 +20,7 @@ security find-generic-password -w -l "$label" | tr -d '\n' |
 if [ -t 1 ]
 then
     # Normally, copy the password to the clipboard and output the label
-    pbcopy
+    clip
     echo "\"$label\" password saved to clipboard"
 else
     # Write the password to STDOUT if /dev/stdout is redirected or piped

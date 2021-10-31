@@ -1,5 +1,6 @@
 #!/bin/sh
 ## This command should be run at startup
+## Requires: git
 cat <<EOF
        Stale \$TMPDIR entries: `cleantmp --dry-run | wc -l`
        Emacs auto-save files: `ls -1 "$XDG_CACHE_HOME/emacs/auto-save" | wc -l`

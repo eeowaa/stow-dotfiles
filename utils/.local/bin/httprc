@@ -1,5 +1,6 @@
 #!/bin/sh
 ## Lookup HTTP response code
+## Requires: tput
 base=`basename "$0"`
 usage="Usage: $base [OPTION]... CODE"
 table=$XDG_DATA_HOME/httpcodes

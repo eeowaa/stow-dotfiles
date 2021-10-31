@@ -1,3 +1,4 @@
+## Requires: runlevel
 case `uname -s` in
 Linux)
     # Set the default browser to firefox at runlevels 4-5

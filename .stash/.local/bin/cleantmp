@@ -1,4 +1,5 @@
 #!/bin/sh -e
+## Requires: coreutils findutils
 progname=`basename "$0"`
 action='-delete'
 

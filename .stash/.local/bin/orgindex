@@ -1,6 +1,5 @@
 #!/bin/sh
 ## Symlink *.org files to ~/Documents/org and remove broken links
-
 ORGDIR=$HOME/Documents/org
 
 mkdir -p "$ORGDIR"

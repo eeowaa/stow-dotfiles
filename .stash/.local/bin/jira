@@ -1,4 +1,5 @@
 #!/bin/sh
+## Requires: firefox coreutils curl
 case $1 in
 browse)
     shift

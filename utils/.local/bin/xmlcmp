@@ -1,5 +1,6 @@
 #!/bin/sh
 ## Compare canonicalized versions of two XML files
+## Requires: xmllint
 base=`basename "$0"`
 usage="Usage: $base [OPTION]... FILE1 FILE2"
 
