@@ -1,12 +1,11 @@
 ## Requires: awscli expect perl wget unzip fzf jq coreutils
 # https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-completion.html
-if [ "$BASH_VERSION" ] || {
-    [ "$ZSH_VERSION" ] && autoload bashcompinit && bashcompinit
-}; then 
-    complete -C aws_completer aws
-else
-    echo >&2 'AWS CLI completion not available for current shell'
-fi
+{
+    [ "$BASH_VERSION" ] || {
+        [ "$ZSH_VERSION" ] && autoload bashcompinit && bashcompinit
+    }
+} && complete -C aws_completer aws \
+  || echo >&2 'AWS CLI completion not available for current shell'
 
 # Wrapper for `aws` with additional subcommands and per-profile logging
 aws() {
