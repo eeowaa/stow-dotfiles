@@ -12,8 +12,7 @@ jump() {
         JUMPLIST=`echo "$JUMPLIST" | sed "s/^[^:]*:\{0,1\}//"`
         ;;
     *)
-        # TODO Make this command configurable
-        JUMPDIR=`fd --hidden --type directory --exclude '*WorkDocs*' . "${@:-$HOME}" | fzf`
+        JUMPDIR=`eval "fd --hidden --type directory $JUMP_OPTIONS . '${@:-$HOME}'" | fzf`
         [ "X$JUMPDIR" = X ] && return 1
         JUMPLIST=$JUMPDIR${JUMPLIST:+:}$JUMPLIST
         ;;
