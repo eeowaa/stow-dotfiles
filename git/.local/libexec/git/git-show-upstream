@@ -1,5 +1,4 @@
 #!/bin/sh -e
-## Requires: git
 progname='git show-upstream'
 usage="Usage: $progname [-h | --help] [BRANCH]"
 moreinfo="Try \`$progname -h' for more info"

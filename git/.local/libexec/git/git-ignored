@@ -1,4 +1,3 @@
 #!/bin/sh
-## Requires: git
 git ls-files -ioc --directory --exclude-standard |
 git check-ignore --verbose --stdin --no-index

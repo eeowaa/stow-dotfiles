@@ -1,5 +1,4 @@
 #!/bin/sh
-## Requires: git
 echo 'digraph git {'
 git log --pretty='format:  %h -> { %p }' ${1+"$@"} \
     | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g'

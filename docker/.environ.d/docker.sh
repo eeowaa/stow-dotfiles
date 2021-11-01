@@ -1,4 +1,4 @@
-## Requires: docker perl
+## Requires: perl
 
 # Rather than adding a detachKeys setting to ~/.docker/config.json, I've
 # wrapped the docker command with a function that adds the equivalent

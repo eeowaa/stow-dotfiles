@@ -1,4 +1,3 @@
-## Requires: ssh-agent
 (
     # Redirect stdout to stderr for this subshell
     exec >&2

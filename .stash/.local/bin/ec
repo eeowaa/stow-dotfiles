@@ -1,5 +1,4 @@
 #!/bin/sh
-## Requires: emacs
 
 # Each user has their own directory for storing Emacs server sockets
 server_socket_dir=${TMPDIR-'/tmp'}/emacs`id -u`

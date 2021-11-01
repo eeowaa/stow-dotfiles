@@ -1,4 +1,4 @@
-## Requires: awscli expect perl wget unzip fzf jq coreutils
+## Requires: expect perl wget unzip fzf jq coreutils
 # https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-completion.html
 {
     [ "$BASH_VERSION" ] || {

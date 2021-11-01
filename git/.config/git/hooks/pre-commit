@@ -1,5 +1,4 @@
 #!/bin/sh
-## Requires: git
 
 # Print normal output to stderr; discard original errors
 exec 1>&2 2>/dev/null
