@@ -97,7 +97,7 @@ all: $(packages)
 submodules: $(gitlinks)
 
 # Meta
-.PHONY: list test
+.PHONY: list listdeps test
 null :=
 space := $(null) $(null)
 define newline
@@ -106,6 +106,8 @@ define newline
 endef
 list:
 	@: $(info $(subst $(space),$(newline),$(sort $(packages))))
+listdeps:
+	$(srcdir)/.bin/listdeps
 test:
 	stow -d $(srcdir) -t $(prefix) $(STOWFLAGS) -nv $(packages)
 

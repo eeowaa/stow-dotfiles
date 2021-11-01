@@ -1,0 +1,40 @@
+#!/bin/sh
+## Output package dependencies in YAML format
+## Requires: make git
+
+# Navigate to project root (avoid using `git rev-parse --show-toplevel`
+# because we want this to work in submodules, too)
+cd "`pwd | sed 's#\(/stow-dotfiles\)/.*#\1#'`"
+
+echo 'Dependencies:'
+{
+    # List all package directories, plus the stash
+    make --no-print-directory list
+    echo '.stash'
+} | while read package
+do
+    echo "  $package:"
+    {
+        # Output dependencies according to '## Requires:' comments
+        git grep -hr '^## Requires:' -- "$package" |
+        sed -e 's/^## Requires:  *//' -e 's/  */\n/g'
+
+        # Output dependencies according to script shebang lines
+        {
+            # List all executable files
+            git ls-files -s -- "$package" |
+            awk '$1 ~ /755$/ { print $4 }'
+        } | {
+            # List non-standard interpreters (everything but sh, sed, and awk)
+            xargs awk -F '/(env )?' '
+            NR == 1 && /^#!/ && !/^#!\/bin\/sh/ {
+                interpreter = $NF
+                if (interpreter !~ /^(sh|sed|awk)\>/) {
+                    sub(/ .*$/, "", interpreter) # Remove flags
+                    print interpreter
+                }
+                exit
+            }'
+        }
+    } | sort -u | sed 's/^/    - /'
+done
