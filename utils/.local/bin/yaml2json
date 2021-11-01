@@ -1,0 +1,5 @@
+#!/bin/sh
+## Convert YAML to JSON
+## Requires: yq
+[ $# -eq 0 ] && set -- -
+yq e -o json -I 4 "$@"
