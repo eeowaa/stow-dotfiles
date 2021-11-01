@@ -12,7 +12,6 @@
   - Ignore errors when reading ~whatis~ database
   - Ensure that Emacs.app is on ~PATH~
 + Scripts
-  - [[file:.local/bin/getpw][getpw]] - Retrieve passwords from Keychain.app
   - [[file:.local/bin/service-shortcut][service-shortcut]] - Set a keyboard shortcut to a service
 
 * Reference

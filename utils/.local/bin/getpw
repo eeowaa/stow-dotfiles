@@ -1,0 +1,132 @@
+#!/bin/sh
+## Retrieve a password from one of several backends
+## Requires: fzf jq
+progname=`basename "$0"`
+
+# Map of backend sources to command interfaces
+sourcemap="\
+bitwarden,bw
+keychain,security
+pass,pass"
+
+# Check for the existance of various password managers
+available=
+for map in $sourcemap
+do
+    IFS=, read backend cmd <<EOF
+$map
+EOF
+    if which $cmd >/dev/null 2>&1
+    then eval $backend=available; available="$available $backend"
+    else eval $backend=missing
+    fi
+done
+
+# Parse command line arguments
+backends= label=
+while [ $# -gt 0 ]
+do
+    case $1 in
+    -h|--help)
+        cat <<EOF
+Usage: $progname [OPTION]... [LABEL]
+Options:
+  -h, --help       Display this help text and exit
+  -b, --bitwarden  Retrieve a password from Bitwarden ($bitwarden)
+  -k, --keychain   Retrieve a password from Keychain.app ($keychain)
+  -p, --pass       Retrieve a password from pass ($pass)
+
+When LABEL is missing, \`fzf' will be used to select it interactively;
+one or more backends may be specified. If no available backends are specified,
+*all* available backends will be queried.
+
+When LABEL is supplied, a single backend must be specified: -b, -k, -p.
+EOF
+        exit $? ;;
+    -[bkp]?*)
+        # Allow "stuck flag" syntax
+        flag=`expr "X$1" : 'X\(-.\).*'`
+        remainder=-`expr "X$1" : 'X-.\(.*\)'`
+        shift
+        set -- $flag "$remainder" ${1+"$@"}
+        continue ;;
+    -b|--bitwarden)
+        if [ $bitwarden = available ]
+        then backends="$backends bitwarden"
+        else echo >&2 'WARNING: missing backend: Bitwarden (skipping)'
+        fi
+        shift ;;
+    -k|--keychain)
+        if [ $keychain = available ]
+        then backends="$backends keychain"
+        else echo >&2 'WARNING: missing backend: Keychain.app (skipping)'
+        fi
+        shift ;;
+    -p|--pass)
+        echo >&2 'WARNING: unimplemented backend: pass (skipping)'
+        shift ;;
+    *)  label=$*
+        set -- ;;
+    esac
+done
+
+# Use all available backends if no available backends were specified
+: "${backends:=$available}"
+
+# Determine the password label if not already supplied
+if [ "X$label" = X ]
+then
+    backend_plus_label=`
+    for backend in $backends
+    do
+        case $backend in
+        bitwarden)
+            bw list items |
+            jq -r '.[] | select(.type == 1) | .name' ;;
+        keychain)
+            security dump-keychain |
+            awk -F= '
+            /0x00000007/ && $2 != "<NULL>" {
+                print substr($2, 2, length($2) - 2)
+            }' |
+            sort -u ;;
+        pass)
+            # TODO
+            ;;
+        esac | sed "s/^/[$backend]	/" # literal tab in sed expression
+    done | fzf`
+    backend=`expr "$backend_plus_label" : '\[\([^]]*\)]'`
+    label=`echo "$backend_plus_label" | cut -f2`
+else
+    # When the label is specified, we also want the backend to be specified
+    if [ `echo "$backends" | wc -w` -eq 1 ]
+    then backend=`echo $backends | sed 's/^ *//'`
+    else cat >&2 <<EOF
+ERROR: A single backend must be specified when LABEL is supplied.
+See \`$progname --help' for more details.
+EOF
+        exit 1
+    fi
+fi
+
+# Obtain the password from the corresponding backend
+case $backend in
+bitwarden)
+    bw list items |
+    jq -r ".[] | select(.type == 1 and .name == \"$label\") | .login.password" ;;
+keychain)
+    security find-generic-password -w -l "$label" |
+    tr -d '\n' ;;
+pass)
+    # TODO
+    ;;
+esac |
+if [ -t 1 ]
+then
+    # Normally, copy the password to the clipboard and output the label
+    clip
+    echo "\"$label\" password saved to clipboard"
+else
+    # Write the password to STDOUT if /dev/stdout is redirected or piped
+    cat
+fi
