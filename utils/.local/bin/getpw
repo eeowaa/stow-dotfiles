@@ -151,7 +151,7 @@ then
                 bw list items |
                 jq -r '.[] | select(.type == 1) | .name' |
                 sed "s/^/[$backend]	/" # literal tab in sed expression
-            } &
+            } 2>/dev/null &
             ;;
         keychain)
             {
@@ -162,7 +162,7 @@ then
                 }' |
                 sort -u |
                 sed "s/^/[$backend]	/" # literal tab in sed expression
-            } &
+            } 2>/dev/null &
             ;;
         pass)
             # TODO
