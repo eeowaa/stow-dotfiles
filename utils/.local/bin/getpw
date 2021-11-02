@@ -2,6 +2,26 @@
 ## Retrieve a password from one of several backends
 ## Requires: fzf jq
 progname=`basename "$0"`
+warn() {
+    {
+        printf 'WARNING: '
+        if [ $# -eq 0 ]
+        then cat
+        else echo "$*"
+        fi
+    } >&2
+}
+die() {
+    {
+        printf 'ERROR: '
+        if [ $# -eq 0 ]
+        then cat
+        else echo "$*"
+        fi
+        echo "See \`$progname --help' for more details."
+    } >&2
+    exit 1
+}
 
 # Map of backend sources to command interfaces
 sourcemap="\
@@ -17,30 +37,34 @@ do
 $map
 EOF
     if which $cmd >/dev/null 2>&1
-    then eval $backend=available; available="$available $backend"
+    then eval $backend=available
+         available=${available:+"$available "}$backend
     else eval $backend=missing
     fi
 done
 
 # Parse command line arguments
-backends= label=
+flags_supplied= backends= label=
 while [ $# -gt 0 ]
 do
     case $1 in
     -h|--help)
         cat <<EOF
 Usage: $progname [OPTION]... [LABEL]
+
 Options:
   -h, --help       Display this help text and exit
   -b, --bitwarden  Retrieve a password from Bitwarden ($bitwarden)
   -k, --keychain   Retrieve a password from Keychain.app ($keychain)
   -p, --pass       Retrieve a password from pass ($pass)
 
-When LABEL is missing, \`fzf' will be used to select it interactively;
-one or more backends may be specified. If no available backends are specified,
-*all* available backends will be queried.
+Environment:
+  GETPW_BACKENDS   Space-delimited list of backends to query. When set, this
+                   variable is used as a fallback when no options are supplied.
 
-When LABEL is supplied, a single backend must be specified: -b, -k, -p.
+When LABEL is supplied, obtain a password from the first specified available
+backend. Otherwise, determine LABEL interactively by querying all specified
+available backends, or all available backends if none specified.
 EOF
         exit $? ;;
     -[bkp]?*)
@@ -51,27 +75,69 @@ EOF
         set -- $flag "$remainder" ${1+"$@"}
         continue ;;
     -b|--bitwarden)
+        flags_supplied=X
         if [ $bitwarden = available ]
-        then backends="$backends bitwarden"
-        else echo >&2 'WARNING: missing backend: Bitwarden (skipping)'
+        then backends=${backends:+"$backends "}bitwarden
+        else warn 'missing backend: Bitwarden (skipping)'
         fi
         shift ;;
     -k|--keychain)
+        flags_supplied=X
         if [ $keychain = available ]
-        then backends="$backends keychain"
-        else echo >&2 'WARNING: missing backend: Keychain.app (skipping)'
+        then backends=${backends:+"$backends "}keychain
+        else warn 'missing backend: Keychain.app (skipping)'
         fi
         shift ;;
     -p|--pass)
-        echo >&2 'WARNING: unimplemented backend: pass (skipping)'
+        flags_supplied=X
+        warn 'unimplemented backend: pass (skipping)'
         shift ;;
     *)  label=$*
-        set -- ;;
+        set --
     esac
 done
 
-# Use all available backends if no available backends were specified
-: "${backends:=$available}"
+# Error if there are no available backends (test this after parsing the command
+# line flags so that help text can still be output using `--help')
+[ "$available" ] || die 'no available password backends.'
+
+# Backend flags take precedence
+default_backends=
+if [ "$flags_supplied" ]
+then
+    # Check backend flags supplied at the command line
+    [ "X$backends" = X ] &&
+        die 'backend flag(s) specified no available backends'
+
+# Fall back to the GETPW_BACKENDS environment variable
+elif [ "${GETPW_BACKENDS:+X}" ]
+then
+    # Remove missing/invalid backends from GETPW_BACKENDS
+    value=
+    for backend in $GETPW_BACKENDS
+    do  found=
+        for item in $available
+        do  if [ "X$backend" = "X$item" ]
+            then found=X
+                    break
+            else continue
+            fi
+        done
+        if [ "$found" ]
+        then value=${value:+"$value "}$backend
+        else warn <<EOF
+missing/invalid backend in GETPW_BACKENDS: $backend (skipping)
+EOF
+        fi
+    done
+    [ "$value" ] || die 'GETPW_BACKENDS contains no available backends'
+    : "${backends:=$value}"
+
+# Otherwise, use all available backends
+else
+    : "${backends:=$available}"
+    default_backends=X
+fi
 
 # Determine the password label if not already supplied
 if [ "X$label" = X ]
@@ -81,32 +147,36 @@ then
     do
         case $backend in
         bitwarden)
-            bw list items |
-            jq -r '.[] | select(.type == 1) | .name' ;;
+            {
+                bw list items |
+                jq -r '.[] | select(.type == 1) | .name' |
+                sed "s/^/[$backend]	/" # literal tab in sed expression
+            } &
+            ;;
         keychain)
-            security dump-keychain |
-            awk -F= '
-            /0x00000007/ && $2 != "<NULL>" {
-                print substr($2, 2, length($2) - 2)
-            }' |
-            sort -u ;;
+            {
+                security dump-keychain |
+                awk -F= '
+                /0x00000007/ && $2 != "<NULL>" {
+                    print substr($2, 2, length($2) - 2)
+                }' |
+                sort -u |
+                sed "s/^/[$backend]	/" # literal tab in sed expression
+            } &
+            ;;
         pass)
             # TODO
             ;;
-        esac | sed "s/^/[$backend]	/" # literal tab in sed expression
+        esac
     done | fzf`
     backend=`expr "$backend_plus_label" : '\[\([^]]*\)]'`
     label=`echo "$backend_plus_label" | cut -f2`
 else
-    # When the label is specified, we also want the backend to be specified
-    if [ `echo "$backends" | wc -w` -eq 1 ]
-    then backend=`echo $backends | sed 's/^ *//'`
-    else cat >&2 <<EOF
-ERROR: A single backend must be specified when LABEL is supplied.
-See \`$progname --help' for more details.
-EOF
-        exit 1
-    fi
+    [ "$default_backends" ] &&
+        die 'when LABEL is given, backend(s) must be specified'
+
+    # Query the first specified available backend
+    backend="${backends%% *}"
 fi
 
 # Obtain the password from the corresponding backend
