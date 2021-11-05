@@ -211,6 +211,22 @@ noremap \<bar> :wa!<cr>
 noremap \q :q!<cr>
 noremap \Q :qa!<cr>
 " }}}
+" Diffing {{{
+" Override diff highlighting for all colorschemes
+function! MyHighlights() abort
+    # TODO: Find something that looks good in low-color terminals, too
+    # TODO: Use different diff highlighting overrides for light themes
+    highlight DiffAdd    term=bold                           ctermbg=235                        guibg=#262626
+    highlight DiffChange term=bold                           ctermbg=235                        guibg=#262626
+    highlight DiffDelete term=bold               ctermfg=238 ctermbg=244 gui=bold guifg=#444444 guibg=#808080
+    highlight DiffText   term=reverse cterm=bold ctermfg=255 ctermbg=196 gui=bold guifg=#ffffff guibg=Red
+endfunction
+
+augroup MyColors
+    autocmd!
+    autocmd ColorScheme * call MyHighlights()
+augroup END
+" }}}
 
 " Fix annoyances
 nnoremap Y y$
