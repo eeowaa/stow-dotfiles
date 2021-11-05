@@ -208,8 +208,7 @@ set ignorecase smartcase incsearch
 " Saving & Quitting {{{
 noremap \\ :w!<cr>
 noremap \<bar> :wa!<cr>
-noremap \q :q!<cr>
-noremap \Q :qa!<cr>
+noremap \q :qa!<cr>
 " }}}
 " Diffing {{{
 " Override diff highlighting for all colorschemes
