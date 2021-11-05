@@ -1,6 +1,7 @@
 [diff]
-	# Use vimdiff as the default difftool (override with -t flag)
+	# Use vimdiff and vscode (-g) as difftools; override with -t
 	tool = vimdiff
+	guitool = vscode
 
 [difftool]
 	# Do not present a [Y/n] prompt before diffing each file
@@ -9,7 +10,7 @@
 	# Allow :cq from within vimdiff to stop git-difftool completely
 	trustExitCode = true
 
-# Add vscode as difftool
+# Add vscode as a difftool
 [difftool "vscode"]
 	cmd = code --wait --diff \"$LOCAL\" \"$REMOTE\"
 
