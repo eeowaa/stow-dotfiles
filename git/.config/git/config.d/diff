@@ -1,17 +1,27 @@
-# Contents stolen from the configuration for emacs.git:
-# <https://git.savannah.gnu.org/cgit/emacs.git/tree/autogen.sh>
+[diff]
+	# Use vimdiff as the default difftool (override with -t flag)
+	tool = vimdiff
 
+[difftool]
+	# Do not present a [Y/n] prompt before diffing each file
+	prompt = false
+
+	# Allow :cq from within vimdiff to stop git-difftool completely
+	trustExitCode = true
+
+# Add vscode as difftool
+[difftool "vscode"]
+	cmd = code --wait --diff \"$LOCAL\" \"$REMOTE\"
+
+# Specific diff functions
+# <https://git.savannah.gnu.org/cgit/emacs.git/tree/autogen.sh>
 [diff "elisp"]
 	xfuncname = ^\\([^[:space:]]*def[^[:space:]]+[[:space:]]+([^()[:space:]]+)
-
 [diff "m4"]
 	xfuncname = ^((m4_)?define|A._DEFUN(_ONCE)?)\\([^),]*
-
 [diff "make"]
 	xfuncname = ^([$.[:alnum:]_].*:|[[:alnum:]_]+[[:space:]]*([*:+]?[:?]?|!?)=|define .*)
-
 [diff "shell"]
 	xfuncname = ^([[:space:]]*[[:alpha:]_][[:alnum:]_]*[[:space:]]*\\(\\)|[[:alpha:]_][[:alnum:]_]*=)
-
 [diff "texinfo"]
 	xfuncname = ^@node[[:space:]]+([^,[:space:]][^,]+)
