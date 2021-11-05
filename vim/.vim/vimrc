@@ -40,10 +40,10 @@ else
     " -- DARK GRAY
     " colorscheme calmar256-dark
     " colorscheme inkpot
-    " colorscheme jellybeans
+    colorscheme jellybeans
     " colorscheme lettuce
     " -- LIGHT GRAY
-    colorscheme mustang
+    " colorscheme mustang
     " colorscheme desert256
     " colorscheme herald
     " colorscheme molokai
