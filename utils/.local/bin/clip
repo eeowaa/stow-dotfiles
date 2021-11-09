@@ -30,8 +30,8 @@ esac
 if which xclip >/dev/null; then
     [ "X$DISPLAY" != X ] &&
     if [ -t 0 ]
-    then xclip -o -selection
-    else perl -pe 'chomp if eof' | xclip -selection
+    then xclip -o -selection clipboard
+    else perl -pe 'chomp if eof' | xclip -selection clipboard
     fi
 elif which xsel >/dev/null; then
     [ "X$DISPLAY" != X ] &&
