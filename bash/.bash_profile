@@ -27,6 +27,16 @@ case $- in
     export PROMPT_COMMAND=my_ps1
     export PROMPT_DIRTRIM=2
 
+    # Source bash completion
+    export BASH_COMPLETION_COMPAT_DIR=$XDG_DATA_HOME/bash-completion
+    for prefix in /usr/local ''
+    do
+        [[ -f $prefix/etc/profile.d/bash_completion.sh ]] && {
+            source $prefix/etc/profile.d/bash_completion.sh
+            break
+        }
+    done
+
     # Load other user preferences
     [[ -f ~/.bashrc ]] && source ~/.bashrc
 esac
