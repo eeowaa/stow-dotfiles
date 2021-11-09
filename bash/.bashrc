@@ -1,2 +1,8 @@
+if [ "$DEBUG" ]; then
+    echo "Sourcing: $BASH_SOURCE" >&2
+fi
+
+# Source generic Bourne Shell environment
 [[ -f "$ENV" ]] && source "$ENV"
-# Nothing bash-specific
+
+# Bash-specific environment (currently empty)

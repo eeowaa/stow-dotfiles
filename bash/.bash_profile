@@ -1,3 +1,7 @@
+if [ "$DEBUG" ]; then
+    echo "Sourcing: $BASH_SOURCE" >&2
+fi
+
 # Source generic Bourne Shell profile
 [[ -f ~/.profile ]] && source ~/.profile
 
