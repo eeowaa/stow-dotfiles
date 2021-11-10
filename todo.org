@@ -85,7 +85,7 @@ There is room for speed improvements. I think that ~npx~ might have something to
 do with the slowness.
 
 ** TODO Create packages containing config for certain package combinations
-For example, macOS-specific Emacs configuration could go in a =macos-emacs=
+For example, macOS-specific Emacs configuration could go in a =macos+emacs=
 package, rather than in =macos= or =emacs=.
 
 ** HOLD Move history files from =$XDG_CACHE_HOME= to =$XDG_DATA_HOME=
