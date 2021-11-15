@@ -1,0 +1,49 @@
+#!/bin/sh
+## Interactively adjust the brightness of a backlight
+
+which brightnessctl >/dev/null 2>&1 || {
+    echo >&2 'ERROR: command not found: brightnessctl'
+    exit 1
+}
+
+device=monitor
+while [ $# -gt 0 ]; do
+    case $1 in
+    -h|--help)
+        progname=`basename "$0"`
+        cat <<EOF
+Usage: $progname [OPTION]...
+Options:
+-h, --help       Display this help text and exit
+-m, --monitor    Adjust the monitor backlight (default)
+-k, --keyboard   Adjust the keyboard backlight
+EOF
+        exit $? ;;
+    -m|--monitor)
+        device=monitor ;;
+    -k|--keyboard)
+        device=keyboard ;;
+    esac
+    shift
+done
+
+# Silently read one character at a time
+echo 'Waiting for SIGINT... (use j/k to adjust)'
+stty -icanon -echo
+trap 'stty icanon echo; exit' 2
+while :
+do
+    char=`dd bs=1 count=1 2>/dev/null`
+    case $char in
+    k)
+        case $device in
+        monitor)  brightnessctl set 10%+ ;;
+        keyboard) brightnessctl -d smc::kbd_backlight set 10%+ ;;
+        esac ;;
+    j)
+        case $device in
+        monitor)  brightnessctl set 10%- ;;
+        keyboard) brightnessctl -d smc::kbd_backlight set 10%- ;;
+        esac ;;
+    esac >/dev/null
+done
