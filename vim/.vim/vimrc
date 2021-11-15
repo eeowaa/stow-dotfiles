@@ -181,6 +181,7 @@ set fileformat=unix fileformats=unix
 set smartindent autoindent
 set linebreak textwidth=79
 set formatoptions+=nj " formatoptions+=a
+set scrolloff=0
 " Headers {{{
 nmap [1 yyPv$r=
 nmap ]1 yypv$r=
