@@ -27,20 +27,43 @@ case `uname -r` in
     exit ;;
 esac
 
+# For when there is no graphical display
+fsclip() {
+    : "${XDG_RUNTIME_DIR:=/run/user/`id -u`}"
+    if [ -d "$XDG_RUNTIME_DIR" ]
+    then
+        # $XDG_RUNTIME_DIR is a per-user temporary system directory, typically
+        # /run/user/<id>. This is perfect for an ephemeral per-user clipboard,
+        # but not something that we want to create if it doesn't already exist.
+        clipdir=$XDG_RUNTIME_DIR
+    else
+        # If we don't have $XDG_RUNTIME_DIR, the next best thing is a private
+        # subdirectory in $TMPDIR -- this is what systemd does.
+        clipdir=${TMPDIR:-/tmp}/`id -un`-private
+        mkdir -m 700 "$clipdir"
+    fi
+    clipfile=$clipdir/clip
+    if [ -t 0 ]
+    then [ -f "$clipfile" ] && cat "$clipfile"
+    else perl -pe 'chomp if eof' >"$clipfile"
+    fi
+    exit
+}
+
 if which xclip >/dev/null; then
-    [ "X$DISPLAY" != X ] &&
+    [ "X$DISPLAY" = X ] && fsclip
     if [ -t 0 ]
     then xclip -o -selection clipboard
     else perl -pe 'chomp if eof' | xclip -selection clipboard
     fi
 elif which xsel >/dev/null; then
-    [ "X$DISPLAY" != X ] &&
+    [ "X$DISPLAY" = X ] && fsclip
     if [ -t 0 ]
     then xsel -o --clipboard
     else perl -pe 'chomp if eof' | xsel -i --clipboard
     fi
 elif which wl-copy >/dev/null; then
-    [ "X$WAYLAND_DISPLAY" != X ] &&
+    [ "X$WAYLAND_DISPLAY" = X ] && fsclip
     if [ -t 0 ]
     then wl-paste -n
     else perl -pe 'chomp if eof' | wl-copy
