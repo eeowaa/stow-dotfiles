@@ -2,28 +2,38 @@
 ## Wrapper around various system-specific clipboard commands
 ## Requires: perl
 
+# Determine whether to copy or paste
+case $1 in
+-o) mode=paste ;;
+-i) mode=copy ;;
+*)  if [ -t 0 ]
+    then mode=paste
+    else mode=copy
+    fi ;;
+esac
+
 case `uname -s` in
 Darwin)
-    if [ -t 0 ]
-    then pbpaste
-    else perl -pe 'chomp if eof' | pbcopy
-    fi
+    case $mode in
+    paste) pbpaste ;;
+    copy)  perl -pe 'chomp if eof' | pbcopy ;;
+    esac
     exit ;;
 CYGWIN_NT*|MINGW*|MSYS*)
-    if [ -t 0 ]
-    then cat /dev/clipboard
-    else perl -pe 'chomp if eof' >/dev/clipboard
-    fi
+    case $mode in
+    paste) cat /dev/clipboard ;;
+    copy)  perl -pe 'chomp if eof' >/dev/clipboard ;;
+    esac
     exit ;;
 esac
 
 # WSL
 case `uname -r` in
 *-Microsoft)
-    if [ -t 0 ]
-    then powershell.exe -noprofile -command Get-Clipboard
-    else perl -pe 'chomp if eof' | clip.exe
-    fi
+    case $mode in
+    paste) powershell.exe -noprofile -command Get-Clipboard ;;
+    copy)  perl -pe 'chomp if eof' | clip.exe ;;
+    esac
     exit ;;
 esac
 
@@ -43,36 +53,36 @@ fsclip() {
         mkdir -m 700 "$clipdir"
     fi
     clipfile=$clipdir/clip
-    if [ -t 0 ]
-    then [ -f "$clipfile" ] && cat "$clipfile"
-    else perl -pe 'chomp if eof' >"$clipfile"
-    fi
+    case $mode in
+    paste) [ -f "$clipfile" ] && cat "$clipfile" ;;
+    copy)  perl -pe 'chomp if eof' >"$clipfile" ;;
+    esac
     exit
 }
 
 if which xclip >/dev/null; then
     [ "X$DISPLAY" = X ] && fsclip
-    if [ -t 0 ]
-    then xclip -o -selection clipboard
-    else perl -pe 'chomp if eof' | xclip -selection clipboard
-    fi
+    case $mode in
+    paste) xclip -o -selection clipboard ;;
+    copy)  perl -pe 'chomp if eof' | xclip -selection clipboard ;;
+    esac
 elif which xsel >/dev/null; then
     [ "X$DISPLAY" = X ] && fsclip
-    if [ -t 0 ]
-    then xsel -o --clipboard
-    else perl -pe 'chomp if eof' | xsel -i --clipboard
-    fi
+    case $mode in
+    paste) xsel -o --clipboard ;;
+    copy)  perl -pe 'chomp if eof' | xsel -i --clipboard ;;
+    esac
 elif which wl-copy >/dev/null; then
     [ "X$WAYLAND_DISPLAY" = X ] && fsclip
-    if [ -t 0 ]
-    then wl-paste -n
-    else perl -pe 'chomp if eof' | wl-copy
-    fi
+    case $mode in
+    paste) wl-paste -n ;;
+    copy)  perl -pe 'chomp if eof' | wl-copy ;;
+    esac
 elif which termux-clipboard-get >/dev/null; then
-    if [ -t 0 ]
-    then termux-clipboard-set
-    else perl -pe 'chomp if eof' | termux-clipboard-get
-    fi
+    case $mode in
+    paste) termux-clipboard-set ;;
+    copy)  perl -pe 'chomp if eof' | termux-clipboard-get ;;
+    esac
 else
     exit 1
 fi
