@@ -16,6 +16,7 @@ git() {
 git_cd() {
     usage="\
 usage: git cd [jump]
+   or: git cd <path>
    or: git cd git
    or: git cd common
    or: git cd top
@@ -80,6 +81,16 @@ usage: git cd [jump]
         print worktree
         exit
     }' branch=$2` ;;
+    *)
+        case $1 in
+        :\(top\)*|:/*|/*)
+            # Convert absolute path to relative
+            target=\
+`git rev-parse --path-format=relative --show-toplevel`\
+`echo "$1" | sed -e 's|^:(top)|/|' -e 's|^:\{0,1\}/|/|'` ;;
+        *)
+            target=$1 ;;
+        esac
     esac
 
     test -d "$target" || {
