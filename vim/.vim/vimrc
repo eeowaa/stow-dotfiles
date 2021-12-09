@@ -100,6 +100,7 @@ autocmd BufNewFile,BufRead *.{json,ipynb} set
     \ foldmethod=indent foldenable
 " }}}
 " Markdown {{{
+let g:markdown_folding=1
 autocmd BufNewFile,BufRead *.{md,markdown} set
     \ syntax=markdown filetype=markdown
     \ makeprg=pandoc\ -f\ markdown\ -t\ html\ -o\ '%<.html'\ '%'
