@@ -1,4 +1,4 @@
-## Requires: fd fzf
+## Requires: fd-find fzf
 
 # An alias allows us to interpolate $JUMP_OPTIONS literally, while expanding
 # and quoting "$@" appropriately when passed as an argument to the command line

@@ -1,5 +1,6 @@
 #!/bin/sh
 ## Display the current battery percentage (or "??%")
+## Requires: acpi
 {
     case `uname -s` in
     Linux)  acpi -b ;;
