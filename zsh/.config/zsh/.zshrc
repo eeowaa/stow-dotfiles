@@ -3,6 +3,7 @@ if [ "$DEBUG" ]; then
 fi
 
 # Initialize command completion
+export fpath=($ZDOTDIR/site-functions $fpath)
 autoload -Uz compinit
 compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
