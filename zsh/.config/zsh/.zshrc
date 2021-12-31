@@ -4,8 +4,8 @@ fi
 
 # Initialize command completion
 export fpath=($ZDOTDIR/site-functions $fpath)
-autoload -Uz compinit
-compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
 # Set the history file
 # (I would rather set this in $ZDOTDIR/.zprofile, but /etc/zshrc overwrites it,
