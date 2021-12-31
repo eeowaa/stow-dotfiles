@@ -28,7 +28,7 @@ case $- in
     export PROMPT_DIRTRIM=2
 
     # Source bash completion
-    export BASH_COMPLETION_COMPAT_DIR=$XDG_DATA_HOME/bash-completion
+    export BASH_COMPLETION_USER_DIR=$XDG_DATA_HOME/bash-completion
     for prefix in /usr/local ''
     do
         [[ -f $prefix/etc/profile.d/bash_completion.sh ]] && {
