@@ -1,6 +1,14 @@
 #!/bin/sh
 ## Wrapper around various system-specific clipboard commands
 ## Requires: perl
+## Usage: clip [-t] [-i | -o]
+
+# Use a tmux paste buffer instead of the system clipboard
+unset tmux
+[ "X$1" = 'X-t' ] && {
+    tmux=yes
+    shift
+}
 
 # Determine whether to copy or paste
 case $1 in
@@ -11,6 +19,14 @@ case $1 in
     else mode=copy
     fi ;;
 esac
+
+[ "X$tmux" = X ] || {
+    case $mode in
+    paste) tmux paste-buffer -d ;;
+    copy)  perl -pe 'chomp if eof' | tmux load-buffer - ;;
+    esac
+    exit
+}
 
 case `uname -s` in
 Darwin)

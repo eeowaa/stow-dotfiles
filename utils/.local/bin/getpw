@@ -194,7 +194,7 @@ esac |
 if [ -t 1 ]
 then
     # Normally, copy the password to the clipboard and output the label
-    clip
+    clip -i
     echo "\"$label\" password saved to clipboard"
 else
     # Write the password to STDOUT if /dev/stdout is redirected or piped

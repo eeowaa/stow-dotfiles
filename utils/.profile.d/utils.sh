@@ -20,7 +20,3 @@ $XDG_DATA_HOME:\
 $XDG_CONFIG_DIRS:\
 $XDG_DATA_DIRS
 export JUMP_OPTIONS JUMP_PATH
-
-# getpw
-GETPW_BACKENDS='keychain bitwarden'
-export GETPW_BACKENDS
