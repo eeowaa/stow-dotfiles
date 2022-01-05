@@ -25,6 +25,8 @@
 [core]
 	logAllRefUpdates = always
 	hooksPath = ~/.config/git/hooks
+[rebase]
+	missingCommitsCheck = warn
 
 # Branching
 [pull]
@@ -66,4 +68,5 @@
 	path = config.d/alias
 	path = config.d/credential
 	path = config.d/diff
+	path = config.d/merge
 	path = config.d/pretty

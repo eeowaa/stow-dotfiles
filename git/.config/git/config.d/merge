@@ -1,0 +1,28 @@
+[merge]
+	# Use vimdiff and meld (-g) as mergetools; override with -t
+	tool = vimdiff
+	guitool = meld
+
+[mergetool]
+	# Do not present a [Y/n] prompt before merging each file
+	prompt = false
+
+	# Allow :cq from within vimdiff to stop git-mergetool completely
+	trustExitCode = true
+
+# Add vscode as a mergetool
+[mergetool "vscode"]
+	cmd = code --wait \"$MERGED\"
+
+[rebase]
+	# Automatically push/pop a stash before/after a rebase
+	autoStash = true
+
+[rerere]
+	# Record manual merge conflict resolutions in $GIT_DIR/rr-cache/;
+	# when an idential merge conflict hunk is encountered later on (especially
+	# during a git-rebase or git-am), the recorded resolution is reused
+	enabled = true
+
+	# Automatically add resolved merge conflicts to the index
+	autoUpdate = true
