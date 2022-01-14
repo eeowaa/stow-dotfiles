@@ -17,5 +17,8 @@
 	pager = !~/.local/libexec/git/git-pager
 	ls-dupes = !~/.local/libexec/git/git-ls-dupes
 
+    # Compound commands
+    overview = graph --all --simplify-by-decoration
+
 	# Git-related shell functions that must execute in the current process
 	# should be defined and wired in ~/.environ.d/git.sh
