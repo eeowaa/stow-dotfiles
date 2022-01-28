@@ -1,0 +1,52 @@
+{
+  "__meta__": {
+    "title": "Tech support cheatsheet",
+    "source": "https://xkcd.com/627/",
+    "start": "Find a menu item or button which looks related to what you want to do."
+  },
+  "Find a menu item or button which looks related to what you want to do.": {
+    "type": "prompt",
+    "next": {
+      "ok": "Did it work? (1)",
+      "can't find one": "Pick one at random."
+    }
+  },
+  "Did it work? (1)": {
+    "type": "prompt",
+    "hint": "Click it.",
+    "next": {
+      "yes": "You're done!",
+      "no": "Have you been trying this for over half an hour?"
+    }
+  },
+  "Pick one at random.": {
+    "type": "prompt",
+    "next": {
+      "ok": "Did it work? (1)",
+      "tried them all": "Did it work? (2)"
+    }
+  },
+  "Did it work? (2)": {
+    "type": "prompt",
+    "hint": "Google the name of the program plus a few words related to what you want to do. Follow any instructions.",
+    "next": {
+      "yes": "You're done!",
+      "no": "Have you been trying this for over half an hour?"
+    }
+  },
+  "You're done!": {
+    "type": "exit",
+    "code": 0
+  },
+  "Have you been trying this for over half an hour?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Ask someone for help or give up.",
+      "no": "Find a menu item or button which looks related to what you want to do."
+    }
+  },
+  "Ask someone for help or give up.": {
+    "type": "exit",
+    "code": 1
+  }
+}

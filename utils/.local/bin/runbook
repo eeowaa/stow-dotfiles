@@ -75,7 +75,8 @@ do
         eval prompt choice $options <<-EOF
 		$message
 		EOF
-        _next=`echo "$object" | jq -r ".next.$choice"` ;;
+        choice=`echo "$choice" | sed 's/"/\\\"/g'`
+        _next=`echo "$object" | jq -r ".next.\"$choice\""` ;;
     status|exit)
         _code=`echo "$object" | jq -r '.code'`
         case $_code in
