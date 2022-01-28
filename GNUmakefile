@@ -60,7 +60,7 @@ doom: emacs $(srcdir)/doom/.config/doom/.git
 vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
 
 # Languages
-packages += dotnet go node perl python
+packages += dotnet go node perl python rust
 
 # Browsers
 packages += lynx firefox
