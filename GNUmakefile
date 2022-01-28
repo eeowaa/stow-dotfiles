@@ -65,8 +65,11 @@ packages += dotnet go node perl python
 # Browsers
 packages += lynx firefox
 
+# Platforms
+packages += aws az k8s
+
 # Uncategorized
-packages += aws direnv gimp git gnupg info irc ldap less locate org ssh-agent units utils wget work
+packages += direnv gimp git gnupg info irc ldap less locate org ssh units utils wget work
 gitlinks += $(srcdir)/org/org/.git $(srcdir)/utils/.local/opt/mailconvert/.git
 org: $(srcdir)/org/org/.git
 utils: $(srcdir)/utils/.local/opt/mailconvert/.git
