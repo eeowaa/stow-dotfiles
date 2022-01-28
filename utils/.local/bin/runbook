@@ -1,0 +1,92 @@
+#!/bin/sh
+## Execute an interactive runbook
+## Requires: tput jq
+progname=`basename "$0"`
+usage="Usage: $progname [OPTION]... RUNBOOK"
+die() { echo >&2 "$progname: $*"; exit 1; }
+
+: ${RUNBOOK_DIR:=${XDG_DATA_HOME:-$HOME/.local/share}/runbooks}
+runbook=
+while [ $# -gt 0 ]
+do
+    case $1 in
+    -h|--help)
+        cat <<EOF
+$usage
+RUNBOOK is either the name of a runbook in \$RUNBOOK_DIR or an arbitrary path
+(including at least one "/" character) to a runbook file.  In either case, the
+".json" file extension may be omitted.
+
+OPTIONS
+  -h, --help      Display this help text and exit
+  -l, --list      List the runbooks in \$RUNBOOK_DIR and exit
+
+ENVIRONMENT
+  RUNBOOK_DIR     Defaults to \${XDG_DATA_HOME:-\$HOME/.local/share}/runbooks
+  SHELL_LIB_PATH  Required for sourcing the prompt.sh library
+EOF
+        exit 0 ;;
+    -l|--list)
+        [ -d "$RUNBOOK_DIR" ] || die "not a directory: $RUNBOOK_DIR"
+        find -L "$RUNBOOK_DIR" -type f -name '*.json' | while read runbook
+        do
+            echo "$runbook" | sed 's|.*/\(.\{1,\}\)\.json$|\1|' | tr -d '\n'
+            jq -r '": " + .__meta__.title' "$runbook"
+        done
+        exit 0 ;;
+    *)
+        runbook=${1%*.json}.json
+        case $runbook in
+        */*)
+            [ -f "$runbook" ] || die "not a file: $runbook" ;;
+        *)
+            [ -d "$RUNBOOK_DIR" ] || die "not a directory: $RUNBOOK_DIR"
+            runbook="$RUNBOOK_DIR/$runbook"
+            [ -f "$runbook" ] || die "not a file: $runbook" ;;
+        esac ;;
+    esac
+    shift
+done
+[ "X$runbook" = X ] && die 'missing argument: RUNBOOK'
+
+# Source prompt.sh
+[ "${SHELL_LIB_PATH:+X}" = X ] || die 'unset variable: SHELL_LIB_PATH'
+[ -d "$SHELL_LIB_PATH" ] || die "not a directory: $SHELL_LIB_PATH"
+[ -f "$SHELL_LIB_PATH/prompt.sh" ] || "missing file: $SHELL_LIB_PATH/prompt.sh"
+. "$SHELL_LIB_PATH/prompt.sh"
+
+# Program loop
+_next=`jq -r '.__meta__.start' "$runbook"`
+while :
+do
+    # Remove trailing (1), (2), etc. from the name of the object
+    message=`echo "$_next" | sed 's/ *([0-9]\{1,\}) *$//'`
+
+    # Extract the object from the runbook for futher inspection
+    object=`jq ".\"$_next\"" "$runbook"`
+
+    # The type of the object determines how we handle it
+    _type=`echo "$object" | jq -r '.type'`
+    case $_type in
+    prompt)
+        _hint=`echo "$object" | jq -r '.hint // ""'`
+        [ "X$_hint" = X ] || printf '\033[1;35;49m%s\033[0m\n' "$_hint"
+        options=`echo "$object" | jq -r '.next | keys | @sh'`
+        eval prompt choice $options <<-EOF
+		$message
+		EOF
+        _next=`echo "$object" | jq -r ".next.$choice"` ;;
+    status|exit)
+        _code=`echo "$object" | jq -r '.code'`
+        case $_code in
+        0) fmtstr='\033[1;32;49m%s\033[0m\n' ;;
+        1) fmtstr='\033[1;33;49m%s\033[0m\n' ;;
+        2) fmtstr='\033[1;31;49m%s\033[0m\n' ;;
+        esac
+        printf "$fmtstr" "$message"
+        if [ $_type = status ]
+        then _next=`echo "$object" | jq -r '.next'`
+        else exit $_code
+        fi ;;
+    esac
+done

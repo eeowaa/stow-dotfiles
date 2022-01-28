@@ -1,0 +1,361 @@
+{
+  "__meta__": {
+    "title": "Troubleshoot a Kubernetes Deployment",
+    "source": "https://learnk8s.io/troubleshooting-deployments",
+    "start": "Is there any PENDING Pod?"
+  },
+  "Is there any PENDING Pod?": {
+    "type": "prompt",
+    "hint": "% kubectl get pods",
+    "next": {
+      "yes": "Is the cluster full?",
+      "no": "Are the Pods RUNNING?"
+    }
+  },
+  "Is the cluster full?": {
+    "type": "prompt",
+    "hint": "% kubectl describe pod <pod-name>",
+    "next": {
+      "yes": "Provision a bigger cluster",
+      "no": "Are you hitting the ResourceQuota limits?"
+    }
+  },
+  "Provision a bigger cluster": {
+    "type": "exit",
+    "code": 1
+  },
+  "Are you hitting the ResourceQuota limits?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Relax the ResourceQuota limits",
+      "no": "Are you mounting a PENDING PersistentVolumeClaim?"
+    }
+  },
+  "Relax the ResourceQuota limits": {
+    "type": "exit",
+    "code": 1
+  },
+  "Are you mounting a PENDING PersistentVolumeClaim?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Fix the PersistentVolumeClaim",
+      "no": "Is the Pod assigned to the Node?"
+    }
+  },
+  "Fix the PersistentVolumeClaim": {
+    "type": "exit",
+    "code": 1
+  },
+  "Is the Pod assigned to the Node?": {
+    "type": "prompt",
+    "hint": "% kubectl get pods -o wide",
+    "next": {
+      "yes": "There is an issue with the Kubelet",
+      "no": "There is an issue with the Scheduler"
+    }
+  },
+  "There is an issue with the Kubelet": {
+    "type": "exit",
+    "code": 2
+  },
+  "There is an issue with the Scheduler": {
+    "type": "exit",
+    "code": 2
+  },
+  "Are the Pods RUNNING?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Are the Pods READY?",
+      "no": "Can you see the logs for the app?"
+    }
+  },
+  "Can you see the logs for the app?": {
+    "type": "prompt",
+    "hint": "% kubectl logs <pod-name>",
+    "next": {
+      "yes": "Fix the issue in the application",
+      "no": "Did the container die too quickly?"
+    }
+  },
+  "Can you see the logs for the app? (1)": {
+    "type": "prompt",
+    "hint": "% kubectl logs <pod-name> --previous",
+    "next": {
+      "yes": "Fix the issue in the application",
+      "no": "Did the container die too quickly?"
+    }
+  },
+  "Fix the issue in the application": {
+    "type": "exit",
+    "code": 1
+  },
+  "Did the container die too quickly?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Can you see the logs for the app? (1)",
+      "no": "Is the Pod status ImagePullBackOff?"
+    }
+  },
+  "Is the Pod status ImagePullBackOff?": {
+    "type": "prompt",
+    "hint": "% kubectl describe pod <pod-name>",
+    "next": {
+      "yes": "Is the name of the image correct?",
+      "no": "Is the Pod status CrashLoopBackOff?"
+    }
+  },
+  "Is the Pod status CrashLoopBackOff?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Did you inspect the logs and fix the crashing app?",
+      "no": "Is the Pod status RunContainerError?"
+    }
+  },
+  "Is the Pod status RunContainerError?": {
+    "type": "prompt",
+    "next": {
+      "yes": "The issue is likely to be with mounting volumes",
+      "no": "Is there any container Running?"
+    }
+  },
+  "Is there any container Running?": {
+    "type": "prompt",
+    "next": {
+      "yes": "The issue is with the node-lifecycle controller",
+      "no": "Consult StackOverflow"
+    }
+  },
+  "The issue is with the node-lifecycle controller": {
+    "type": "exit",
+    "code": 1
+  },
+  "Consult StackOverflow": {
+    "type": "exit",
+    "code": 2
+  },
+  "The issue is likely to be with mounting volumes": {
+    "type": "exit",
+    "code": 1
+  },
+  "Did you inspect the logs and fix the crashing app?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Did you forget the CMD instruction in the Dockerfile?",
+      "no": "Fix crashing app"
+    }
+  },
+  "Fix crashing app": {
+    "type": "exit",
+    "code": 1
+  },
+  "Did you forget the CMD instruction in the Dockerfile?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Fix the Dockerfile",
+      "no": "Is the Pod restarting frequently? Cycling between Running and CrashLoopBackoff?"
+    }
+  },
+  "Fix the Dockerfile": {
+    "type": "exit",
+    "code": 1
+  },
+  "Is the Pod restarting frequently? Cycling between Running and CrashLoopBackoff?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Fix the liveness probe",
+      "no": "Unknown state"
+    }
+  },
+  "Fix the liveness probe": {
+    "type": "exit",
+    "code": 1
+  },
+  "Is the name of the image correct?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Is the image tag valid? Does it exist?",
+      "no": "Fix the image name"
+    }
+  },
+  "Fix the image name": {
+    "type": "exit",
+    "code": 1
+  },
+  "Is the image tag valid? Does it exist?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Are you pulling images from a private registry?",
+      "no": "Fix the tag"
+    }
+  },
+  "Fix the tag": {
+    "type": "exit",
+    "code": 1
+  },
+  "Are you pulling images from a private registry?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Configure pulling images from a private registry",
+      "no": "The issue could be with the CRI or Kubelet"
+    }
+  },
+  "Configure pulling images from a private registry": {
+    "type": "exit",
+    "code": 1
+  },
+  "Are the Pods READY?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Can you access the app?",
+      "no": "Is the Readiness probe failing?"
+    }
+  },
+  "Is the Readiness probe failing?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Fix the Readiness probe",
+      "no": "Unknown state"
+    }
+  },
+  "Fix the Readiness probe": {
+    "type": "exit",
+    "code": 1
+  },
+  "Unknown state": {
+    "type": "exit",
+    "code": 2
+  },
+  "Can you access the app?": {
+    "type": "prompt",
+    "hint": "% kubectl port-forward <pod-name> 8080:<pod-port>",
+    "next": {
+      "yes": "Pods are running correctly",
+      "no": "Is the port exposed by container correct and listening on 0.0.0.0?"
+    }
+  },
+  "Is the port exposed by container correct and listening on 0.0.0.0?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Unknown state",
+      "no": "Fix the app. It should listen on 0.0.0.0. Update the containerPort"
+    }
+  },
+  "Fix the app. It should listen on 0.0.0.0. Update the containerPort": {
+    "type": "exit",
+    "code": 1
+  },
+  "Pods are running correctly": {
+    "type": "status",
+    "code": 0,
+    "next": "Can you see a list of endpoints?"
+  },
+  "Can you see a list of endpoints?": {
+    "type": "prompt",
+    "hint": "% kubectl describe service <service-name>",
+    "next": {
+      "yes": "Can you visit the app?",
+      "no": "Is the Selector matching the right Pod label?"
+    }
+  },
+  "Is the Selector matching the right Pod label?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Does the Pod have an IP address assigned?",
+      "no": "Fix the Service selector. It has to match the Pod labels"
+    }
+  },
+  "Fix the Service selector. It has to match the Pod labels": {
+    "type": "exit",
+    "code": 1
+  },
+  "Does the Pod have an IP address assigned?": {
+    "type": "prompt",
+    "next": {
+      "yes": "There is an issue with the Kubelet",
+      "no": "There is an issue with the Controller manager"
+    }
+  },
+  "There is an issue with the Controller manager": {
+    "type": "exit",
+    "code": 2
+  },
+  "Can you visit the app?": {
+    "type": "prompt",
+    "hint": "% kubectl port-forward service/<service-name> 8080:<service-port>",
+    "next": {
+      "yes": "The Service is running correctly",
+      "no": "Is the targetPort on the Service matching the containerPort in the Pod?"
+    }
+  },
+  "Is the targetPort on the Service matching the containerPort in the Pod?": {
+    "type": "prompt",
+    "next": {
+      "yes": "The issue could be with Kube Proxy",
+      "no": "Fix the Service targetPort and the containerPort"
+    }
+  },
+  "The issue could be with Kube Proxy": {
+    "type": "exit",
+    "code": 2
+  },
+  "Fix the Service targetPort and the containerPort": {
+    "type": "exit",
+    "code": 1
+  },
+  "The Service is running correctly": {
+    "type": "status",
+    "code": 0,
+    "next": "Can you see a list of Backends?"
+  },
+  "Can you see a list of Backends?": {
+    "type": "prompt",
+    "hint": "% kubectl describe ingress <ingress-name>",
+    "next": {
+      "yes": "Can you visit the app? (1)",
+      "no": "Are the serviceName and servicePort matching the Service?"
+    }
+  },
+  "Are the serviceName and servicePort matching the Service?": {
+    "type": "prompt",
+    "next": {
+      "yes": "The issue is specific to the Ingress controller. Consult the docs for your Ingress.",
+      "no": "Fix the ingress service.name and service.port.number"
+    }
+  },
+  "Fix the ingress service.name and service.port.number": {
+    "type": "exit",
+    "code": 1
+  },
+  "Can you visit the app? (1)": {
+    "type": "prompt",
+    "hint": "% kubectl port-forward <ingress-pod-name> 8080:<ingress-port>",
+    "next": {
+      "yes": "The Ingress is running correctly",
+      "no": "The issue is specific to the Ingress controller. Consult the docs for your Ingress."
+    }
+  },
+  "The issue is specific to the Ingress controller. Consult the docs for your Ingress.": {
+    "type": "exit",
+    "code": 2
+  },
+  "The Ingress is running correctly": {
+    "type": "status",
+    "code": 0,
+    "next": "The app should be working. Can you visit it from the public internet?"
+  },
+  "The app should be working. Can you visit it from the public internet?": {
+    "type": "prompt",
+    "next": {
+      "yes": "Nothing more to do",
+      "no": "The issue is likely to be with the infrastructure and how the cluster is exposed."
+    }
+  },
+  "The issue is likely to be with the infrastructure and how the cluster is exposed.": {
+    "type": "exit",
+    "code": 2
+  },
+  "Nothing more to do": {
+    "type": "exit",
+    "code": 0
+  }
+}

@@ -67,6 +67,7 @@ packages += lynx firefox
 
 # Platforms
 packages += aws az k8s
+k8s: utils
 
 # Uncategorized
 packages += direnv gimp git gnupg info irc ldap less locate org ssh units utils wget work
