@@ -14,6 +14,7 @@
 # Machine-specific user data
 /lynx/.config/lynx/bookmarks.html
 /work/.local/share/acronyms/
+/node/.npmrc
 
 # Machine-specific environments, profiles, and scripts should be placed in
 # ~/.environ.d, ~/.profile.d, and ~/.local/bin, respectively.  Just don't add
