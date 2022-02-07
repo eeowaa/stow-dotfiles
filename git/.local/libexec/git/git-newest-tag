@@ -1,0 +1,4 @@
+#!/bin/sh
+## Show the newest tag in a git repo (not only reachable from HEAD)
+git fetch --tags
+git describe --tags `git rev-list --tags --max-count=1`

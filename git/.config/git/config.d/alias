@@ -16,6 +16,7 @@
 	ignored = !~/.local/libexec/git/git-ignored
 	pager = !~/.local/libexec/git/git-pager
 	ls-dupes = !~/.local/libexec/git/git-ls-dupes
+	newest-tag = !~/.local/libexec/git/git-newest-tag
 
     # Compound commands
     overview = graph --all --simplify-by-decoration
