@@ -79,7 +79,8 @@ packages += aws az k8s docker
 k8s: utils
 
 # Databases
-packages += ldap mongo
+packages += ldap mongo redis
+redis: docker
 
 # Reference
 packages += info locate org units

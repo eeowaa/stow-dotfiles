@@ -1,0 +1,45 @@
+#!/bin/sh
+## Requires: docker
+
+# Perform one-shot operations
+case $1 in
+-h|--help)
+    cat <<EOF
+Usage: redisinsight [OPTION]...
+Wrapper for redislabs/redisinsight container
+
+Options:
+  -h, --help     Display this help text and exit
+  -p, --pull     Pull the latest image
+  -r, --restart  Restart the container
+  -k, --kill     Kill the container
+
+When no options are given:
+  1. Start a container if there is not already one running
+  2. Open RedisInsights in a web browser
+EOF
+    exit 0 ;;
+-p|--pull)
+    docker pull redislabs/redisinsight:latest
+    exit $? ;;
+-r|--restart)
+    docker restart redisinsight
+    exit $? ;;
+-k|--kill)
+    docker kill redisinsight
+    exit $? ;;
+esac
+
+# Start a container if there is not already one running
+case `docker ps --quiet --filter name=redisinsight` in
+'') docker run \
+        --name redisinsight \
+        --detach \
+        --rm \
+        --volume redisinsight:/db \
+        --publish 8001:8001 \
+        redislabs/redisinsight:latest ;;
+esac
+
+# Open RedisInsights in a web browser
+xdg-open http://localhost:8001
