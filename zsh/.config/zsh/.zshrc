@@ -2,7 +2,14 @@ if [ "$DEBUG" ]; then
     echo >&2 "Sourcing: ${(%):-%N}"
 fi
 
-# Initialize command completion
+# TODO: Initialize command completion
+# NOTE: These are the paths to look at:
+# - /usr/share/zsh/5.8/functions/{bashcompinit,compinstall,compinit.compdump}
+# - /usr/share/zsh/site-functions/{fzf,kompose,_code} # fzf is completion.zsh
+# - ~/.config/zsh/site-functions
+# - ~/.cache/zsh/zcompdump
+# - /usr/share/fzf/shell/key-bindings.zsh
+# - ~/.profile.d/
 export fpath=($ZDOTDIR/site-functions $fpath)
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
