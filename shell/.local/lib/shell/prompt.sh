@@ -82,19 +82,6 @@ prompt()
     *)
         # ${1}: Identifier of global variable to hold response value
         local prompt_variable=$1
-
-        # ${N}: Last option in list to be presented to the user
-        local prompt_last=`eval echo\ \"\\$$#\"`
-
-        # Remove ${1} and ${N} from positional parameters
-        shift
-        local prompt_unshift='set x'
-        while test $# -gt 1
-        do
-            prompt_unshift="$prompt_unshift $1"
-            shift
-        done
-        eval "$prompt_unshift"
         shift
 
         # Build prompt string
@@ -103,7 +90,7 @@ prompt()
         do
             prompt_str=$prompt_str$prompt_opt$PROMPT_DELIM
         done
-        prompt_str=$prompt_str$prompt_last$PROMPT_CLOSE$PROMPT_PS1
+        prompt_str=${prompt_str%"$PROMPT_DELIM"}$PROMPT_CLOSE$PROMPT_PS1
 
         # Keep prompting until a valid selection has been made
         echo
