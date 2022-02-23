@@ -31,10 +31,10 @@ cygwin: linux $(srcdir)/cygwin/.local/opt/cygtools/.git
 endif
 
 # Graphics
-packages += X11
+packages += X11 gimp
 
 # WMs and DEs
-packages += i3 # doesn't necessarily need X11
+packages += i3
 
 # Terminals
 packages += xterm tmux
@@ -59,20 +59,36 @@ doom: private STOWFLAGS := $(filter-out --no-folding,$(STOWFLAGS))
 doom: emacs $(srcdir)/doom/.config/doom/.git
 vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
 
+# Pagers
+packages += bat less
+
+# Browsers
+packages += wget lynx firefox
+
+# Security
+packages += bw gnupg openssl ssh
+
+# Development
+packages += direnv git irc
+
 # Languages
 packages += dotnet go node perl python rust
 
-# Browsers
-packages += lynx firefox
-
 # Platforms
-packages += aws az k8s
+packages += aws az k8s docker
 k8s: utils
 
-# Uncategorized
-packages += bat direnv gimp git gnupg info irc ldap less locate org ssh units utils wget work
-gitlinks += $(srcdir)/org/org/.git $(srcdir)/utils/.local/opt/mailconvert/.git
+# Databases
+packages += ldap mongo
+
+# Reference
+packages += info locate org units
+gitlinks += $(srcdir)/org/org/.git
 org: $(srcdir)/org/org/.git
+
+# Miscellaneous
+packages += utils work
+gitlinks += $(srcdir)/utils/.local/opt/mailconvert/.git
 utils: $(srcdir)/utils/.local/opt/mailconvert/.git
 
 # Local Configuration
