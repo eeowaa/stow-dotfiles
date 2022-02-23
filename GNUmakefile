@@ -70,7 +70,7 @@ packages += aws az k8s
 k8s: utils
 
 # Uncategorized
-packages += direnv gimp git gnupg info irc ldap less locate org ssh units utils wget work
+packages += bat direnv gimp git gnupg info irc ldap less locate org ssh units utils wget work
 gitlinks += $(srcdir)/org/org/.git $(srcdir)/utils/.local/opt/mailconvert/.git
 org: $(srcdir)/org/org/.git
 utils: $(srcdir)/utils/.local/opt/mailconvert/.git
