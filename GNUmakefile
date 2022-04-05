@@ -79,7 +79,7 @@ packages += aws az k8s docker
 k8s: utils
 
 # Databases
-packages += ldap mongo redis
+packages += ldap mongo redis elastic
 redis: docker
 
 # Reference
