@@ -1,0 +1,24 @@
+#!/bin/sh
+## Open README files in the current working directory in $EDITOR
+## Requires: findutils
+
+case `(echo README*) 2>/dev/null` in
+''|'README*')
+    # If no README files exist, a new one is genenerated based on the structure
+    # of the current working directory
+    local listing=`ls -F1 --group-directories-first`
+    echo "$listing" | awk '
+    BEGIN {
+        print "# Directory contents"
+        print "## Directories"
+    }
+    !x && /[^\/]$/ {
+        print "## Files"
+        x = 1
+    }
+    $0 != "README.md" {
+        print "###", $0
+    }' >README.md
+    $EDITOR README.md ;;
+*)  $EDITOR README* ;;
+esac
