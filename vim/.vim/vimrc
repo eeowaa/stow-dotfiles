@@ -15,7 +15,13 @@ let g:bookmark_sign='>>'
 let g:bookmark_annotation_sign='##'
 let g:lisp_rainbow=1
 let g:surround_35="**\r**"
+" }}}
+" NetRW {{{
 " XXX let g:netrw_home="$XDG_CACHE_HOME/vim"
+let g:netrw_list_hide='^\..*/$,\.sw[nop]$,^Session\.vim$' " cycle with `a`, toggle hidden with `gh`
+let g:netrw_banner=0 " toggle with `I`
+" let g:netrw_liststyle=3 " cycle with `i`
+" let g:netrw_browse_split=4
 " }}}
 " Diffing {{{
 " Override diff highlighting for all colorschemes
