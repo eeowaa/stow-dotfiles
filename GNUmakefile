@@ -82,6 +82,9 @@ k8s: utils
 packages += ldap mongo redis elastic
 redis: docker
 
+# Automation
+packages += ansible
+
 # Reference
 packages += info locate org units
 gitlinks += $(srcdir)/org/org/.git
