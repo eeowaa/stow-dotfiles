@@ -1,0 +1,45 @@
+#!/bin/sh
+## Requires: docker
+
+# Perform one-shot operations
+case $1 in
+-h|--help)
+    cat <<EOF
+Usage: cerebro [OPTION]...
+Wrapper for lmenezes/cerebro container
+
+Options:
+  -h, --help     Display this help text and exit
+  -p, --pull     Pull the latest image
+  -r, --restart  Restart the container
+  -k, --kill     Kill the container
+
+When no options are given:
+  1. Start a container if there is not already one running
+  2. Open Cerebro in a web browser
+EOF
+    exit 0 ;;
+-p|--pull)
+    docker pull lmenezes/cerebro:latest
+    exit $? ;;
+-r|--restart)
+    docker restart cerebro
+    exit $? ;;
+-k|--kill)
+    docker kill cerebro
+    exit $? ;;
+esac
+
+# Start a container if there is not already one running
+# TODO: Look into adding a volume, just like with RedisInsights
+case `docker ps --quiet --filter name=cerebro` in
+'') docker run \
+        --name cerebro \
+        --detach \
+        --rm \
+        --publish 9000:9000 \
+        lmenezes/cerebro:latest ;;
+esac
+
+# Open Cerebro in a web browser
+xdg-open http://localhost:9000
