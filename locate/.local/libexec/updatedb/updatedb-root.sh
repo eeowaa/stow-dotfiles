@@ -1,11 +1,14 @@
 #!/bin/sh
 case `uname -s` in
 CYGWIN_NT*)
-    cygdrive=`mount -p | awk 'NR == 2 { print $1 }'` ;;
-*)  cygdrive= ;;
+    private=
+    findopts='--findoptions=( -type d -name .git -print0 -prune ) -o'
+    cygdrive=`mount -p | awk 'NR == 2 { print $1 }' | sed 's/[ 	]/\\&/g'` ;;
+*)  private='--require-visibility=no'
+    findopts=
+    cygdrive=`echo "$HOME" | sed 's/[ 	]/\\&/g'` ;;
 esac
 
-/usr/bin/env updatedb --prunefs= \
+/usr/bin/env updatedb $private --prunefs= \
     --prunepaths="$cygdrive /tmp /usr/tmp /var/tmp /var/lock /var/run /run /media /mnt /proc" \
-    --findoptions='( -type d -name .git -print0 -prune ) -o' \
-    --output="$XDG_CACHE_HOME/locate/locatedb.root"
+    ${findopts:+"$findopts"} --output="$XDG_CACHE_HOME/locate/locatedb.root"
