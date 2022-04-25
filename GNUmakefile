@@ -16,8 +16,14 @@ ifeq ($(UNAME_S),Darwin)
 MACOS := 1
 packages := macos
 else ifeq ($(UNAME_S),Linux)
+UNAME_R := $(shell uname -r)
+ifneq (,$(findstring WSL2,$(UNAME_R))) # e.g. 5.10.16.3-microsoft-standard-WSL2
+WSL2 := 1
+packages := wsl2
+else
 LINUX := 1
 packages := linux
+endif
 else ifneq (,$(findstring CYGWIN,$(UNAME_S))) # e.g. CYGWIN_NT-10.0
 # Do not override the standard CYGWIN environment variable
 # <https://cygwin.com/cygwin-ug-net/using-cygwinenv.html>
