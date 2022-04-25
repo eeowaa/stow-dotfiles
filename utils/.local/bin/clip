@@ -47,7 +47,7 @@ esac
 case `uname -r` in
 *-Microsoft|*-microsoft-standard-WSL2)
     case $mode in
-    paste) powershell.exe -noprofile -command Get-Clipboard | tr -d '\r' ;;
+    paste) powershell.exe -noprofile -command Get-Clipboard | tr -d '\r' | perl -pe 'chomp if eof' ;;
     copy)  perl -pe 'chomp if eof' | clip.exe ;;
     esac
     exit ;;
