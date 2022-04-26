@@ -39,6 +39,9 @@ endif
 # Graphics
 packages += X11 gimp
 
+# Media
+packages += ffmpeg
+
 # WMs and DEs
 packages += i3
 

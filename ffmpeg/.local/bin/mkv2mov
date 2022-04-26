@@ -1,0 +1,34 @@
+#!/bin/sh
+# Simple utility to convert .mkv videos (produced by OBS) to .mov videos used by Davinci Resolve
+# WARNING: The .mov files produced are uncompressed and large (needed by Davinci Resolve)
+# WARNING: Use qwinff (GUI) instead to produce smaller .mov files for sharing with others
+# <https://gitlab.com/Vashinator/ffmpeg-script-for-obs-recordings-to-davinci-resolve/tree/master>
+progname=`basename "$0"`
+die() {
+    echo >&2 "$progname: error: $*"
+    exit 1
+}
+case $1 in
+-h|--help)
+    cat <<EOF
+Usage: $progname [-h | --help] INFILE [OUTFILE]
+INFILE must be a Matroska data file with a .mkv extention
+OUTFILE defaults to INFILE with .mkv replaced with .mov
+EOF
+    exit 0 ;;
+*.mkv)
+    infile=$1
+    [ -f "$infile" ] || die "not a file: $infile"
+    case $# in
+    1) outfile=`echo "$infile" | sed 's/\.mkv$/.mov/'` ;;
+    2) outfile=$2 ;;
+    *) die 'too many arguments (see --help)' ;;
+    esac ;;
+*)  die "argument must be filename ending in .mkv: $infile" ;;
+esac
+ffmpeg \
+    -i "$infile" \
+    -c:v dnxhd \
+    -profile:v dnxhr_hq \
+    -pix_fmt yuv422p \
+    -c:a pcm_s16le "$outfile"
