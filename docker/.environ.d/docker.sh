@@ -30,5 +30,5 @@ for my $i (0 .. $#ARGV) {
         last;
     }
 }
-exec "docker", @ARGV;' ${1+"$@"}
+exec "docker", @ARGV;' -- ${1+"$@"}
 }
