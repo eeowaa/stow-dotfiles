@@ -1,0 +1,80 @@
+#!/bin/sh
+BASE=$1 LOCAL=$2 REMOTE=$3 MERGED=$4
+
+# If there is no common ancestor, open /dev/null in vimdiff to preserve buffer
+# numbering corresponding to index stages
+[ "X$BASE" = X ] && BASE=/dev/null
+
+# Make sure that all variables exist and correspond to files that exist
+error() {
+    echo >&2 "$*"
+    have_files=false
+}
+have_files=true
+for var in BASE LOCAL REMOTE MERGED
+do
+    eval "\
+if [ \"X\$$var\" = X ]
+then error 'unset variable: $var'
+elif [ -f \"\$$var\" ]
+then : OK
+else error \"nonexistent file: \$$var\"
+fi"
+done
+[ $have_files = true ] || exit 2
+
+# Open files in vim in order corresponding to index stages
+# FIXME: Include buffer1 in the diffthis (requires ENTER)
+vim -c "buffer4 \
+| topleft split | buffer2 \
+| vertical rightbelow split | buffer3 \
+| wincmd j \
+| windo diffthis \
+| windo set number wrap" \
+"$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+
+# Window arrangement in Vim:
+#
+#   +------------------------------------+-------------------------------------+
+#   |                                    |                                     |
+#   | File Path:       $LOCAL            | File Path:        $REMOTE           |
+#   | Git Commit Ref:  HEAD              | Git Commit Ref:   MERGE_HEAD        |
+#   | Git Index Stage: 2                 | Git Index Stage:  3                 |
+#   | Vim Buffer:      2                 | Vim Buffer:       3                 |
+#   |                                    |                                     |
+#   +------------------------------------+-------------------------------------+
+#   |                                                                          |
+#   |                       File Path:       $MERGED                           |
+#   |                       Git Commit Ref:  unstaged                          |
+#   |                       Git Index Stage: 0 (after merge)                   |
+#   |                       Vim Buffer:      4                                 |
+#   |                                                                          |
+#   +--------------------------------------------------------------------------+
+#
+# Hidden buffer in Vim:
+#
+#   - File Path:       $BASE
+#   - Git Commit Ref:  $(git merge-base HEAD MERGE_HEAD)
+#   - Git Index Stage: 1
+#   - Vim Buffer:      1
+#
+# Notes and hints:
+#
+#   - The $BASE buffer is hidden to preserve screen real estate and to simplify
+#     the interface. Use CTRL-^ in the bottom window to jump between $MERGED and
+#     $BASE, or use :b1 from anywhere to open $BASE.
+#
+#   - From $MERGED, use 2do and 3do to obtain diff chunks from $LOCAL and
+#     $REMOTE, respectively. Use [range]diffget [2|3] to obtain chunks over a
+#     given range.  From $LOCAL or $REMOTE, use 4dp to put diff chunks into
+#     $MERGED. Use [range]diffput 4 to put chunks in a given range.
+#
+#   - The contents of buffers 1 through 3 are populated from the blob objects
+#     in the git index corresponding to :1:<path>, :2:<path>, and :3:<path>.
+#     These index stages respectively correspond to blobs in the database:
+#     $(git merge-base HEAD MERGE_HEAD):<path>, HEAD:<path>, and MERGE_HEAD:<path>.
+#
+#   - To finalize the merge, save buffer 4 and quit Vim normally. To abandon the
+#     merge, quit Vim using :cq!, which will signal to Git to ignore the results
+#     (at least when mergetool.trustExistCode is set to true, which it is in my
+#     config).

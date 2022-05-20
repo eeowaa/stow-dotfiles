@@ -1,6 +1,6 @@
 [merge]
-	# Use vimdiff and meld (-g) as mergetools; override with -t
-	tool = vimdiff
+	# Use vimdiff wrapper and meld (-g) as mergetools; override with -t
+	tool = git-vimdiff
 	guitool = meld
 
 [mergetool]
@@ -9,6 +9,10 @@
 
 	# Allow :cq from within vimdiff to stop git-mergetool completely
 	trustExitCode = true
+
+# Use a wrapper for vimdiff that helps to simplify the interface
+[mergetool "git-vimdiff"]
+	cmd = git-vimdiff \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
 
 # Add vscode as a mergetool
 [mergetool "vscode"]
