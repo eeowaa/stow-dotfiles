@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+## Launch a flatpak
+## Requires: bash fzf
+app=`flatpak list | cut -f2 | fzf`
+flatpak run "$app" >/dev/null 2>&1 &
+disown %1

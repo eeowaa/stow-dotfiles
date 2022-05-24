@@ -84,7 +84,7 @@ packages += direnv git irc
 packages += dotnet go node perl python rust
 
 # Platforms
-packages += aws az k8s docker
+packages += aws az k8s docker flatpak
 k8s: utils
 
 # Databases
