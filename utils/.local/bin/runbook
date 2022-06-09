@@ -23,7 +23,7 @@ OPTIONS
 
 ENVIRONMENT
   RUNBOOK_DIR     Defaults to \${XDG_DATA_HOME:-\$HOME/.local/share}/runbooks
-  SHELL_LIB_PATH  Required for sourcing the prompt.sh library
+  SHELL_LIB_DIR   Required for sourcing the prompt.sh library
 EOF
         exit 0 ;;
     -l|--list)
@@ -50,10 +50,10 @@ done
 [ "X$runbook" = X ] && die 'missing argument: RUNBOOK'
 
 # Source prompt.sh
-[ "${SHELL_LIB_PATH:+X}" = X ] || die 'unset variable: SHELL_LIB_PATH'
-[ -d "$SHELL_LIB_PATH" ] || die "not a directory: $SHELL_LIB_PATH"
-[ -f "$SHELL_LIB_PATH/prompt.sh" ] || "missing file: $SHELL_LIB_PATH/prompt.sh"
-. "$SHELL_LIB_PATH/prompt.sh"
+[ "${SHELL_LIB_DIR:+X}" = X ] || die 'unset variable: SHELL_LIB_DIR'
+[ -d "$SHELL_LIB_DIR" ] || die "not a directory: $SHELL_LIB_DIR"
+[ -f "$SHELL_LIB_DIR/prompt.sh" ] || "missing file: $SHELL_LIB_DIR/prompt.sh"
+. "$SHELL_LIB_DIR/prompt.sh"
 
 # Program loop
 _next=`jq -r '.__meta__.start' "$runbook"`
