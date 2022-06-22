@@ -1,5 +1,45 @@
 #!/bin/sh
 ## Symlink .desktop files from Flatpaks into the system application directory
+case $1 in -f|--force) ;; *)
+    cat >&2 <<EOF
+$0: Refusing to continue.
+
+    This script could use some work.  Open it, read the TODO section, and try
+    to fix it.  If you don't feel like fixing it, run this script again with
+    the \`-f' or \`--force' flag.
+
+EOF
+    exit 1
+esac
+
+# TODO: Use a better approach
+#
+# Observations:
+# - GNOME is supposed to read .desktop files from every `applications`
+#   subdirectory of directories specified in $XDG_DATA_DIRS.
+# - $XDG_DATA_DIRS contains /var/lib/flatpak/exports/share and
+#   ~/.local/share/flatpak/exports/share.
+# - Flatpak should symlink .desktop files into
+#   /var/lib/flatpak/exports/share/applications for system flatpaks and into
+#   ~/.local/share/flatpak/exports/share/applications for user flatpaks.
+# - Beyond /usr/share/applications, there is also /usr/local/share/applications
+#   and ~/.local/share/applications.
+# - ~/.local/share/applications does not have a corresponding entry in
+#   $XDG_DATA_DIRS, but $XDG_DATA_HOME does default to ~/.local/share, and
+#   GNOME supposedly looks in ~/.local/share/applications; I need to very this.
+# - If you cannot get the Flatpak-specific `applications' directories to work,
+#   then at least try to install them into the generic `applications'
+#   directories corresponding to the installation prefix.
+# - User edits should go into a copy (not a symlink) of a .desktop file so that
+#   it won't be overwritten by application updates.
+#
+# References:
+# - https://askubuntu.com/questions/610474/can-local-share-applications-override-usr-share-applications
+# - https://www.reddit.com/r/Fedora/comments/rqfucu/desktop_files_in_localshareapplications/
+# - https://wiki.archlinux.org/title/Desktop_entries
+# - update-desktop-database(1)
+# - desktop-file-install(1)
+
 [ `id -u` -eq 0 ] || exec sudo --preserve-env=XDG_DATA_HOME "$0"
 set -x
 appdir=/usr/share/applications
