@@ -1,0 +1,9 @@
+#!/bin/sh
+## Symlink .desktop files from Flatpaks into the system application directory
+[ `id -u` -eq 0 ] || exec sudo --preserve-env=XDG_DATA_HOME "$0"
+set -x
+appdir=/usr/share/applications
+cmdstr='test -e "'$appdir'/${1##*/}" || ln -s "$1" '\'$appdir\'
+find /var/lib/flatpak/app "$XDG_DATA_HOME"/flatpak/app \
+    -path '*/export/share/applications/*' -type f -name '*.desktop' \
+    -exec /bin/sh -xc "$cmdstr" "$0" '{}' \;
