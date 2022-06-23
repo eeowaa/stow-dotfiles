@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 ## Retrieve a password from one of several backends
 ## Requires: fzf jq
 progname=`basename "$0"`
@@ -119,7 +119,7 @@ then
         for item in $available
         do  if [ "X$backend" = "X$item" ]
             then found=X
-                    break
+                 break
             else continue
             fi
         done
