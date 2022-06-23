@@ -1,0 +1,6 @@
+#!/bin/sh
+## Return the host's public IP address
+## Requires: bind-utils
+
+host myip.opendns.com resolver1.opendns.com |
+sed -n 's/^myip\.opendns\.com has address //p'
