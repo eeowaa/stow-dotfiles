@@ -26,19 +26,31 @@ esac
 #   and ~/.local/share/applications.
 # - ~/.local/share/applications does not have a corresponding entry in
 #   $XDG_DATA_DIRS, but $XDG_DATA_HOME does default to ~/.local/share, and
-#   GNOME supposedly looks in ~/.local/share/applications; I need to very this.
+#   GNOME supposedly looks in ~/.local/share/applications; I need to verify this.
 # - If you cannot get the Flatpak-specific `applications' directories to work,
 #   then at least try to install them into the generic `applications'
 #   directories corresponding to the installation prefix.
 # - User edits should go into a copy (not a symlink) of a .desktop file so that
-#   it won't be overwritten by application updates.
+#   edits won't be overwritten by application updates. However, this means that
+#   the package-installed .desktop file will be completely ignored, including
+#   any updates to the .desktop file across package updates. Unfortunately,
+#   user edits must contain an entire .desktop entry and cannot just override
+#   individual values, so there is no easy way around this.
 #
 # References:
+# - https://specifications.freedesktop.org/desktop-entry-spec/latest/index.html
 # - https://askubuntu.com/questions/610474/can-local-share-applications-override-usr-share-applications
 # - https://www.reddit.com/r/Fedora/comments/rqfucu/desktop_files_in_localshareapplications/
 # - https://wiki.archlinux.org/title/Desktop_entries
+# - https://wiki.gnome.org/Initiatives/Wayland/SessionStart
+# - https://unix.stackexchange.com/questions/317282/set-environment-variables-for-gnome-on-wayland-and-bash-on-virtual-terminals-or
 # - update-desktop-database(1)
 # - desktop-file-install(1)
+# - Specific files installed by the flatpak RPM:
+#   /etc/profile.d/flatpak.sh
+#   /usr/share/flatpak/triggers/*
+#   /usr/lib/systemd/system-environment-generators/60-flatpak-system-only
+#   /usr/lib/systemd/user-environment-generators/60-flatpak
 
 [ `id -u` -eq 0 ] || exec sudo --preserve-env=XDG_DATA_HOME "$0"
 set -x
