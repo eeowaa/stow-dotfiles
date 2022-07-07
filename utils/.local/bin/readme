@@ -6,7 +6,7 @@ case `(echo README*) 2>/dev/null` in
 ''|'README*')
     # If no README files exist, a new one is genenerated based on the structure
     # of the current working directory
-    local listing=`ls -F1 --group-directories-first`
+    listing=`ls -F1 --group-directories-first`
     echo "$listing" | awk '
     BEGIN {
         print "# Directory contents"
