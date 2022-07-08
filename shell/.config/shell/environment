@@ -53,6 +53,12 @@ up() {
     done
     OLDPWD=$startdir
 }
+goto() {
+    local target=`readlink -f "$1"`
+    [ -d "$target" ] || target=${target%/*}
+    [ -d "$target" ] && cd "$target"
+    pwd
+}
 cdsed() {
     local dest=`pwd | sed "s|$1|$2|"`
     cd "$dest"
