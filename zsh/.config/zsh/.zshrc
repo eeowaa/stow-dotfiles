@@ -19,12 +19,6 @@ autoload -Uz compinit && compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 # at least on macOS)
 export HISTFILE=$XDG_CACHE_HOME/zsh/history
 
-# Source POSIX shell environment
-# (Although ~/.profile sets ENV, it *does not always get run*,
-# in particular when running zsh as an interactive NON-LOGIN shell)
-ENV=$XDG_CONFIG_HOME/shell/environment
-[[ -f "$ENV" ]] && source "$ENV"
-
 # Use bash-like word definitions for navigation and operations
 autoload -Uz select-word-style
 select-word-style bash
@@ -47,9 +41,14 @@ bindkey '^X^E' edit-command-line
 unsetopt prompt_cr prompt_sp
 
 # ZSH prompt string
-# TODO:
-# - Add leading "..." to shortened directory paths
-# - Use the same colors as bash does for the prompt
+# TODO: Add leading "..." to shortened directory paths
+# TODO: Use the same colors as bash does for the prompt
 autoload -Uz colors
 colors
 PS1='%F{magenta}[%j]%f %F{white}%2c%f %(?.%F{green}.%F{red})$%f '
+
+# Source POSIX shell environment
+# (Although ~/.profile sets ENV, it *does not always get run*,
+# in particular when running zsh as an interactive NON-LOGIN shell)
+ENV=$XDG_CONFIG_HOME/shell/environment
+[[ -f "$ENV" ]] && source "$ENV"
