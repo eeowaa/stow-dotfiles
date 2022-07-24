@@ -9,6 +9,7 @@ ignore_vim    := .*\.sw[a-p]
 ignore_backup := .*\.bak|.*\.~[1-9]~
 ignore_pcre   := ^($(ignore_vim)|$(ignore_backup))$$
 STOWFLAGS     := --no-folding --ignore '$(ignore_pcre)'
+GITFLAGS      := --init --recursive 
 
 # Operating Systems
 UNAME_S := $(shell uname -s)
@@ -57,16 +58,25 @@ packages += shell bash zsh
 bash: shell
 zsh: shell
 
-# Editors
-packages += emacs doom vim
+# Editors - Vim
+packages += vim
+gitlinks += $(srcdir)/vim/.vim/pack/eeowaa/.git
+vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
+
+# Editors - Emacs
+packages += emacs
 ifdef MACOS
 gitlinks += $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
 emacs: $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
 endif
-gitlinks += $(srcdir)/doom/.config/doom/.git $(srcdir)/vim/.vim/pack/eeowaa/.git
+
+# Editors - Doom Emacs
+packages += doom
+doomdirs := $(addprefix $(srcdir)/doom/.local/src/,hlissner/doom-emacs-private/.git tecosaur/emacs-config/.git)
+gitlinks += $(doomdirs) $(srcdir)/doom/.config/doom/.git
+$(doomdirs): private GITFLAGS := $(filter-out --recursive,$(GITFLAGS))
 doom: private STOWFLAGS := $(filter-out --no-folding,$(STOWFLAGS))
-doom: emacs $(srcdir)/doom/.config/doom/.git
-vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
+doom: emacs $(doomdirs) $(srcdir)/doom/.config/doom/.git
 
 # Pagers
 packages += bat less
@@ -149,4 +159,4 @@ test:
 $(packages):
 	stow -d $(srcdir) -t $(prefix) $(STOWFLAGS) $@
 $(gitlinks):
-	git -C $(srcdir) submodule update --init --recursive $(patsubst $(srcdir)/%,%,$(@D))
+	git -C $(srcdir) submodule update $(GITFLAGS) $(patsubst $(srcdir)/%,%,$(@D))
