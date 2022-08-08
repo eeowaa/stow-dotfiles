@@ -1,9 +1,8 @@
 " Runtime {{{
-" XXX set undodir=$XDG_CACHE_HOME/vim/undo
-" XXX set directory=$XDG_CACHE_HOME/vim/swap
-" XXX set backupdir=$XDG_CACHE_HOME/vim/backup
-" XXX set viminfo+='1000,n$XDG_CACHE_HOME/vim/viminfo
-" XXX set runtimepath=$XDG_CONFIG_HOME/vim,$XDG_CONFIG_HOME/vim/after,$VIMRUNTIME
+set undodir=$HOME/.vim/undo,.
+set directory=$HOME/.vim/swap,.
+set backupdir=$HOME/.vim/backup,.
+set viminfo+='1000,n$HOME/.vim/viminfo
 " }}}
 " Plugins {{{
 syntax enable
@@ -17,7 +16,6 @@ let g:lisp_rainbow=1
 let g:surround_35="**\r**"
 " }}}
 " NetRW {{{
-" XXX let g:netrw_home="$XDG_CACHE_HOME/vim"
 let g:netrw_list_hide='^\..*/$,\.sw[nop]$,^Session\.vim$' " cycle with `a`, toggle hidden with `gh`
 let g:netrw_banner=0 " toggle with `I`
 " let g:netrw_liststyle=3 " cycle with `i`

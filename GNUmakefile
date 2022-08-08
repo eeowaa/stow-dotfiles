@@ -62,6 +62,8 @@ zsh: shell
 packages += vim
 gitlinks += $(srcdir)/vim/.vim/pack/eeowaa/.git
 vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
+vim-postinstall:
+	cd $(prefix)/.vim && chmod 700 undo swap backup viminfo
 
 # Editors - Emacs
 packages += emacs
