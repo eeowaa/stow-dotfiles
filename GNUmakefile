@@ -155,8 +155,13 @@ test:
 	stow -d $(srcdir) -t $(prefix) $(STOWFLAGS) -nv $(packages)
 
 # Recipes
-.PHONY: $(packages)
-$(packages):
-	stow -d $(srcdir) -t $(prefix) $(STOWFLAGS) $@
+preinstall_targets  := $(addsuffix -preinstall,$(packages))
+install_targets     := $(addsuffix -install,$(packages))
+postinstall_targets := $(addsuffix -postinstall,$(packages))
+.PHONY: $(preinstall_targets) $(install_targets) $(postinstall_targets) $(packages)
+$(install_targets): %-install: %-preinstall
+	stow -d $(srcdir) -t $(prefix) $(STOWFLAGS) $*
+$(postinstall_targets): %-postinstall: %-install
+$(packages): %: %-postinstall
 $(gitlinks):
 	git -C $(srcdir) submodule update $(GITFLAGS) $(patsubst $(srcdir)/%,%,$(@D))
