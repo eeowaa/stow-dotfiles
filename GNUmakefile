@@ -90,7 +90,7 @@ packages += wget lynx firefox
 packages += bw gnupg openssl ssh
 
 # Development
-packages += direnv git irc
+packages += direnv gdb git irc
 
 # Languages
 packages += dotnet go node perl python rust
