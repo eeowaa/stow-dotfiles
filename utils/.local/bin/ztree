@@ -1,0 +1,69 @@
+#!/bin/sh
+## List the contents of a zip archive recursively (small zipfiles only)
+## Requires: unzip tree
+progname=`basename "$0"`
+usage="Usage: $progname ZIPFILE"
+
+# Parse command line arguments
+case $1 in
+-h|--help) 
+    echo "$usage"
+    exit $? ;;
+esac
+[ $# -eq 1 ] || {
+    echo "$usage" >&2
+    exit 1
+}
+zipfile=$1
+file "$zipfile" | grep 'Zip archive data' >/dev/null || {
+    echo "$progname: not a zip archive: $zipfile" >&2
+    exit 1
+}
+
+# Check for required commands
+status=0
+for tool in unzip tree
+do
+    which "$tool" >/dev/null 2>&1 || {
+        status=1
+        echo "$progname: missing required command: $tool" >&2
+    }
+done
+[ $status -eq 0 ] || exit 1
+
+# Create temporary directory and copy zipfile to it
+ZTREE_TMPDIR=`mktemp -d`
+trap "rm -rf '$ZTREE_TMPDIR'" 0 1 2 3 15
+cp "$zipfile" "$ZTREE_TMPDIR"
+cd "$ZTREE_TMPDIR"
+
+# Create a script to extract a zipfile into its own directory
+cat >"$ZTREE_TMPDIR/extract" <<\EOF
+#!/bin/sh
+zipfile=$1
+
+# Exit if the supplied argument is not a zipfile
+file "$zipfile" | grep 'Zip archive data' >/dev/null || exit 1
+
+# Move <zipfile> to a new directory named <zipfile>/
+mkdir "$zipfile".d
+mv "$zipfile" "$zipfile".d
+mv "$zipfile".d "$zipfile"
+
+# Extract <zipfile>/<zipfile> within <zipfile>/ and remove it
+cd "$zipfile"
+unzip -q "$zipfile"
+rm "$zipfile"
+
+# Extract more zipfiles that live under this directory
+find . -type f -execdir "$ZTREE_TMPDIR/extract" '{}' \;
+EOF
+chmod +x "$ZTREE_TMPDIR/extract"
+
+# Recursively extract the zipfile
+export ZTREE_TMPDIR
+find . -type f -execdir "$ZTREE_TMPDIR/extract" '{}' \;
+
+# List the contents of the zipfile
+cd "$ZTREE_TMPDIR"
+tree -n --noreport "$zipfile"
