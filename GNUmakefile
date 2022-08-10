@@ -104,7 +104,7 @@ packages += ldap mongo redis elastic
 redis: docker
 
 # Automation
-packages += ansible
+packages += ansible topgrade
 
 # Reference
 packages += info locate org units
