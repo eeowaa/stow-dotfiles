@@ -87,7 +87,7 @@ packages += bat less
 packages += wget lynx firefox
 
 # Security
-packages += bw gnupg openssl ssh
+packages += bw openssl ssh
 
 # Development
 packages += direnv gdb git irc
