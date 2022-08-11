@@ -74,10 +74,10 @@ endif
 
 # Editors - Doom Emacs
 packages += doom
-doomdirs := $(addprefix $(srcdir)/doom/.local/src/,hlissner/doom-emacs-private/.git tecosaur/emacs-config/.git)
+doomdirs := $(addprefix $(srcdir)/doom/.local/src/doom/,hlissner/doom-emacs-private/.git tecosaur/emacs-config/.git)
 gitlinks += $(doomdirs) $(srcdir)/doom/.config/doom/.git
-$(doomdirs): private GITFLAGS := $(filter-out --recursive,$(GITFLAGS))
-doom: private STOWFLAGS := $(filter-out --no-folding,$(STOWFLAGS))
+$(doomdirs): GITFLAGS := $(filter-out --recursive,$(GITFLAGS))
+doom: STOWFLAGS := $(filter-out --no-folding,$(STOWFLAGS))
 doom: emacs $(doomdirs) $(srcdir)/doom/.config/doom/.git
 
 # Pagers

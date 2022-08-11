@@ -38,11 +38,11 @@
 
 # Reference Doom Emacs configurations
 [submodule "hlissner/doom-emacs-private"]
-	path = doom/.local/src/hlissner/doom-emacs-private
+	path = doom/.local/src/doom/hlissner/doom-emacs-private
 	url = git@github.com:hlissner/doom-emacs-private.git
 	branch = master
 [submodule "tecosaur/emacs-config"]
-	path = doom/.local/src/tecosaur/emacs-config
+	path = doom/.local/src/doom/tecosaur/emacs-config
 	url = git@github.com:tecosaur/emacs-config.git
 	branch = master
 
