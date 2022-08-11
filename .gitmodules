@@ -48,6 +48,6 @@
 
 # For native-comp Emacs on macOS
 [submodule "build-emacs-for-macos"]
-	path = emacs/.local/src/build-emacs-for-macos
+	path = emacs/.local/src/emacs/build-emacs-for-macos
 	url = git@github.com:jimeh/build-emacs-for-macos.git
 	branch = master

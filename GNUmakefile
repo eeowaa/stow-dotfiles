@@ -68,8 +68,8 @@ vim-postinstall:
 # Editors - Emacs
 packages += emacs
 ifdef MACOS
-gitlinks += $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
-emacs: $(srcdir)/emacs/.local/src/build-emacs-for-macos/.git
+gitlinks += $(srcdir)/emacs/.local/src/emacs/build-emacs-for-macos/.git
+emacs: $(srcdir)/emacs/.local/src/emacs/build-emacs-for-macos/.git
 endif
 
 # Editors - Doom Emacs
