@@ -121,6 +121,11 @@ autocmd BufNewFile,BufRead *.{md,markdown} set
     \ syntax=markdown filetype=markdown
     \ makeprg=pandoc\ -f\ markdown\ -t\ html\ -o\ '%<.html'\ '%'
 " }}}
+" Terraform {{{
+autocmd BufNewFile,BufRead *.tf set
+    \ filetype=terraform
+    \ tabstop=2 shiftwidth=2 expandtab
+" }}}
 " VB.NET {{{
 autocmd BufNewFile,BufRead *.vb set
     \ filetype=vbnet
