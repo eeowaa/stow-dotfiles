@@ -38,7 +38,7 @@ cygwin: linux $(srcdir)/cygwin/.local/opt/cygtools/.git
 endif
 
 # Graphics
-packages += X11 gimp
+packages += X11
 
 # Media
 packages += ffmpeg
