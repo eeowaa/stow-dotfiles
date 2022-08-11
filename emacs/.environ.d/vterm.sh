@@ -1,14 +1,12 @@
 [ "X$INSIDE_EMACS" = Xvterm ] && {
 
 # Helper function used to send escape sequences to vterm.
-vterm_printf() {
-    if [ -n "$TMUX" ]
-    then
-        case ${TERM%%-*} in tmux|screen)
-            printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-        esac
-    elif [ "X${TERM%%-*}" = Xscreen ]
-    then
+vterm_printf(){
+    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
+        # Tell tmux to pass the escape sequences through
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
         printf "\eP\e]%s\007\e\\" "$1"
     else
         printf "\e]%s\e\\" "$1"
@@ -18,14 +16,10 @@ vterm_printf() {
 # Execute elisp functions directly from vterm. Only functions specified in
 # `vterm-eval-cmds` are allowed to be executed.
 vterm_cmd() {
-    local vterm_elisp=
-    while [ $# -gt 0 ]
-    do
-        # The nested $(printf) statements are required in order to handle
-        # arguments with spaces in them. For example, `vterm_cmd message "hello world"`
-        # only writes "hello" when using a simplified version of the following
-        # variable assignment. Ignore your urge to refactor and just go with it.
-        vterm_elisp=$vterm_elisp$(printf '"%s" ' "$(printf "%s" "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')")
+    local vterm_elisp
+    vterm_elisp=""
+    while [ $# -gt 0 ]; do
+        vterm_elisp="$vterm_elisp""$(printf '"%s" ' "$(printf "%s" "$1" | sed -e 's|\\|\\\\|g' -e 's|"|\\"|g')")"
         shift
     done
     vterm_printf "51;E$vterm_elisp"
