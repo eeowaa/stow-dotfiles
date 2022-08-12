@@ -84,7 +84,7 @@ doom: emacs $(doomdirs) $(srcdir)/doom/.config/doom/.git
 packages += bat less
 
 # Browsers
-packages += wget lynx firefox
+packages += lynx firefox
 
 # Security
 packages += bw openssl ssh
