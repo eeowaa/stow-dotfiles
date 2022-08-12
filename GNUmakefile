@@ -107,7 +107,7 @@ redis: docker
 packages += ansible topgrade
 
 # Reference
-packages += info locate org units
+packages += info locate org
 gitlinks += $(srcdir)/org/org/.git
 org: $(srcdir)/org/org/.git
 
