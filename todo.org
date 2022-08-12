@@ -21,9 +21,9 @@ I would like to reorganize the =GNUmakefile= targets first, so that my
 documentation can mirror the =GNUmakefile=.
 
 ** DONE Discuss the XDG Base Directory specification
-* Makefile [3/5]
+* Makefile [4/5]
 ** TODO Reorganize =Makefile= targets according to =.stash/.local/etc/modules=
-** HOLD Define dependencies between each target
+** DONE Define dependencies between each target
 I would like to reorganize the =GNUmakefile= targets first, which might help in
 discovering dependencies.
 
@@ -49,27 +49,56 @@ I just asked a question on StackOverflow:
 ** DONE Modify the ~stow~ invocation to allow this repo to be cloned anywhere
 I would rather clone to =~/src/life/stow-dotfiles= than to =~/stow-dotfiles=
 
-* Dotfiles [4/11]
-** STRT Fix XDG Base Directory compliance for ZSH
+* Dotfiles [9/12]
+** STRT Remove XDG Base Directory compliance
+Before I get to this, I'd like to finish compliance across all the programs I
+/currently/ have dotfiles for (I'm closer to achieving that than backing out).
+Any newly-added program dotfiles should just use default paths.
+
+*UPDATE*: I've changed my mind on this. I'd rather just remove XDG conformity
+(notice the subtle change in vocabulary) because I don't see a point anymore.
+I've already started ripping out useless XDG stuff. The following packages could
+/potentially/ still use some work:
+
+- [ ] aws
+- [ ] bash
+- [ ] linux
+- [ ] lynx
+- [ ] node
+- [ ] perl
+- [ ] python
+- [ ] X11
+- [ ] xterm
+- [ ] zsh
+
+** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
+There is room for speed improvements. I think that ~npx~ might have something to
+do with the slowness.
+
+** TODO Create packages containing config for certain package combinations
+For example, macOS-specific Emacs configuration could go in a =macos+emacs=
+package, rather than in =macos= or =emacs=.
+
+** KILL Fix XDG Base Directory compliance for ZSH
 |   | From                    | To                                | How           |
 |---+-------------------------+-----------------------------------+---------------|
 | Y | =$ZDOTDIR/.zsh_history= | =$XDG_CACHE_HOME/zsh/history=     | ~HISTFILE~    |
 | ? | =$ZDOTDIR/.zcompdump=   | =$XDG_CACHE_HOME/zsh/zcompdump=   | ~compinit -d~ |
 |   | =$ZDOTDIR/.zcompcache/= | =$XDG_CACHE_HOME/zsh/zcompcache/= |               |
 
-** STRT Fix XDG Base Directory compliance for Bash
+** KILL Fix XDG Base Directory compliance for Bash
 |   | From                  | To                             | How        |
 |---+-----------------------+--------------------------------+------------|
 | ? | =$HOME/.bash_history= | =$XDG_CACHE_HOME/bash/history= | ~HISTFILE~ |
 
-** STRT Fix XDG Base Directory compliance for Node
+** KILL Fix XDG Base Directory compliance for Node
 |   | From                          | To                                     | How                 |
 |---+-------------------------------+----------------------------------------+---------------------|
 | X | =$HOME/.npm/=                 | other various directories              | Arch Wiki           |
 | X | =$HOME/.node_repl_history=    | =$XDG_CACHE_HOME/node/repl_history=    | ~NODE_REPL_HISTORY~ |
 |   | =$HOME/.ts_node_repl_history= | =$XDG_CACHE_HOME/ts_node/repl_history= |                     |
 
-** STRT Group Vim files
+** KILL Group Vim files
 Because Vim doesn't load packages from =$XDG_CONFIG_HOME/vim/pack/=, this is one
 case where I use the default =$HOME/.vim/= and don't even try to fight it
 (although I could symlink that directory to =$XDG_CONFIG_HOME/vim/=).
@@ -80,22 +109,9 @@ case where I use the default =$HOME/.vim/= and don't even try to fight it
 
 https://vi.stackexchange.com/questions/14357/moving-viminfo-file-to-vim-dir
 
-** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
-There is room for speed improvements. I think that ~npx~ might have something to
-do with the slowness.
-
-** TODO Create packages containing config for certain package combinations
-For example, macOS-specific Emacs configuration could go in a =macos+emacs=
-package, rather than in =macos= or =emacs=.
-
-** HOLD Move history files from =$XDG_CACHE_HOME= to =$XDG_DATA_HOME=
+** KILL Move history files from =$XDG_CACHE_HOME= to =$XDG_DATA_HOME=
 This is the standard. But first I'd like to finish fumbling through it the
 "wrong" way I've been doing, for consistency's sake.
-
-** HOLD Remove XDG Base Directory compliance
-Before I get to this, I'd like to finish compliance across all the programs I
-/currently/ have dotfiles for (I'm closer to achieving that than backing out).
-Any newly-added program dotfiles should just use default paths.
 
 ** DONE Ignore specific ~shellcheck~ violations
 - SC1007 :: https://github.com/koalaman/shellcheck/wiki/SC1007
