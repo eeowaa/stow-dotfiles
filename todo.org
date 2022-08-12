@@ -57,19 +57,23 @@ Any newly-added program dotfiles should just use default paths.
 
 *UPDATE*: I've changed my mind on this. I'd rather just remove XDG conformity
 (notice the subtle change in vocabulary) because I don't see a point anymore.
-I've already started ripping out useless XDG stuff. The following packages could
-/potentially/ still use some work:
+I've already started ripping out useless XDG stuff. Here are some commands to
+determine where XDG compliance could /potentially/ still be removed:
 
-- [ ] aws
-- [ ] bash
-- [ ] linux
-- [ ] lynx
-- [ ] node
-- [ ] perl
-- [ ] python
-- [ ] X11
-- [ ] xterm
-- [ ] zsh
+#+name: .profile.d/* files with XDG configuration
+#+begin_src sh :results verbatim
+git grep -l '=.*\$XDG_' -- ':/*/.profile.d/*.sh'
+#+end_src
+
+#+name: .environ.d/* files with XDG configuration
+#+begin_src sh :results verbatim
+git grep -l 'alias.*XDG_' -- ':/*/.environ.d/*.sh'
+#+end_src
+
+#+name: All files referencing XDG variables
+#+begin_src sh :results verbatim
+git grep -l 'XDG_'
+#+end_src
 
 ** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
 There is room for speed improvements. I think that ~npx~ might have something to

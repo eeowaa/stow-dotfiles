@@ -13,11 +13,59 @@ These are my dotfiles managed with GNU Stow. Use in conjunction with
 
 * Usage
 #+begin_src sh :eval no
+make list         # List packages
+.bin/listdeps     # List packages and their external dependencies
+
 make configure    # Decide which packages you want
-make [PACKAGE]... # Install specified packages and their dependencies
+make [PACKAGE]... # Install specified packages and packages on which they depend
+
+make dist         # Generate a new example-local.mk from package directories
 #+end_src
 
 * Discussion
+** Package-specific documentation
+Each package can have a top-level ~README.*~ file which will not get stowed.
+This is due to Stow's builtin ignore list, as defined in the [[https://www.gnu.org/software/stow/manual/html_node/Types-And-Syntax-Of-Ignore-Lists.html][Stow manual]].
+
+** Stow directory folding
+When directories are folded (symlinked back to Stow), files installed into
+those directories by other processes on the system physically live in Stow,
+which is the wrong place for them.
+
+The main downside to /not/ folding directories is that when they are unstowed,
+the target directories are not removed even if they are empty. This doesn't
+hurt anything, though, unless the filesystem is running out of inodes.
+
+Considering the above two points, the =GNUmakefile= disables directory folding
+by default. In the odd case where a package requires directory folding (e.g. the
+~doom~ package), its =GNUmakefile= rule should contain a target-specific
+variable assignment to ~STOWFLAGS~ to remove the ~--no-folding~ flag.
+
+** XDG Base Directory compliance
+In my opinion, [[https://wiki.archlinux.org/index.php/XDG_Base_Directory][configuring packages]] to conform with the XDG Base Directory
+specification provides little to no value when managing dotfiles with Stow. I am
+currently migrating /away from/ XDG Base Directory compliance for the following
+reasons:
+
+1. It introduces significant boilerplate in config files, reducing
+   signal-to-noise ratio and increasing shell startup time.
+2. It complicates the Stow directory structure, adding extra path components
+   with duplicate organizational semantics (e.g. =zsh/.config/zsh/= vs. =zsh/=)
+3. The XDG Base Directory specification is often misunderstood and abused by
+   programs (e.g. caching runtime data in =$XDG_CONFIG_HOME=); why migrate from
+   one imperfect system to another?
+
+#+begin_quote
+Dotfiles and data for each package are organized according to the XDG Base
+Directory specification [[https://wiki.archlinux.org/index.php/XDG_Base_Directory][where feasible]]. When a program does not follow XDG
+conventions by default, one of the following techniques is applied to bring it
+into compliance (listed in preferred order):
+
+1. Environment variable(s) in =.profile.d/=
+2. Wrapper alias in =.environ.d/=
+#+end_quote
+
+
 ** Dotfile management systems
 Dotfiles be managed in many different ways. Here are a few approaches:
 
@@ -41,87 +89,3 @@ I believe that the GNU Stow approach strikes the best balance:
 - Easily the most maintainable
 
 *** TODO Explain my experience with and rationale for using each approach
-** The XDG Base Directory specification
-Currently, dotfiles and data for each package are organized according to the XDG
-Base Directory specification [[https://wiki.archlinux.org/index.php/XDG_Base_Directory][where feasible]]. When a program does not follow XDG
-conventions by default, one of the following techniques is applied to bring it
-into compliance (listed in preferred order):
-
-1. Environment variable(s) in =.profile.d/=
-2. Wrapper alias in =.environ.d/=
-3. Symlinks (often found in the top-level directory)
-
-This is mostly a holdover from when I managed dotfiles /without/ Stow, but now I
-don't see as much value in deviating from default legacy paths, considering how
-Stow organizes everything. Here are some reasons to get rid of XDG Base
-Directory compliance:
-
-1. It introduces significant boilerplate in config files, reducing
-   signal-to-noise ratio (some Stow packages are solely for implementing XDG
-   Base Directory compliance); this also increases shell startup time
-2. It complicates the Stow directory structure, adding extra path components
-   with duplicate organizational semantics (e.g. =zsh/.config/zsh/= vs. =zsh/=)
-3. The XDG Base Directory specification is often misunderstood and abused by
-   programs (e.g. caching runtime data in =$XDG_CONFIG_HOME=); why migrate from
-   one imperfect system to another?
-
-There are only a few potential benefits in keeping with the XDG Base Directory
-specification to organize dotfiles, in addition to using Stow:
-
-1. Dotfiles not already managed by Stow /might/ be more discoverable if grouped
-   under =$XDG_CONFIG_HOME= (however, an opposing argument could be made for a
-   flat structure in =$HOME= -- it boils down to opinion)
-2. One could argue that the XDG Base Directory specification is the future of
-   dotfile organization, so one might as well stay ahead of the curve (however,
-   support for legacy organization is unlikely to be dropped for most projects)
-3. Custom and local config files corresponding to standard dotfiles would have
-   a clear place to go under =$XDG_CONFIG_HOME= (however, =$XDG_DATA_HOME= and
-   =$HOME/.local/etc= would be other decent options)
-
-In the end, I believe that implementing XDG Base Directory compliance is
-low-value (arguably *no*-value) busywork when Stow does what I need. Someday I
-will untangle this mess and switch back to default paths, only keeping XDG Base
-Directory paths where they are the default for a given program.
-
-** Stow directory folding
-When directories are folded (symlinked back to Stow), files installed into
-those directories by other processes on the system physically live in Stow,
-which is the wrong place for them.
-
-The main downside to /not/ folding directories is that when they are unstowed,
-the target directories are not removed even if they are empty. This doesn't
-hurt anything, though, unless the filesystem is running out of inodes.
-
-Considering the above two points, the =GNUmakefile= disables directory folding
-by default. In the odd case where a package requires directory folding (e.g. the
-~doom~ package), its =GNUmakefile= rule should contain a target-specific
-variable assignment to ~STOWFLAGS~ to remove the ~--no-folding~ flag.
-
-** Package-specific documentation
-Each package can have a top-level ~README.*~ file which will not get stowed.
-This is due to Stow's builtin ignore list, as defined in the [[https://www.gnu.org/software/stow/manual/html_node/Types-And-Syntax-Of-Ignore-Lists.html][Stow manual]]:
-
-#+begin_example
-# Comments and blank lines are allowed.
-
-RCS
-.+,v
-
-CVS
-\.\#.+       # CVS conflict files / emacs lock files
-\.cvsignore
-
-\.svn
-_darcs
-\.hg
-
-\.git
-\.gitignore
-
-.+~          # emacs backup files
-\#.*\#       # emacs autosave files
-
-^/README.*
-^/LICENSE.*
-^/COPYING
-#+end_example
