@@ -7,7 +7,7 @@
 assume_yes = true
 
 # Disable specific steps - same options as the command line flag
-#disable = ["system", "emacs"]
+disable = ["emacs"]
 
 # Ignore failures for these steps
 ignore_failures = ["git_repos"]
