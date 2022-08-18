@@ -106,8 +106,8 @@ redis: docker
 # Automation
 packages += ansible topgrade
 
-# Reference
-packages += info locate org
+# Reference and Documentation
+packages += info locate markdown org
 gitlinks += $(srcdir)/org/org/.git
 org: $(srcdir)/org/org/.git
 
