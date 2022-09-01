@@ -1,0 +1,68 @@
+#!/bin/sh
+## Create a nested tmux session (named "A" through "Z")
+## Reference: https://stackoverflow.com/questions/68220053/tmux-pane-tabs-or-locking-freezing-pane-splits-in-place
+## TODO: Allow nested sessions to have arbitrary names (use envvars or user variables for metadata)
+
+die() {
+    echo >&2 "$*"
+    exit 1
+}
+
+[ "$TMUX" ] || die "ERROR: not in an active tmux session"
+
+# Allow up to 26 nested sessions
+increment() {
+    local letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    echo ${letters##*$1} | cut -c1
+}
+
+progname=`basename "$0"`
+usage="Usage: $progname [-n | -a nested-session | -l]"
+
+case $1 in
+-n|'')
+    # Make sure we are not already in a nested tmux session
+    if tmux display-message -p '#S' | grep -qx '[A-Z]'
+    then
+        die "ERROR: multiple levels of nesting is not supported"
+    fi
+
+    # Find the first available session name between "A" and "Z"
+    x=A; while :
+    do
+        tmux has-session -t "$x" 2>/dev/null || {
+            session_name=$x
+            break
+        }
+        x=$(increment "$x")
+    done
+
+    # Create, configure, and attach to a new session
+    tmux -f "${XDG_CONFIG_HOME:-$HOME/.config}/tmux/tmux-nested.conf" \
+        new-session -ds "$session_name"
+    tmux send-keys -t "$session_name" \
+        'tmux set-option prefix C-q' ENTER \
+        'tmux bind-key -r C-q send-keys C-q' ENTER \
+        'tmux set-option pane-active-border-style fg=colour12' ENTER \
+        'tmux set-option status-style fg=colour16,bg=colour12' ENTER \
+        'tmux set-option status-right ""' ENTER \
+        'tmux set-option -gu window-status-style' ENTER \
+        'tmux set-option -gu window-status-current-style' ENTER \
+        'tmux set-option window-status-style fg=colour16,bg=colour12' ENTER \
+        'tmux set-option window-status-current-style fg=colour16,bg=colour12' ENTER \
+        'clear' ENTER
+    env -u TMUX tmux attach -t "$session_name"
+    exit $? ;;
+-a)
+    # Attach to the specified session if requested
+    session_name=$OPTARG
+    env -u TMUX tmux attach -t "$session_name" || die "Try \`$progname -l'?" ;;
+-l)
+    # Display list of nested sessions
+    nested=$(tmux list-sessions -F '#{session_name}' | grep -x '[A-Z]' | sort)
+    : ${nested:='No nested sessions running'}
+    echo "$nested"
+    exit 0 ;;
+*)
+    die "$usage" ;;
+esac
