@@ -93,7 +93,7 @@ packages += bw openssl ssh
 packages += direnv gdb git irc
 
 # Languages
-packages += dotnet go node perl python rust
+packages += dotnet go haskell node perl python rust
 
 # Platforms
 packages += aws az k8s docker flatpak
