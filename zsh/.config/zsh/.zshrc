@@ -9,7 +9,7 @@ fi
 # TODO: Use the same colors as bash does for the prompt
 autoload -Uz colors
 colors
-PS1='%F{magenta}[%j]%f %F{white}%2c%f %(?.%F{green}.%F{red})$%f '
+PS1='%F{magenta}[%j]%f %2c %(?.%F{green}.%F{red})$%f '
 # }}}2
 
 # TODO: Initialize command completion {{{2
