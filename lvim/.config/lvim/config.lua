@@ -184,10 +184,68 @@ lvim.builtin.treesitter.highlight.enable = true
 
 -- Additional Plugins
 lvim.plugins = {
+  -- Colorschemes
   {
     "rktjmp/lush.nvim",
     "metalelf0/jellybeans-nvim",
     cmd = "colorscheme jellybeans-nvim",
+  },
+  -- Git
+  {
+    "tpope/vim-fugitive",
+    cmd = {
+      "G",
+      "Git",
+      "Gdiffsplit",
+      "Gread",
+      "Gwrite",
+      "Ggrep",
+      "GMove",
+      "GDelete",
+      "GBrowse",
+      "GRemove",
+      "GRename",
+      "Glgrep",
+      "Gedit"
+    },
+    ft = {
+      "fugitive"
+    },
+  },
+  -- Treesitter
+  {
+    "p00f/nvim-ts-rainbow",
+  },
+  -- General
+  {
+    "folke/todo-comments.nvim",
+    event = "BufRead",
+    config = function()
+      require("todo-comments").setup()
+    end,
+  },
+  {
+    "tommcdo/vim-lion",
+  },
+  {
+    "tpope/vim-repeat",
+  },
+  {
+    "tpope/vim-surround",
+    -- make sure to change the value of `timeoutlen` if it's not triggering correctly, see https://github.com/tpope/vim-surround/issues/117
+    -- setup = function()
+      --  vim.o.timeoutlen = 500
+    -- end
+  },
+  {
+    "tpope/vim-unimpaired",
+  },
+  -- Language-specific
+  {
+    "towolf/vim-helm",
+  },
+  {
+    "bfrg/vim-jq",
   },
 }
 
