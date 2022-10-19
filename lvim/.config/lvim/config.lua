@@ -25,6 +25,21 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 -- vim.keymap.del("n", "<C-Up>")
 -- override a default keymapping
 -- lvim.keys.normal_mode["<C-q>"] = ":q<cr>" -- or vim.keymap.set("n", "<C-q>", ":q<cr>" )
+lvim.keys.normal_mode["="] = "<c-w>+"
+lvim.keys.normal_mode["-"] = "<c-w>-"
+lvim.keys.normal_mode["_"] = "<c-w><"
+lvim.keys.normal_mode["+"] = "<c-w>>"
+-- TODO <c-u> and <c-k>
+vim.api.nvim_set_keymap("c", "<c-a>", "<home>", {noremap = false})
+vim.api.nvim_set_keymap("c", "<c-e>", "<end>", {noremap = false})
+vim.api.nvim_set_keymap("c", "<c-d>", "<delete>", {noremap = false})
+vim.api.nvim_set_keymap("c", "<c-f>", "<right>", {noremap = false})
+vim.api.nvim_set_keymap("c", "<c-b>", "<left>", {noremap = false})
+vim.api.nvim_set_keymap("i", "<c-a>", "<home>", {noremap = false})
+vim.api.nvim_set_keymap("i", "<c-e>", "<end>", {noremap = false})
+vim.api.nvim_set_keymap("i", "<c-d>", "<delete>", {noremap = false})
+vim.api.nvim_set_keymap("i", "<c-f>", "<right>", {noremap = false})
+vim.api.nvim_set_keymap("i", "<c-b>", "<left>", {noremap = false})
 
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 -- we use protected-mode (pcall) just in case the plugin wasn't loaded yet.
