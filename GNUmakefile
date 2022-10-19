@@ -65,6 +65,10 @@ vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
 vim-postinstall:
 	cd $(prefix)/.vim && chmod 700 undo swap backup viminfo
 
+# Editors - LunarVim
+packages += lvim
+lvim: git python node rust
+
 # Editors - Emacs
 packages += emacs
 ifdef MACOS
