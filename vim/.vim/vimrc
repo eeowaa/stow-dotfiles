@@ -116,15 +116,17 @@ autocmd BufNewFile,BufRead *.{json,ipynb} set
     \ foldmethod=indent foldenable
 " }}}
 " Markdown {{{
-let g:markdown_folding=1
+" let g:markdown_folding=1
 autocmd BufNewFile,BufRead *.{md,markdown} set
     \ syntax=markdown filetype=markdown
     \ makeprg=pandoc\ -f\ markdown\ -t\ html\ -o\ '%<.html'\ '%'
+    \ nofoldenable
 " }}}
 " Terraform {{{
 autocmd BufNewFile,BufRead *.tf set
     \ filetype=terraform
     \ tabstop=2 shiftwidth=2 expandtab
+    \ foldmethod=indent foldenable
 " }}}
 " VB.NET {{{
 autocmd BufNewFile,BufRead *.vb set
