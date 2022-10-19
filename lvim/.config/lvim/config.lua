@@ -12,6 +12,7 @@ an executable
 lvim.log.level = "warn"
 lvim.format_on_save = false
 lvim.colorscheme = "jellybeans-nvim"
+vim.opt.scrolloff = 0
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
