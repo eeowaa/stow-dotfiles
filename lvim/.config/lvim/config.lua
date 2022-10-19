@@ -30,7 +30,7 @@ lvim.keys.normal_mode["="] = "<c-w>+"
 lvim.keys.normal_mode["-"] = "<c-w>-"
 lvim.keys.normal_mode["_"] = "<c-w><"
 lvim.keys.normal_mode["+"] = "<c-w>>"
--- TODO <c-u> and <c-k>
+-- TODO: <c-u> and <c-k>
 vim.api.nvim_set_keymap("c", "<c-a>", "<home>", {noremap = false})
 vim.api.nvim_set_keymap("c", "<c-e>", "<end>", {noremap = false})
 vim.api.nvim_set_keymap("c", "<c-d>", "<delete>", {noremap = false})
@@ -76,7 +76,7 @@ vim.api.nvim_set_keymap("i", "<c-b>", "<left>", {noremap = false})
 --   w = { "<cmd>Trouble workspace_diagnostics<cr>", "Workspace Diagnostics" },
 -- }
 
--- TODO: User Config for predefined plugins
+-- User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
