@@ -3,6 +3,8 @@ lvim.log.level = "warn"
 lvim.format_on_save = false
 lvim.colorscheme = "jellybeans-nvim"
 vim.opt.scrolloff = 0
+vim.opt.number = false
+vim.opt.signcolumn = "auto" -- left margin (disable with `:se scl=no`)
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -89,6 +91,7 @@ lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+lvim.builtin.indentlines.active = false
 lvim.builtin.breadcrumbs.active = true
 lvim.builtin.bufferline.active = false
 vim.opt.showtabline = 1
