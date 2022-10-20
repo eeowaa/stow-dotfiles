@@ -88,6 +88,14 @@ lvim.builtin.breadcrumbs.active = true
 lvim.builtin.bufferline.active = false
 vim.opt.showtabline = 1
 
+-- Disable autocomplete
+local cmp = require('cmp')
+cmp.setup {
+  completion = {
+    autocomplete = false
+  }
+}
+
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
@@ -214,9 +222,7 @@ lvim.plugins = {
     },
   },
   -- Treesitter
-  {
-    "p00f/nvim-ts-rainbow",
-  },
+  { "p00f/nvim-ts-rainbow", },
   -- General
   {
     "folke/todo-comments.nvim",
@@ -225,12 +231,8 @@ lvim.plugins = {
       require("todo-comments").setup()
     end,
   },
-  {
-    "tommcdo/vim-lion",
-  },
-  {
-    "tpope/vim-repeat",
-  },
+  { "tommcdo/vim-lion", },
+  { "tpope/vim-repeat", },
   {
     "tpope/vim-surround",
     -- make sure to change the value of `timeoutlen` if it's not triggering correctly, see https://github.com/tpope/vim-surround/issues/117
@@ -238,16 +240,10 @@ lvim.plugins = {
       --  vim.o.timeoutlen = 500
     -- end
   },
-  {
-    "tpope/vim-unimpaired",
-  },
+  { "tpope/vim-unimpaired", },
   -- Language-specific
-  {
-    "towolf/vim-helm",
-  },
-  {
-    "bfrg/vim-jq",
-  },
+  { "towolf/vim-helm", },
+  { "bfrg/vim-jq", },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
