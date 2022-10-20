@@ -6,6 +6,8 @@ vim.opt.scrolloff = 0
 vim.opt.number = false
 vim.opt.signcolumn = "auto" -- left margin (disable with `:se scl=no`)
 vim.opt.linebreak = true
+
+-- TODO: Figure out how to do the following (it causes errors)
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -124,6 +126,10 @@ lvim.builtin.treesitter.ensure_installed = {
 -- Treesitter config
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enable = true
+-- TODO: Enable treesitter-based folding where possible
+-- https://www.reddit.com/r/neovim/comments/kx2nnj/treesitter_and_folding/
+-- vim.wo.foldmethod = 'expr'
+-- vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
 
 -- Generic LSP settings
 
