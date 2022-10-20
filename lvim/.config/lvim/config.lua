@@ -5,6 +5,7 @@ lvim.colorscheme = "jellybeans-nvim"
 vim.opt.scrolloff = 0
 vim.opt.number = false
 vim.opt.signcolumn = "auto" -- left margin (disable with `:se scl=no`)
+vim.opt.linebreak = true
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -179,6 +180,21 @@ lvim.lsp.on_attach_callback = function(client, bufnr)
   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 end
 ]]
+lvim.lsp.on_attach_callback = function(client, bufnr)
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+      -- disable virtual text
+      virtual_text = false,
+
+      -- show signs
+      signs = true,
+
+      -- delay update diagnostics
+      update_in_insert = false,
+    }
+  )
+end
+
 -- Set additional formatters
 --[[
 -- This will override the language server formatting capabilities (if it exists)
