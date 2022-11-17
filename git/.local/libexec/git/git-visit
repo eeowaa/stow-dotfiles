@@ -166,7 +166,7 @@ http*://*)
     *)  die "unsupported HTTP remote: $remote_url" ;;
     esac
     ;;
-*@*)
+ssh://*|*@*)
     # ssh://[user@]host.xz[:port]/[~[user]/]path/to/repo.git/
     # [user@]host.xz:[/][~[user]/]path/to/repo.git/
     case $remote_url in
@@ -176,6 +176,14 @@ http*://*)
     git@*bitbucket*:*.git)
         remote_url=`echo "$remote_url" | sed 's|^git@\(.*bitbucket.*\):|https://\1/|'`
         browse_bitbucket ${1+"$@"} ;;
+    ssh://?*/_git/?*)
+        # Azure DevOps
+        remote_url=`echo "$remote_url" | sed \
+            -e 's|^ssh://||' \
+            -e 's|^[^:/@]*@||' \
+            -e 's|:[0-9]\{1,\}/|/|' \
+            -e 's|^|http://|'`
+        browse "$remote_url" ;;
     *)  die "unsupported SSH remote: $remote_url" ;;
     esac
     ;;
