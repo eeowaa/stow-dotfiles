@@ -1,3 +1,4 @@
+" vim: fen fdm=marker
 " Runtime {{{
 set undodir=$HOME/.vim/undo,.
 set directory=$HOME/.vim/swap,.
