@@ -1,0 +1,30 @@
+#!/bin/sh
+use_nvm() {
+    watch_file .nvmrc
+    local node_version
+    case $# in
+    0)
+        [ -f .nvmrc ] || {
+            log_error 'use_nvm: Missing argument or .nvmrc file'
+            return 1
+        }
+        node_version=`cat .nvmrc`
+        [ "$node_version" ] || {
+            log_error 'use_nvm: Missing version in .nvmrc'
+            return 1
+        } ;;
+    1)
+        node_version=$1 ;;
+    *)
+        log_error 'use_nvm: Too many arguments'
+        return 1 ;;
+    esac
+    local nvm_dir=${NVM_DIR:-"$HOME/.config/nvm"}
+    [ -f "$nvm_dir/nvm.sh" ] || {
+        log_error "use_nvm: Missing file: $nvm_dir/nvm.sh"
+        return 1
+    }
+    . "$nvm_dir/nvm.sh"
+    nvm use "$node_version"
+    layout node
+}
