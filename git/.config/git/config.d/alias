@@ -3,6 +3,7 @@
 	ff = merge --ff-only
 	consider = update-index --no-assume-unchanged
 	empty-tree-sha1 = hash-object -t tree /dev/null
+	pushnew = -c push.autoSetupRemote=true push
 
 	# External commands
 	graph = !~/.local/libexec/git/git-graph
