@@ -14,15 +14,16 @@ git() {
 
 # Wrapper for cd with useful git-related shortcuts
 git_cd() {
-    usage="\
+    local usage="\
 usage: git cd [jump]
    or: git cd <path>
    or: git cd git
    or: git cd common
    or: git cd top
    or: git cd super
-   or: git cd worktree <branch>
+   or: git cd worktree [<branch>]
 "
+    local target=
     case $1 in
     -h|--help)
         echo "$usage"
@@ -35,11 +36,11 @@ usage: git cd [jump]
         }
 
         # Literal tab characters are more predictably reliable than "\t"
-        tab='	'
+        local tab='	'
 
         # Temporary file I/O is more predictably reliable in this complex case
         # than variable assignment from command substitution
-        tmpfile=`mktemp`
+        local tmpfile=`mktemp`
 
         # `git-ls-tree` is used instead of `git-ls-files` because the latter
         # will not output directories if they contain no files (i.e. if they
@@ -56,7 +57,7 @@ usage: git cd [jump]
             rm -f "$tmpfile"
             return 1
         }
-        filepath=`cat "$tmpfile"`
+        local filepath=`cat "$tmpfile"`
         rm -f "$tmpfile"
 
         target=`git rev-parse --show-toplevel`/$filepath ;;
@@ -69,18 +70,35 @@ usage: git cd [jump]
     super)
         target=`git rev-parse --show-superproject-working-tree` ;;
     worktree)
-        test $# -eq 2 || {
-            echo >&2 'Usage: git cd worktree <branch>'
-            return 1
-        }
-        target=`git worktree list --porcelain | awk '
-    $1 == "worktree" {
-        worktree = $2
-    }
-    $1 == "branch" && gensub(/.*\//, "", 1, $2) == branch {
-        print worktree
-        exit
-    }' branch=$2` ;;
+        case $# in
+        1)
+            which fzf >/dev/null || {
+                echo >&2 'Error: missing command: fzf'
+                return 1
+            }
+            local branch=`git worktree list --porcelain | awk '
+            $1 == "branch" {
+                print gensub(/.*\//, "", 1, $2)
+            }' | fzf`
+            [ "$branch" ] || {
+                echo >&2 'Error: empty selection'
+                return 1
+            }
+            git_cd worktree "$branch"
+            return $? ;;
+        2)
+            target=`git worktree list --porcelain | awk '
+            $1 == "worktree" {
+                worktree = $2
+            }
+            $1 == "branch" && gensub(/.*\//, "", 1, $2) == branch {
+                print worktree
+                exit
+            }' branch=$2` ;;
+        *)
+            echo >&2 'Usage: git cd worktree [<branch>]'
+            return 1 ;;
+        esac ;;
     *)
         case $1 in
         :\(top\)*|:/*|/*)
