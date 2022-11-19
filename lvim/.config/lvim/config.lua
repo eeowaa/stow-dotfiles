@@ -1,17 +1,31 @@
--- General
-lvim.log.level = "warn"
-lvim.format_on_save = false
-lvim.colorscheme = "jellybeans-nvim"
+-- vim: fen fdm=marker
+-- General / Uncategorized {{{
+-- Vim
 vim.opt.scrolloff = 0
 vim.opt.number = false
 vim.opt.signcolumn = "auto" -- left margin (disable with `:se scl=no`)
 vim.opt.linebreak = true
+vim.opt.showtabline = 1
+vim.opt.textwidth = 79
+-- TODO: Translate `set formatoptions+=n` to Lua
 
--- TODO: Figure out how to do the following (it causes errors)
--- to disable icons and use a minimalist setup, uncomment the following
--- lvim.use_icons = false
+-- LunarVim
+lvim.log.level = "warn"
+lvim.format_on_save = false
+lvim.colorscheme = "jellybeans-nvim"
 
--- Keymappings [view all the defaults by pressing <leader>Lk]
+-- Disable autocomplete
+local cmp = require('cmp')
+cmp.setup {
+  completion = {
+    autocomplete = false
+  }
+}
+-- }}}
+-- Keymappings {{{
+-- [view all the defaults by pressing <leader>Lk]
+
+-- Set the leader key
 lvim.leader = "space"
 
 -- Add your own keymappings
@@ -65,10 +79,6 @@ lvim.builtin.telescope.defaults.mappings = {
 }
 ]]
 
--- Change theme settings
--- lvim.builtin.theme.options.dim_inactive = true
--- lvim.builtin.theme.options.style = "storm"
-
 -- Use which-key to add extra bindings with the leader-key prefix
 --[[
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
@@ -82,32 +92,19 @@ lvim.builtin.which_key.mappings["t"] = {
   w = { "<cmd>Trouble workspace_diagnostics<cr>", "Workspace Diagnostics" },
 }
 ]]
+-- }}}
+-- UI {{{
+-- Change theme settings
+-- lvim.builtin.theme.options.dim_inactive = true
+-- lvim.builtin.theme.options.style = "storm"
 
--- User config for predefined plugins
--- After changing plugin config:
--- 1. Exit and reopen LunarVim,
--- 2. Run :PackerInstall
--- 3. Run :PackerCompile
-lvim.builtin.alpha.active = true
-lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.notify.active = true
-lvim.builtin.terminal.active = true
-lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
-lvim.builtin.indentlines.active = false
-lvim.builtin.breadcrumbs.active = true
-lvim.builtin.bufferline.active = false
-vim.opt.showtabline = 1
-
--- Disable autocomplete
-local cmp = require('cmp')
-cmp.setup {
-  completion = {
-    autocomplete = false
-  }
-}
-
--- If you don't want all the parsers change this to a table of the ones you want
+-- TODO: Figure out how to do the following (it causes errors)
+-- to disable icons and use a minimalist setup, uncomment the following
+-- lvim.use_icons = false
+-- }}}
+-- Treesitter {{{
+lvim.builtin.treesitter.ignore_install = { "haskell" }
+lvim.builtin.treesitter.highlight.enable = true
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
   "c",
@@ -122,17 +119,12 @@ lvim.builtin.treesitter.ensure_installed = {
   "java",
   "yaml",
 }
-
--- Treesitter config
-lvim.builtin.treesitter.ignore_install = { "haskell" }
-lvim.builtin.treesitter.highlight.enable = true
 -- TODO: Enable treesitter-based folding where possible
 -- https://www.reddit.com/r/neovim/comments/kx2nnj/treesitter_and_folding/
 -- vim.wo.foldmethod = 'expr'
 -- vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
-
--- Generic LSP settings
-
+-- }}}
+-- LSP {{{
 -- Install servers in the skipped_servers list
 --[[
 lvim.lsp.installer.setup.ensure_installed = {
@@ -247,8 +239,24 @@ linters.setup {
   },
 }
 ]]
-
--- Additional Plugins
+-- }}}
+-- Predefined Plugins {{{
+-- User config for predefined plugins
+-- After changing plugin config:
+-- 1. Exit and reopen LunarVim,
+-- 2. Run :PackerInstall
+-- 3. Run :PackerCompile
+lvim.builtin.alpha.active = true
+lvim.builtin.alpha.mode = "dashboard"
+lvim.builtin.notify.active = true
+lvim.builtin.terminal.active = true
+lvim.builtin.nvimtree.setup.view.side = "left"
+lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+lvim.builtin.indentlines.active = false
+lvim.builtin.breadcrumbs.active = true
+lvim.builtin.bufferline.active = false
+-- }}}
+-- Additional Plugins {{{
 lvim.plugins = {
   -- Colorschemes
   {
@@ -290,18 +298,21 @@ lvim.plugins = {
   { "tpope/vim-repeat", },
   {
     "tpope/vim-surround",
-    -- make sure to change the value of `timeoutlen` if it's not triggering correctly, see https://github.com/tpope/vim-surround/issues/117
+    -- make sure to change the value of `timeoutlen` if it's not triggering
+    -- correctly; see https://github.com/tpope/vim-surround/issues/117
     -- setup = function()
-      --  vim.o.timeoutlen = 500
+    --   vim.o.timeoutlen = 500
     -- end
   },
+  { "troydm/zoomwintab.vim", },
   { "tpope/vim-unimpaired", },
   -- Language-specific
   { "towolf/vim-helm", },
   { "bfrg/vim-jq", },
 }
-
--- Autocommands (https://neovim.io/doc/user/autocmd.html)
+-- }}}
+-- Autocommands {{{
+-- See `:help autocmd`
 --[[
 vim.api.nvim_create_autocmd("BufEnter", {
   pattern = { "*.json", "*.jsonc" },
@@ -326,3 +337,4 @@ vim.api.nvim_create_autocmd("FileType", {
     })
   end,
 })
+-- }}}
