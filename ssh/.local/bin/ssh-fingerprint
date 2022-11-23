@@ -1,0 +1,35 @@
+#!/bin/sh
+## Show the MD5 fingerprints of public SSH keys
+progname=`basename "$0"`
+usage="Usage: $progname [-h | --help] KEY..."
+keys=
+for arg
+do
+    case $arg in 
+    -h|--help)
+        echo "$usage"
+        exit $? ;;
+    *)
+        [ -f "$arg" ] || {
+            echo >&2 "$progname: not a file: $arg"
+            continue
+        }
+        file "$arg" | grep -E '(Open)?SSH\>.*\<public key\>' >/dev/null || {
+            echo >&2 "$progname: not a public SSH key: $arg"
+            continue
+        }
+        keys=`printf '%s%s\n' "$keys" "$arg"` ;;
+    esac
+done
+[ "X$keys" = X ] && {
+    echo >&2 "$usage"
+    exit 1
+}
+echo "$keys" | while read key
+do
+    fingerprint=`
+        ssh-keygen -l -E md5 -f "$key" |
+        sed 's/^.*MD5:\([^ ]*\) .*/\1/'
+    `
+    printf '%s %s\n' "$fingerprint" "$key"
+done
