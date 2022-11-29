@@ -1,0 +1,57 @@
+#!/bin/sh
+## Function to install a binary asset from the latest release of a GitHub
+## Requires: jq curl
+progname=`basename "$0"`
+repo= asset= prefix= root= binary=
+die() {
+    echo >&2 "ERROR: $progname: $*"
+    exit 1
+}
+
+while [ $# -gt 0 ]
+do
+    case $1 in
+    --repo)
+        # A "<user>/<repo>" string to identify a GitHub repo
+        repo=$2 ;;
+    --asset)
+        # An anchored regular expression used by `jq` for a named tarball
+        asset=$2 ;;
+    --prefix)
+        # Directory to pass to `tar -C`
+        prefix=$2 ;;
+    --path)
+        # Directory path within the tarball to the data root
+        # NOTE: This variable cannot be named `path` due to conflict with ZSH
+        root=$2 ;;
+    --binary)
+        # Path relative to the data root to the executable file
+        binary=$2 ;;
+    esac
+    shift; shift
+done
+for arg in "$repo" "$asset" "$prefix" "$root" "$binary"
+do
+    [ "X$arg" = X ] && die 'missing argument'
+done
+local url=`
+    curl -s https://api.github.com/repos/$repo/releases/latest | jq -r \
+    '.assets[] | select(.name | test("^'"$asset"'$")) | .browser_download_url'
+`
+[ "X$url" = X ] && die 'could not find URL'
+local canonical_path=`readlink -m "$prefix/$root"`
+[ -e "$canonical_path" ] && {
+    printf "\
+$progname: found existing: $canonical_path
+$progname: (recursively) delete? [y/N]: "
+    read delete
+    case $delete in
+    [yY]*)
+        rm -rf "$canonical_path" ;;
+    *)  die 'refusing to download' ;;
+    esac
+}
+mkdir -p "$prefix" "$HOME/.local/bin"
+curl -Lo- "$url" | tar -C "$prefix" -xzf -
+[ -x "$canonical_path/$binary" ] || die "not an executable file: $canonical_path/$binary"
+ln -sf "$canonical_path/$binary" "$HOME/.local/bin"
