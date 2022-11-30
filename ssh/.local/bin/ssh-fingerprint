@@ -5,7 +5,7 @@ usage="Usage: $progname [-h | --help] KEY..."
 keys=
 for arg
 do
-    case $arg in 
+    case $arg in
     -h|--help)
         echo "$usage"
         exit $? ;;

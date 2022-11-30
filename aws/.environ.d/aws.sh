@@ -85,7 +85,7 @@ expect {
 }
 
 # Write to our temporary file
-puts \$log \$output" 
+puts \$log \$output"
 
             # Remove control codes from the output and append to the log
             # Magic courtesy of <https://unix.stackexchange.com/a/18979>

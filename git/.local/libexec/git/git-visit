@@ -33,7 +33,7 @@ browse_github() {
     # Determine what we want to visit
     case $# in
     0)  if test "X$branch" = "X$remote_HEAD"
-        then 
+        then
             # Homepage of repo
             url=$remote_url
         else

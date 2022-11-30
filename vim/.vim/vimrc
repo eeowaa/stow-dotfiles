@@ -44,7 +44,7 @@ augroup END
 " Transparent background {{{
 " General idea: https://stackoverflow.com/a/67569365
 " More suggested highlighting groups: https://gist.github.com/fuadnafiz98/d91e468c9bc4689868eb0984a29fef66
-" Explanation of highlighting groups: :help highlight-groups 
+" Explanation of highlighting groups: :help highlight-groups
 autocmd SourcePost *
     \ highlight Normal      guibg=NONE ctermbg=NONE |
     \ highlight LineNr      guibg=NONE ctermbg=NONE |

@@ -9,7 +9,7 @@ ignore_vim    := .*\.sw[a-p]
 ignore_backup := .*\.bak|.*\.~[1-9]~
 ignore_pcre   := ^($(ignore_vim)|$(ignore_backup))$$
 STOWFLAGS     := --no-folding --ignore '$(ignore_pcre)'
-GITFLAGS      := --init --recursive 
+GITFLAGS      := --init --recursive
 
 # Operating Systems
 UNAME_S := $(shell uname -s)

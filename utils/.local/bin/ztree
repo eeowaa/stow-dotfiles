@@ -6,7 +6,7 @@ usage="Usage: $progname ZIPFILE"
 
 # Parse command line arguments
 case $1 in
--h|--help) 
+-h|--help)
     echo "$usage"
     exit $? ;;
 esac
