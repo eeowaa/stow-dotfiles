@@ -331,8 +331,8 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "helm",
   callback = function()
     vim.lsp.start({
-      name = 'helm-lint-ls',
-      cmd = {'helm-lint-ls', 'serve'},
+      name = 'helm_ls',
+      cmd = {'helm_ls', 'serve'},
       root_dir = vim.fs.dirname(vim.fs.find({'Chart.yaml', 'values.yaml'}, { upward = true })[1]),
     })
   end,
