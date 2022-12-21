@@ -1,7 +1,7 @@
 [ "X$INSIDE_EMACS" = Xvterm ] && {
 
 # Helper function used to send escape sequences to vterm.
-vterm_printf(){
+vterm_printf() {
     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
         # Tell tmux to pass the escape sequences through
         printf "\ePtmux;\e\e]%s\007\e\\" "$1"
@@ -30,8 +30,7 @@ vterm_cmd() {
 vterm_load_aliases() {
     local dir=$(mktemp -p "${TMPDIR:-/tmp}" -d vterm-XXXX)
     local fifo=$dir/fifo
-    if mkfifo "$fifo"
-    then
+    if mkfifo "$fifo"; then
         # Because `vterm_cmd` executes asynchronously, we need to use a FIFO for
         # blocking I/O (otherwise there is a race condition where `cat` tries to
         # read the file before it has been written to by Emacs).
@@ -54,8 +53,7 @@ vterm_load_aliases
 
 # Open the README for vterm.
 vterm_help() {
-    if [ -f "$EMACS_VTERM_PATH/README.md" ]
-    then
+    if [ -f "$EMACS_VTERM_PATH/README.md" ]; then
         vterm_cmd find-file "$EMACS_VTERM_PATH/README.md"
     else
         echo >&2 'ERROR: could not find file: $EMACS_VTERM_PATH/README.md'
@@ -63,17 +61,28 @@ vterm_help() {
     fi
 }
 
-# Set up directory tracking and prompt tracking in vterm.
+# Set up directory tracking, prompt tracking, and dynamic buffer title in vterm.
 vterm_prompt_end() {
     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
 }
 if [ "$BASH_VERSION" ]
 then
     PS1=$PS1'\[$(vterm_prompt_end)\]'
+    PROMPT_COMMAND=$(
+        printf '%secho -ne "\033]0;%s\007"' \
+            "${PROMPT_COMMAND:+$PROMPT_COMMAND; }" \
+            "${VTERM_BUFFER_NAME:-*vterm \$HOSTNAME:\$PWD*}"
+    )
 elif [ "$ZSH_VERSION" ]
 then
     setopt PROMPT_SUBST
     PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+    autoload -U add-zsh-hook
+    vterm_title() {
+        print -Pn "\e]2;${VTERM_BUFFER_NAME:-*vterm %m:%2~*}\a"
+    }
+    add-zsh-hook -Uz chpwd vterm_title
+    vterm_title
 else
     echo >&2 'vterm directory tracking and prompt tracking not available for current shell'
 fi
