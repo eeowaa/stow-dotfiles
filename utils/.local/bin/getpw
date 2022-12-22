@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 ## Retrieve a password from one of several backends
 ## Requires: fzf jq
 progname=`basename "$0"`
@@ -137,6 +137,12 @@ EOF
 else
     : "${backends:=$available}"
     default_backends=X
+fi
+
+# Source a wrapper function for Bitwarden if one exists
+if [ -f "$HOME/.environ.d/bw.sh" ]
+then
+    . "$HOME/.environ.d/bw.sh"
 fi
 
 # Determine the password label if not already supplied
