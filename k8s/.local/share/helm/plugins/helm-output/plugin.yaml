@@ -1,0 +1,6 @@
+name: "output"
+version: "0.1.0"
+usage: "Render chart templates to $HELM_CACHE_HOME/output"
+description: "Render chart templates to $HELM_CACHE_HOME/output"
+ignoreFlags: false
+command: "$HELM_PLUGIN_DIR/output.sh"
