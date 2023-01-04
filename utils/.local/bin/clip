@@ -80,7 +80,7 @@ if which xclip >/dev/null; then
     [ "X$DISPLAY" = X ] && fsclip
     case $mode in
     paste) xclip -o -selection clipboard ;;
-    copy)  perl -pe 'chomp if eof' | xclip -selection clipboard ;;
+    copy)  perl -pe 'chomp if eof' | xclip -i -selection clipboard ;;
     esac
 elif which xsel >/dev/null; then
     [ "X$DISPLAY" = X ] && fsclip
