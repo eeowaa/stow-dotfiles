@@ -1,6 +1,7 @@
 ## Requires: runlevel
 LYNX_CFG=$XDG_CONFIG_HOME/lynx/lynx.cfg
-export LYNX_CFG
+LYNX_LSS=$XDG_CONFIG_HOME/lynx/lynx.lss
+export LYNX_CFG LYNX_LSS
 
 case `uname -s` in
 Linux)
