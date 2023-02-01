@@ -18,12 +18,12 @@ Example 1: Translate all environment variables
 Example 2: Translate only environment variables given on STDIN
 (Note that shell variables are ignored)
 
-    \$ $progname <<----
+    \$ $progname <<EOF
     export A=1
     B=2 export B
     C=3 D=4 E=5
     export D F=6
-        ---
+    EOF
     (progn
       (setenv "A" "1")
       (setenv "B" "2")
