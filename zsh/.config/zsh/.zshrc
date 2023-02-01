@@ -67,6 +67,10 @@ export HISTFILE=$XDG_CACHE_HOME/zsh/history
 # <https://askubuntu.com/questions/23630/how-do-you-share-history-between-terminals-in-zsh>
 setopt inc_append_history
 
+# Ignore comments in interactive command lines
+# <https://unix.stackexchange.com/questions/33994/zsh-interpret-ignore-commands-beginning-with-as-comments>
+setopt interactivecomments
+
 # <https://unix.stackexchange.com/questions/167582/why-zsh-ends-a-line-with-a-highlighted-percent-symbol>
 # Prevent "%" symbols from showing in Emacs terminals (specifically vterm)
 unsetopt prompt_cr prompt_sp
