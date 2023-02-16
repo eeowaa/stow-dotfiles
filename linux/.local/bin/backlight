@@ -26,24 +26,27 @@ EOF
     esac
     shift
 done
+[ $device = keyboard ] && kdb_backlight=`
+    brightnessctl -l |
+    sed -n 's/^Device '\''\(.*::kbd_backlight\)'\''.*/\1/p'
+`
 
 # Silently read one character at a time
 echo 'Waiting for SIGINT... (use j/k to adjust)'
 stty -icanon -echo
 trap 'stty icanon echo; exit' 2
-while :
-do
+while :; do
     char=`dd bs=1 count=1 2>/dev/null`
     case $char in
     k)
         case $device in
         monitor)  brightnessctl set 10%+ ;;
-        keyboard) brightnessctl -d smc::kbd_backlight set 10%+ ;;
+        keyboard) brightnessctl -d "$kbd_backlight" set 10%+ ;;
         esac ;;
     j)
         case $device in
         monitor)  brightnessctl set 10%- ;;
-        keyboard) brightnessctl -d smc::kbd_backlight set 10%- ;;
+        keyboard) brightnessctl -d "$kbd_backlight" set 10%- ;;
         esac ;;
     esac >/dev/null
 done
