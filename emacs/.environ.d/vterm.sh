@@ -1,4 +1,4 @@
-[ "X$INSIDE_EMACS" = Xvterm ] && {
+[ "X$INSIDE_EMACS" = Xvterm ] && [ "X$JPY_PARENT_PID" = X ] && {
 
 # Helper function used to send escape sequences to vterm.
 vterm_printf() {
