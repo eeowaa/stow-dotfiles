@@ -1,4 +1,5 @@
 #!/bin/sh -e
+## Requires: ed
 
 # Render chart templates to "$HELM_CACHE_DIR/output"
 eval "`helm env`"
