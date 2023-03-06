@@ -1,0 +1,89 @@
+#!/bin/sh
+## Convert files to org format in my preferred style
+## Requires: pandoc
+progname=`basename "$0"`
+usage="Usage: $progname [-h | --help] FILE..."
+case $1 in
+-h|--help)
+    echo "$usage"
+    exit ;;
+esac
+for infile
+do
+    [ -f "$infile" ] || {
+        echo >&2 "$infile -> ERROR: not a file"
+        continue
+    }
+    printf "$infile -> "
+    outfile=${infile%.*}.org
+    pandoc --columns=80 -t org "$infile" | awk '
+function getline_or_exit() {
+    if (!getline)
+        exit
+}
+
+# Set startup options
+BEGIN {
+    print "#+STARTUP: fold"
+}
+
+# Match drawers
+match($0, /^ *:([^ ]+):$/, a) {
+    drawer_type = a[1]
+
+    # Remove indentation from drawers
+    sub(/^ +/, ""); print
+    do {
+        getline_or_exit()
+        sub(/^ +/, ""); print
+    } while (toupper($0) != ":END:")
+
+    # Remove empty lines after property drawers
+    if (toupper(drawer_type) == "PROPERTIES")
+        do {
+            getline_or_exit()
+        } while (!$0)
+}
+
+# Match blocks
+match($0, /^ *#\+[bB][eE][gG][iI][nN]_([^ ]+)$/, a) {
+    block_type = a[1]
+
+    # Print start of block
+    print
+
+    # Remove extra 2 leading spaces within block
+    getline_or_exit()
+    while (!/^ *#\+[eE][nN][dD]_/) {
+        sub(/^  /, ""); print
+        getline_or_exit()
+    }
+
+    # Print end of block
+    print
+    next
+}
+
+# Match unordered lists
+/^ *- / {
+    in_list = 1
+
+    # Remove blank lines between list items
+    while (in_list) {
+        print
+        getline_or_exit()
+        if (!$0) {
+            getline_or_exit()
+            if (!/^ *- /) {
+                if (/^[^ ]/)
+                    in_list = 0
+                printf "\n"
+            }
+        }
+    }
+}
+
+# Pass through all other lines
+{ print }' >"$outfile"
+    echo "$outfile"
+done
