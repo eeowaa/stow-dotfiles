@@ -38,7 +38,8 @@ case `docker ps --quiet --filter name=cerebro` in
         --detach \
         --rm \
         --publish 9000:9000 \
-        lmenezes/cerebro:latest ;;
+        lmenezes/cerebro:latest
+    sleep 2 ;;
 esac
 
 # Open Cerebro in a web browser
