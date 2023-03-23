@@ -1,0 +1,65 @@
+#!/bin/sh
+## Interactively add a git submodule
+## Requires: ed
+
+echo -n 'Git remote URL (prefer SSH): '
+read url
+package=`echo "$url" | sed -e 's,^.*/\([^/]*\)$,\1,' -e 's,\.git$,,'`
+
+echo -n 'Git branch name (prefer remote HEAD): '
+read branch
+
+echo -n 'Parent directory (relative or absolute): '
+read dir
+dir=`readlink -m "$dir"`
+toplevel=`git rev-parse --path-format=absolute --show-toplevel`
+case $dir/ in
+"$toplevel"/*)
+    path=`echo "$dir" |
+          sed -e "s|^$toplevel||" -e 's|$|'"/$package|" -e 's|^/||'` ;;
+*)  echo >&2 'ERROR: directory is outside of git repository'
+    exit 1
+esac
+mkdir -p "$dir"
+
+header="[submodule \"$package\"]"
+entry=$header\
+'\n\tpath = '$path\
+'\n\turl = '$url\
+'\n\tbranch = '$branch
+
+cd "$toplevel"
+if [ -f .gitmodules ]; then
+    if grep -xFe "[submodule \"$package\"]" .gitmodules >/dev/null; then
+        echo >&2 "ERROR: .gitmodules already contains entry for $package"
+        exit 1
+    fi
+    tmpfile=`mktemp`
+    trap "rm -f '$tmpfile'" 0 1 2 3 15
+    awk '
+    !inserted && /^\[submodule / && header < $0 {
+        print entry
+        inserted = 1
+    } {
+        print
+    } END {
+        if (!inserted)
+            print entry
+    }' header="$header" entry="$entry" .gitmodules >"$tmpfile"
+    mv "$tmpfile" .gitmodules
+else
+    printf "$entry"'\n' >.gitmodules
+fi
+
+git submodule add --name "$package" -b "$branch" -- "$url" "$path"
+cat <<EOF
+Hint: Run the following commands:
+
+    # Make sure nothing else is staged
+    git status
+
+    # Commit and push the changes for the new vim package
+    git commit -m 'Add $package submodule'
+    git push
+
+EOF
