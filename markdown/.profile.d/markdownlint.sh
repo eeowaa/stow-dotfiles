@@ -1,6 +1,6 @@
 # Notes:
 # - Although I prefer 2-space indents for unordered lists, some markdown
-#   formatters require 4 spaces.
+#   renderers require 4 spaces.
 # - In the documentation referenced below, it would seem that a config file such
 #   as ~/.markdownlint.yaml or ~/.markdownlintrc (or similar files under
 #   ~/.config/markdownlint/) would be recognized by markdownlint, but right now,
