@@ -75,6 +75,16 @@ git grep -l 'alias.*XDG_' -- ':/*/.environ.d/*.sh'
 git grep -l 'XDG_'
 #+end_src
 
+** TODO Properly initialize shell completion for Bash and ZSH
+Three goals:
+
+- Load completions installed at the system level
+- Generate and install user-level completion when lacking system-level completion
+- Prefer reusing available Bash completions in ZSH instead of generating new
+
+It might be easiest to start with Bash completions and move on to ZSH once you
+have everything instrumented properly in Bash.
+
 ** TODO Profile the duration of sourcing =.profile.d/*= and =.environ.d/*= files
 There is room for speed improvements. I think that ~npx~ might have something to
 do with the slowness.
