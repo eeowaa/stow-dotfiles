@@ -31,7 +31,9 @@ EOF
         printf '\e[0m'
     else
         shift
-        printf '\e[%s;%sm%s\e[0m' ${b} ${c} "$*"
+        printf '\e[%s;%sm' ${b} ${c}
+        printf "$@"
+        printf '\e[0m'
     fi
 }
 
