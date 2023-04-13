@@ -78,7 +78,7 @@ usage: git cd [jump]
             }
             local branch=`git worktree list --porcelain | awk '
             $1 == "branch" {
-                print gensub(/.*\//, "", 1, $2)
+                print gensub(/^refs\/heads\//, "", 1, $2)
             }' | fzf`
             [ "$branch" ] || {
                 echo >&2 'Error: empty selection'
@@ -91,7 +91,7 @@ usage: git cd [jump]
             $1 == "worktree" {
                 worktree = $2
             }
-            $1 == "branch" && gensub(/.*\//, "", 1, $2) == branch {
+            $1 == "branch" && gensub(/^refs\/heads\//, "", 1, $2) == branch {
                 print worktree
                 exit
             }' branch=$2` ;;
