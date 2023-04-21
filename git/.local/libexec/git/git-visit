@@ -176,8 +176,11 @@ ssh://*|*@*)
     git@*bitbucket*:*.git)
         remote_url=`echo "$remote_url" | sed 's|^git@\(.*bitbucket.*\):|https://\1/|'`
         browse_bitbucket ${1+"$@"} ;;
+    git@ssh.dev.azure.com:*)
+        remote_url=`echo "$remote_url" | sed 's|^git@ssh\.\(dev\.azure\.com\):[^/]\{1,\}/\(.*\)/\(.*\)|https://\1/\2/_git/\3|'`
+        browse "$remote_url" ;;
     ssh://?*/_git/?*)
-        # Azure DevOps
+        # Self-hosted Azure DevOps
         remote_url=`echo "$remote_url" | sed \
             -e 's|^ssh://||' \
             -e 's|^[^:/@]*@||' \
