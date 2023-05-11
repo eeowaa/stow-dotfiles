@@ -1,0 +1,3 @@
+#!/bin/sh
+## Run emacsclient with "Waiting for Emacs..." suppressed
+emacsclient --quiet ${1+"$@"}
