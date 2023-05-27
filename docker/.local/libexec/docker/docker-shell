@@ -1,0 +1,14 @@
+#!/bin/sh
+## Interactively select and run a shell in a local Docker container
+## Requires: fzf
+
+image=`docker image list --format '{{.Repository}}:{{.Tag}}' | sort | fzf`
+[ "$image" ] && {
+    cmdline="\
+if which bash >/dev/null 2>&1; then bash; \
+elif which ash >/dev/null 2>&1; then ash; \
+else /bin/sh; \
+fi"
+    docker run --rm --detach-keys "$DOCKER_DETACH_KEYS" -it "$image" \
+    /bin/sh -c "$cmdline"
+}
