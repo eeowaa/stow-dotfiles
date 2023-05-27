@@ -1,0 +1,2 @@
+DOCKER_DETACH_KEYS='ctrl-z,z'
+export DOCKER_DETACH_KEYS

@@ -26,7 +26,7 @@ docker() {
     perl -e '
 for my $i (0 .. $#ARGV) {
     if ($ARGV[$i] =~ /^(?:attach|exec|run|start)$/) {
-        splice(@ARGV, $i + 1, 0, "--detach-keys", "ctrl-z,z");
+        splice(@ARGV, $i + 1, 0, "--detach-keys", $ENV{"DOCKER_DETACH_KEYS"});
         last;
     }
 }
