@@ -1,0 +1,50 @@
+#!/bin/sh
+## Output a `npm run` script as a shell script
+## Requires: jq
+progname=`basename "$0"`
+usage="Usage: $progname [-h | --help] SCRIPT"
+
+die() {
+    if [ -t 0 ]
+    then echo "$*"
+    else cat
+    fi >&2
+    exit 1
+}
+
+[ $# -eq 1 ] || die <<EOF
+$progname: wrong number of arguments
+$usage
+EOF
+case $1 in
+-h|--help)
+    echo "$usage"
+    exit $? ;;
+*)
+    name=$1 ;;
+esac
+
+local_prefix=`npm config list | sed -n 's/^; npm local prefix = //p'`
+package_json=$local_prefix/package.json
+[ -f "$package_json" ] || die "$progname: missing package.json"
+
+# Assumes "foo && bar && baz" style
+npm_script() {
+    local name=$1
+    for part in pre '' post
+    do
+        script_part=$(
+            jq -r ".scripts[\"$part$name\"]" "$package_json" |
+            sed -e '/^null$/d' -e 's/ *&& */\n/g'
+        )
+        [ "X$script_part" = X ] || cat <<EOF
+( # $part$name
+    set -e
+`echo "$script_part" | sed 's/^/    /'`
+)
+EOF
+    done
+}
+
+echo "export PATH=\"$local_prefix/node_modules/.bin:\$PATH\""
+npm_script "$name"
