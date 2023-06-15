@@ -57,6 +57,7 @@ export HISTFILE=$XDG_CACHE_HOME/zsh/history
 # Have all ZSH instances write to the same history file
 # FIXME: This is not working as intended
 # <https://askubuntu.com/questions/23630/how-do-you-share-history-between-terminals-in-zsh>
+# <https://unix.stackexchange.com/questions/111718/command-history-in-zsh>
 setopt inc_append_history
 
 # Ignore comments in interactive command lines

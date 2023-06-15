@@ -100,15 +100,15 @@ packages += direnv gdb git irc
 packages += dotnet go haskell lua node perl python rust
 
 # Platforms
-packages += aws az k8s docker flatpak
+packages += aws az docker flatpak k8s
 k8s: utils
 
 # Databases
-packages += ldap mongo redis elastic
+packages += elastic ldap mongo redis
 redis: docker
 
 # Automation
-packages += ansible topgrade
+packages += ansible parallel topgrade
 
 # Reference and Documentation
 packages += info locate markdown org
