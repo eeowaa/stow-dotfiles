@@ -118,7 +118,7 @@ org: $(srcdir)/org/org/.git
 # Miscellaneous
 packages += utils work
 gitlinks += $(srcdir)/utils/.local/opt/mailconvert/.git
-utils: $(srcdir)/utils/.local/opt/mailconvert/.git
+utils: parallel $(srcdir)/utils/.local/opt/mailconvert/.git
 
 # Local Configuration
 .PHONY: dist configure

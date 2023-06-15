@@ -1,4 +1,4 @@
-## Requires: fd-find fzf
+## Requires: fd-find fzf parallel
 jump() {
     case $1 in
     -l) [ "X$JUMPLIST" = X ] || echo "X$JUMPLIST" | cut -c2- | tr : '\n'
@@ -27,7 +27,11 @@ jump() {
             IFS=$OLD_IFS
 
             # Interactively select a directory in JUMP_PATH
-            JUMPDIR=$(fd -Htd -E '.git*' $JUMP_OPTIONS . "$@" 2>/dev/null | fzf)
+            JUMPDIR=$(
+                parallel --line-buffer --quote \
+                    fd -Htd -E '.git*' $JUMP_OPTIONS . '{}' \
+                    ::: "$@" 2>/dev/null | fzf
+            )
 
             # Restore setting for word splitting
             [ "$nosplit" ] && unsetopt shwordsplit
