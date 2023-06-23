@@ -7,6 +7,9 @@ git() {
     cd)
         shift
         git_cd ${1+"$@"} ;;
+    shopt)
+        shift
+        git_shopt ${1+"$@"} ;;
     *)
         command git ${1+"$@"} ;;
     esac
@@ -116,4 +119,71 @@ usage: git cd [jump]
         return 1
     }
     cd "$target"
+}
+
+# Enable or disable git integration features in the current shell
+git_shopt() {
+    local usage="\
+usage: git shopt [-su] [optname ...]
+options: alias
+"
+    local mode=
+    case $1 in
+    -h|--help)
+        echo "$usage"
+        return $? ;;
+    -s) mode=set ;;
+    -u) mode=unset ;;
+    *)  echo >&2 "$usage"
+        return 1 ;;
+    esac
+    shift
+    for optname
+    do
+        case $optname in
+        alias)
+            git_shopt_alias $mode ;;
+        *)
+            echo >&2 "Invalid option: $optname" ;;
+        esac
+    done
+}
+git_shopt_alias() {
+    case $1 in
+    set)
+        # TODO: Model after magit transient keys
+        while read name value
+        do
+            echo "$name: $value"
+            alias "$name=$value"
+            _git_shopt_aliases=$_git_shopt_aliases${_git_shopt_aliases:+' '}$name
+        done <<EOF ;;
+ga  git add
+gc  git commit
+gd  git diff
+gf  git fetch
+gg  git graph --all
+gp  git push
+gs  git status
+EOF
+    unset)
+        # Enable word splitting in zsh
+        local nosplit=
+        [ "$ZSH_VERSION" ] && [[ ! -o shwordsplit ]] && {
+            setopt shwordsplit
+            nosplit=X
+        }
+
+        local shadow=
+        for name in $_git_shopt_aliases
+        do
+            unalias $name
+            shadow=`which $name 2>/dev/null`
+            [ "$shadow" ] && echo "$name: $shadow"
+        done
+        _git_shopt_aliases=
+
+        # Restore setting for word splitting
+        [ "$nosplit" ] && unsetopt shwordsplit ;;
+    esac
 }
