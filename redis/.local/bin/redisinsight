@@ -42,5 +42,5 @@ case `docker ps --quiet --filter name=redisinsight` in
     sleep 2 ;;
 esac
 
-# Open RedisInsights in a web browser
+# Open RedisInsights in a web browser (may have to refresh)
 xdg-open http://localhost:8001

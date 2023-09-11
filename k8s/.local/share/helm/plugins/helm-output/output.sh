@@ -16,3 +16,5 @@ w
 q
 EOF
 done
+
+# TODO: Preserve the order of templates in each file
