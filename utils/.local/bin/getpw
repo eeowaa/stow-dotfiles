@@ -61,6 +61,8 @@ Options:
 Environment:
   GETPW_BACKENDS   Space-delimited list of backends to query. When set, this
                    variable is used as a fallback when no options are supplied.
+  GETPW_MAX_AGE    Maximum age in seconds of local password cache for remote
+                   backends. (default = 86400)
 
 When LABEL is supplied, obtain a password from the first specified available
 backend. Otherwise, determine LABEL interactively by querying all specified
@@ -139,11 +141,40 @@ else
     default_backends=X
 fi
 
-# Source a wrapper function for Bitwarden if one exists
-if [ -f "$HOME/.environ.d/bw.sh" ]
-then
-    . "$HOME/.environ.d/bw.sh"
-fi
+# Initialize backends as needed
+expr "X$GETPW_MAX_AGE" : 'X[0-9]\{1,\}$' >/dev/null || GETPW_MAX_AGE=86400
+for backend in $backends
+do
+    echo >&2 "Initializing backend: $backend"
+    case $backend in
+    bitwarden)
+        read bw_status bw_lastsync <<EOF
+`bw status 2>/dev/null | jq -r '.status + " " + .lastSync'`
+EOF
+        seconds=`expr \`date +%s\` - \`date +%s -d $bw_lastsync\``
+        case $bw_status in
+        unauthenticated)
+            # > Log into BitWarden
+            # > Download encrypted vault to local storage
+            # > Create/store a session token + decrypt vault into memory
+            bw login || exit $? ;;
+        locked)
+            # > Download encrypted vault if local copy is too old
+            # > Create/store a session token + decrypt vault into memory
+            [ $seconds -lt $GETPW_MAX_AGE ] || bw sync --quiet
+            bw unlock || exit $? ;;
+        unlocked)
+            # > Download encrypted vault if local copy is too old
+            [ $seconds -lt $GETPW_MAX_AGE ] || bw sync --quiet ;;
+        esac ;;
+    keychain)
+        # No initialization needed
+        ;;
+    pass)
+        # TODO
+        ;;
+    esac
+done
 
 # Determine the password label if not already supplied
 if [ "X$label" = X ]
@@ -186,6 +217,7 @@ else
 fi
 
 # Obtain the password from the corresponding backend
+echo >&2 "Obtaining password from backend: $backend"
 case $backend in
 bitwarden)
     bw list items |

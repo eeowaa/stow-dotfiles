@@ -1,0 +1,51 @@
+#!/bin/sh -e
+
+# Establish secure session caching for BitWarden
+[ "$BW_SESSION_CACHE" ] || {
+    BW_SESSION_CACHE=$XDG_CACHE_HOME/bw/session
+    export BW_SESSION_CACHE
+}
+if [ -f "$BW_SESSION_CACHE" ]
+then
+    BW_SESSION=`cat "$BW_SESSION_CACHE"`
+    export BW_SESSION
+else
+    cachedir=`dirname "$BW_SESSION_CACHE"`
+    mkdir -p "$cachedir"
+    touch "$BW_SESSION_CACHE"
+    chmod 600 "$BW_SESSION_CACHE"
+fi
+
+# Remove ~/bin from $PATH
+PATH=`
+    echo "$PATH" | tr : '\n' |
+    grep -Ev "^($HOME|~)/bin/?$" |
+    tr '\n' : | sed 's/:$//'
+`
+export PATH
+
+showhelp= action=
+for arg
+do
+    case $arg in
+    -h|--help)
+        # Always show help text when asked
+        bw ${1+"$@"}
+        exit ;;
+    -*)
+        # Pass through other flags without special handling
+        ;;
+    *)
+        # The first non-flag argument is the action to run
+        [ "$action" ] || action=$1 ;;
+    esac
+done
+
+# Execute a BitWarden CLI command, caching session tokens if needed
+case $action in
+login|unlock)
+    token=`bw $@ --cleanexit --raw`
+    [ "X$token" = X ] || echo "$token" >"$BW_SESSION_CACHE" ;;
+*)
+    bw ${1+"$@"} ;;
+esac
