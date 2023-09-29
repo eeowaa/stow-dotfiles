@@ -151,7 +151,9 @@ do
         read bw_status bw_lastsync <<EOF
 `bw status 2>/dev/null | jq -r '.status + " " + .lastSync'`
 EOF
-        seconds=`expr \`date +%s\` - \`date +%s -d $bw_lastsync\``
+        if [ "$bw_lastsync" ]
+        then seconds=`expr \`date +%s\` - \`date +%s -d $bw_lastsync\``
+        fi
         case $bw_status in
         unauthenticated)
             # > Log into BitWarden
