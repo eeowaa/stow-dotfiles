@@ -42,15 +42,17 @@ augroup END
 
 " }}}
 " Transparent background {{{
+" NOTE: I have this disabled for now, because it causes the background to be
+"       white instead of transparent in my current environment (GNOME on X11)
 " General idea: https://stackoverflow.com/a/67569365
 " More suggested highlighting groups: https://gist.github.com/fuadnafiz98/d91e468c9bc4689868eb0984a29fef66
 " Explanation of highlighting groups: :help highlight-groups
-autocmd SourcePost *
-    \ highlight Normal      guibg=NONE ctermbg=NONE |
-    \ highlight LineNr      guibg=NONE ctermbg=NONE |
-    \ highlight Folded      guibg=NONE ctermbg=NONE |
-    \ highlight SignColumn  guibg=NONE ctermbg=NONE |
-    \ highlight EndOfBuffer guibg=NONE ctermbg=NONE
+" autocmd SourcePost *
+"     \ highlight Normal      guibg=NONE ctermbg=NONE |
+"     \ highlight LineNr      guibg=NONE ctermbg=NONE |
+"     \ highlight Folded      guibg=NONE ctermbg=NONE |
+"     \ highlight SignColumn  guibg=NONE ctermbg=NONE |
+"     \ highlight EndOfBuffer guibg=NONE ctermbg=NONE
 " }}}
 " Environment {{{
 set nocompatible
