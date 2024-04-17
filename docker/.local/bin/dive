@@ -1,0 +1,14 @@
+#!/bin/sh
+progname=`basename "$0"`
+
+# Determine path of Docker socket
+socket=${DOCKER_HOST:-/var/run/docker.sock}
+socket=`readlink -f "${socket#unix://*}"`
+[ -S "$socket" ] || {
+    echo >&2 "$progname: could not determine Docker socket"
+    exit 1
+}
+
+# Run dive (https://github.com/wagoodman/dive)
+docker run -it --rm -v "$socket:/var/run/docker.sock" \
+    wagoodman/dive:latest ${1+"$@"}
