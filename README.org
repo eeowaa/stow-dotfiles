@@ -67,7 +67,7 @@ into compliance (listed in preferred order):
 
 
 ** Dotfile management systems
-Dotfiles be managed in many different ways. Here are a few approaches:
+Dotfiles can be managed in many different ways. Here are a few approaches:
 
 1. Have a git repo in =$HOME=
 2. Generate dotfiles from templates and copy into place

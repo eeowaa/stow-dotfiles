@@ -1,0 +1,5 @@
+#!/bin/sh
+## Run this command if pipx breaks after an OS update
+## Reference: https://github.com/pypa/pipx/issues/888
+rm -rf "$HOME/.local/pipx/shared"
+pipx reinstall-all

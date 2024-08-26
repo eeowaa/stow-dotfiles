@@ -9,11 +9,11 @@
 # Skin...
 k9s:
   body:
-    fgColor: default
+    fgColor: black
     bgColor: default
     logoColor: default
   prompt:
-    fgColor: default
+    fgColor: black
     bgColor: default
     suggestColor: default
   info:
@@ -22,12 +22,12 @@ k9s:
   dialog:
     fgColor: default
     bgColor: default
-    buttonFgColor: default
-    buttonBgColor: default
-    buttonFocusFgColor: default
-    buttonFocusBgColor: default
-    labelFgColor: default
-    fieldFgColor: default
+    buttonFgColor: white
+    buttonBgColor: black
+    buttonFocusFgColor: white
+    buttonFocusBgColor: black
+    labelFgColor: black
+    fieldFgColor: blue
   frame:
     border:
       fgColor: default

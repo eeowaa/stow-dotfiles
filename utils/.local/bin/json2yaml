@@ -2,4 +2,4 @@
 ## Convert JSON to YAML
 ## Requires: yq
 [ $# -eq 0 ] && set -- -
-yq e -P "$@"
+yq e -Poy "$@"
