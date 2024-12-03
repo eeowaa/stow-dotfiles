@@ -20,8 +20,8 @@ alias p='pwd'
 alias j='jobs'
 alias e='echo $?'
 alias grep='grep --color=auto'
-alias ls='ls --color=auto --group-directories-first'
-alias ll='ls -l'
+alias ls='ls --color=auto --group-directories-first -v'
+alias ll='ls --color=auto --group-directories-first -vl'
 
 # Functions for interactive use
 f() {
