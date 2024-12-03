@@ -1,0 +1,7 @@
+#!/bin/sh
+## Requires: tree
+
+# Grab the second `tree` in the $PATH (this script is the first)
+tree=`which -a tree | sed -n 2p`
+
+$tree --dirsfirst -a ${1+"$@"}
