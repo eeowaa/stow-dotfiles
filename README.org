@@ -22,6 +22,37 @@ make [PACKAGE]... # Install specified packages and packages on which they depend
 make dist         # Generate a new example-local.mk from package directories
 #+end_src
 
+** Docker
+In some constrained environments, GNU Stow and other prerequisites cannot be
+installed on the host system (e.g., the user does not have root access). In
+such cases, Docker can be used to configure dotfiles. The following example
+demonstrates how to configure Git and SSH using this method, which is often
+the first step in dotfile management using this repository (submodules cannot
+be cloned until then).
+
+#+begin_src sh :eval no
+# Build a "stow-dotfiles" image containing all prerequisites
+docker build -t stow-dotfiles .
+
+# Spawn in interactive container with appropriate host access
+: "${PWD:=$(pwd)}"
+docker run --rm -it \
+    --volume "${HOME}:/mnt/rootfs${HOME}" \
+    --volume "${PWD}:/mnt/rootfs${PWD}" \
+    --workdir "/mnt/rootfs${PWD}" \
+    --env "HOME=/mnt/rootfs${HOME}" \
+    --user "$(id -u):$(id -g)" stow-dotfiles
+
+# Run commands within the container to manage dotfiles on the host
+eval "$(direnv hook bash)"
+make configure  # Ensure that ssh and git are selected
+make ssh git
+
+# Generate an SSH keypair and upload the public key to GitHub
+ssh-keygen -t ed25519 -f "${HOME}/.ssh/github/id_ed25519"
+cat "${HOME}/.ssh/github/id_ed25519.pub"  # Upload this part
+#+end_src
+
 * Discussion
 ** Package-specific documentation
 Each package can have a top-level ~README.*~ file which will not get stowed.
