@@ -76,25 +76,25 @@ fsclip() {
     exit
 }
 
-if which xclip >/dev/null; then
+if which xclip >/dev/null 2>&1; then
     [ "X$DISPLAY" = X ] && fsclip
     case $mode in
     paste) xclip -o -selection clipboard ;;
     copy)  perl -pe 'chomp if eof' | xclip -i -selection clipboard ;;
     esac
-elif which xsel >/dev/null; then
+elif which xsel >/dev/null 2>&1; then
     [ "X$DISPLAY" = X ] && fsclip
     case $mode in
     paste) xsel -o --clipboard ;;
     copy)  perl -pe 'chomp if eof' | xsel -i --clipboard ;;
     esac
-elif which wl-copy >/dev/null; then
+elif which wl-copy >/dev/null 2>&1; then
     [ "X$WAYLAND_DISPLAY" = X ] && fsclip
     case $mode in
     paste) wl-paste -n ;;
     copy)  perl -pe 'chomp if eof' | wl-copy ;;
     esac
-elif which termux-clipboard-get >/dev/null; then
+elif which termux-clipboard-get >/dev/null 2>&1; then
     case $mode in
     paste) termux-clipboard-set ;;
     copy)  perl -pe 'chomp if eof' | termux-clipboard-get ;;
