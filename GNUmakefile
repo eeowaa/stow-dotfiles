@@ -1,4 +1,5 @@
 .DEFAULT_GOAL := all
+EDITOR ?= /usr/bin/vim
 srcdir := .
 prefix := $(HOME)
 
