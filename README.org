@@ -45,7 +45,8 @@ docker run --rm -it \
 
 # Run commands within the container to manage dotfiles on the host
 eval "$(direnv hook bash)"
-make configure  # Ensure that ssh and git are selected
+make configure            # Ensure that "ssh" and "git" are selected
+rm "${HOME}/.ssh/config"  # Remove existing SSH config to avoid conflict
 make ssh git
 
 # Generate an SSH keypair and upload the public key to GitHub
