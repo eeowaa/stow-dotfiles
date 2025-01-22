@@ -44,14 +44,18 @@ docker run --rm -it \
     --user "$(id -u):$(id -g)" stow-dotfiles
 
 # Run commands within the container to manage dotfiles on the host
-eval "$(direnv hook bash)"
-make configure            # Ensure that "ssh" and "git" are selected
-rm "${HOME}/.ssh/config"  # Remove existing SSH config to avoid conflict
-make ssh git
+eval "$(direnv hook bash)"  # Activate direnv for enhanced interactivity
+make configure              # Ensure that "ssh" and "git" are selected
+rm "${HOME}/.ssh/config"    # Remove existing SSH config to avoid conflict
+make ssh git                # Install "ssh" and "git" GNU Stow packages
+exit                        # Exit the container and return to the host
 
 # Generate an SSH keypair and upload the public key to GitHub
 ssh-keygen -t ed25519 -f "${HOME}/.ssh/github/id_ed25519"
-cat "${HOME}/.ssh/github/id_ed25519.pub"  # Upload this part
+cat "${HOME}/.ssh/github/id_ed25519.pub"
+
+# Recursively clone submodules over SSH (must be performed from the host)
+make submodules
 #+end_src
 
 * Discussion
