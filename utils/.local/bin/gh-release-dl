@@ -35,7 +35,7 @@ do
     [ "X$arg" = X ] && die 'missing argument'
 done
 local url=`
-    curl -s https://api.github.com/repos/$repo/releases/latest | jq -r \
+    curl -fsSLo- https://api.github.com/repos/$repo/releases/latest | jq -r \
     '.assets[] | select(.name | test("^'"$asset"'$")) | .browser_download_url'
 `
 [ "X$url" = X ] && die 'could not find URL'
@@ -52,6 +52,6 @@ $progname: (recursively) delete? [y/N]: "
     esac
 }
 mkdir -p "$prefix" "$HOME/.local/bin"
-curl -Lo- "$url" | tar -C "$prefix" -xzf -
+curl -fsSLo- "$url" | tar -C "$prefix" -xzf -
 [ -x "$canonical_path/$binary" ] || die "not an executable file: $canonical_path/$binary"
 ln -sf "$canonical_path/$binary" "$HOME/.local/bin"
