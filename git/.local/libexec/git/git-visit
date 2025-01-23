@@ -56,7 +56,37 @@ EOF
     browse "$url"
 }
 browse_gitlab() {
-    : stub
+    # Strip the trailing '.git' from the remote URL
+    remote_url=`expr "$remote_url" : '\(.*\)\.git$'`
+
+    # Determine default branch on remote
+    remote_HEAD=`git symbolic-ref "refs/remotes/$remote/HEAD" 2>/dev/null | sed 's#.*/##'`
+    test "X$remote_HEAD" = X && remote_HEAD='main'
+
+    # Determine what we want to visit
+    case $# in
+    0)  if test "X$branch" = "X$remote_HEAD"
+        then
+            # Homepage of repo
+            url=$remote_url
+        else
+            # Tree of alternate branch
+            url=$remote_url/-/tree/$branch
+        fi ;;
+    1)  file=`echo "X$1" | sed -e 's/^X//' -e 's/:[0-9]*$//'`
+        line=`expr "X$1" : 'X.*:\([0-9]*\)$'`
+
+        # Specific file, potentially with line number
+        url=$remote_url/-/blob/$branch/$GIT_PREFIX$file
+        test "X$line" = X || url="$url#L$line" ;;
+    *)  die <<EOF
+$usage
+$moreinfo
+EOF
+    esac
+
+    # Visit the darn thing!
+    browse "$url"
 }
 browse_bitbucket() {
     # Strip the trailing '.git' from the remote URL
@@ -173,6 +203,9 @@ ssh://*|*@*)
     git@github.com:*.git)
         remote_url=`echo "$remote_url" | sed 's|^git@github\.com:|https://github.com/|'`
         browse_github ${1+"$@"} ;;
+    git@*gitlab*:*.git)
+        remote_url=`echo "$remote_url" | sed 's|^git@\(.*gitlab.*\):|https://\1/|'`
+        browse_gitlab ${1+"$@"} ;;
     git@*bitbucket*:*.git)
         remote_url=`echo "$remote_url" | sed 's|^git@\(.*bitbucket.*\):|https://\1/|'`
         browse_bitbucket ${1+"$@"} ;;
