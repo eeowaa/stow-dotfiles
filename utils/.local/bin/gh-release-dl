@@ -11,21 +11,27 @@ die() {
 while [ $# -gt 0 ]
 do
     case $1 in
+    --help)
+        cat <<EOF
+Usage: $progname [--help] ARGUMENT...
+Arguments:
+  --repo     "<user>/<repo>" string to identify a GitHub repo
+  --asset    Anchored regular expression used by \`jq\` for a named tarball
+  --prefix   Directory to pass to \`tar -C\`
+  --path     Directory path within the tarball to the data root
+  --binary   Path relative to the data root to the executable file
+EOF
+        exit 0 ;;
     --repo)
-        # A "<user>/<repo>" string to identify a GitHub repo
         repo=$2 ;;
     --asset)
-        # An anchored regular expression used by `jq` for a named tarball
         asset=$2 ;;
     --prefix)
-        # Directory to pass to `tar -C`
         prefix=$2 ;;
     --path)
-        # Directory path within the tarball to the data root
         # NOTE: This variable cannot be named `path` due to conflict with ZSH
         root=$2 ;;
     --binary)
-        # Path relative to the data root to the executable file
         binary=$2 ;;
     esac
     shift; shift
