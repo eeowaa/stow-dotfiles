@@ -40,12 +40,12 @@ for arg in "$repo" "$asset" "$prefix" "$root" "$binary"
 do
     [ "X$arg" = X ] && die 'missing argument'
 done
-local url=`
+url=`
     curl -fsSLo- https://api.github.com/repos/$repo/releases/latest | jq -r \
     '.assets[] | select(.name | test("^'"$asset"'$")) | .browser_download_url'
 `
 [ "X$url" = X ] && die 'could not find URL'
-local canonical_path=`readlink -m "$prefix/$root"`
+canonical_path=`readlink -m "$prefix/$root"`
 [ -e "$canonical_path" ] && {
     printf "\
 $progname: found existing: $canonical_path
@@ -58,6 +58,6 @@ $progname: (recursively) delete? [y/N]: "
     esac
 }
 mkdir -p "$prefix" "$HOME/.local/bin"
-curl -fsSLo- "$url" | tar -C "$prefix" -xzf -
+curl -fsSLo- "$url" | tar -C "$prefix" -xzf-
 [ -x "$canonical_path/$binary" ] || die "not an executable file: $canonical_path/$binary"
 ln -sf "$canonical_path/$binary" "$HOME/.local/bin"
