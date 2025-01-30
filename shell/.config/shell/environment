@@ -84,6 +84,15 @@ fixpath() {
     }'`
     export PATH
 }
+editpath() {
+    local tmpfile=`mktemp`
+    echo "$PATH" | tr : '\n' >"$tmpfile"
+    ${VISUAL:-$EDITOR} "$tmpfile" && {
+        PATH=`tr '\n' : <"$tmpfile"`
+        fixpath
+    }
+    rm -f "$tmpfile"
+}
 
 # Source each environment script
 for environ in "$HOME/.environ.d"/*.sh
