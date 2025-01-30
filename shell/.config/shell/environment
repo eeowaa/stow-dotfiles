@@ -67,7 +67,7 @@ cdsed() {
 fixpath() {
     # Remove duplicate and nonexistent entries from `PATH'
     PATH=`echo "$PATH" | tr : '\n' | awk '
-    {
+    NF {
         if ($0 in y) {
             print "Removing duplicate PATH entry:", $0 > "/dev/stderr"
         } else if (system(sprintf("/bin/sh -c \"test -d '\''%s'\''\"", $0)) != 0) {
