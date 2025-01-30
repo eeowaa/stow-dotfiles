@@ -66,7 +66,7 @@ then
     PROMPT_COMMAND=$(
         printf '%secho -ne "\033]0;%s\007"' \
             "${PROMPT_COMMAND:+$PROMPT_COMMAND; }" \
-            "${VTERM_BUFFER_NAME:-*vterm \$HOSTNAME:\$PWD*}"
+            "${VTERM_BUFFER_NAME:-*vterm \$HOSTNAME:\${PWD/\$HOME/\~\}*}"
     )
 elif [ "$ZSH_VERSION" ]
 then
