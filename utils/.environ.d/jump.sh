@@ -1,19 +1,28 @@
 ## Requires: fd-find fzf parallel
 jump() {
     case $1 in
-    -l) [ "X$JUMPLIST" = X ] || echo "X$JUMPLIST" | cut -c2- | tr : '\n'
+    -l)
+        # List directories in $JUMP_LIST (like `dirs`).
+        [ "X$JUMP_LIST" = X ] || echo "X$JUMP_LIST" | cut -c2- | tr : '\n'
         return 0
         ;;
-    -)  [ "X$JUMPLIST" = X ] && {
-            echo >&2 'JUMPLIST is empty'
+    -)
+        # Jump to the previous directory in $JUMP_LIST (like `popd`).
+        "X$JUMP_LIST" = X ] && {
+            echo >&2 'JUMP_LIST is empty'
             return 1
         }
-        JUMPDIR=${JUMPLIST%%:*}
-        JUMPLIST=`echo "$JUMPLIST" | sed "s/^[^:]*:\{0,1\}//"`
+        JUMP_DIR=${JUMP_LIST%%:*}
+        JUMP_LIST=`echo "$JUMP_LIST" | sed "s/^[^:]*:\{0,1\}//"`
         ;;
     *)
-        [ $# -eq 0 ] && {
-            # Enable word splitting in zsh
+        # Jump to an interactively-selected directory (like `pushd`).
+        # Top-level directories can be specified with function arguments.
+        # If no arguments are supplied, colon-separated directories in
+        # $JUMP_PATH are the top-level directories, falling back to $HOME.
+        [ $# -eq 0 ] &&
+        {
+            # Enable word-splitting in ZSH
             local nosplit
             [ "$ZSH_VERSION" ] && [[ ! -o shwordsplit ]] && {
                 setopt shwordsplit
@@ -26,20 +35,22 @@ jump() {
             set -- ${JUMP_PATH:-$HOME}
             IFS=$OLD_IFS
 
-            # Interactively select a directory in JUMP_PATH
-            JUMPDIR=$(
-                parallel --line-buffer --quote \
-                    fd -Htd -E '.git*' $JUMP_OPTIONS . '{}' \
-                    ::: "$@" 2>/dev/null | fzf
-            )
-
             # Restore setting for word splitting
             [ "$nosplit" ] && unsetopt shwordsplit
         }
-        [ "X$JUMPDIR" = X ] && return 1
-        JUMPLIST=$JUMPDIR${JUMPLIST:+:}$JUMPLIST
+
+        # Interactively select a directory, adding it to $JUMP_LIST.
+        JUMP_DIR=$(
+            parallel --line-buffer --quote \
+                fd -Htd -E '.git*' $JUMP_OPTIONS . '{}' \
+                ::: "$@" 2>/dev/null | fzf
+        )
+        [ "X$JUMP_DIR" = X ] && return 1
+        JUMP_LIST=$JUMP_DIR${JUMP_LIST:+:}$JUMP_LIST
         ;;
     esac
-    cd "$JUMPDIR"
-    echo "$JUMPDIR"
+
+    # Jump to the directory
+    cd "$JUMP_DIR"
+    echo "$JUMP_DIR"
 }
