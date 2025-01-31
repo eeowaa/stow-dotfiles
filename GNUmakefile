@@ -62,8 +62,8 @@ zsh: shell
 # Editors - Vim
 packages += vim
 gitlinks += $(srcdir)/vim/.vim/pack/eeowaa/.git
-vim: $(srcdir)/vim/.vim/pack/eeowaa/.git
-vim-postinstall:
+vim-postinstall: $(srcdir)/vim/.vim/pack/eeowaa/.git
+	stow -d $(srcdir)/vim/.vim -t $(prefix)/.vim/pack $(filter-out --no-folding,$(STOWFLAGS)) pack
 	cd $(prefix)/.vim && chmod 700 undo swap backup viminfo
 
 # Editors - LunarVim
