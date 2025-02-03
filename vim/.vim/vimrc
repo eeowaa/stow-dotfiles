@@ -125,6 +125,11 @@ autocmd BufNewFile,BufRead *.{md,markdown} set
     \ makeprg=pandoc\ -f\ markdown\ -t\ html\ -o\ '%<.html'\ '%'
     \ nofoldenable
 " }}}
+" Python {{{
+autocmd BufNewFile,BufRead *.{py} set
+    \ tabstop=4 shiftwidth=4 expandtab
+    \ foldmethod=indent foldenable
+" }}}
 " Terraform {{{
 autocmd BufNewFile,BufRead *.tf set
     \ filetype=terraform
@@ -225,6 +230,7 @@ noremap k gk
 " }}}
 " Folding {{{
 set foldmethod=marker
+set foldminlines=0
 nnoremap <silent> <leader>zj :call NextClosedFold('j')<cr>
 nnoremap <silent> <leader>zk :call NextClosedFold('k')<cr>
 function! NextClosedFold(dir)
