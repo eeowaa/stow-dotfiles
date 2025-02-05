@@ -231,6 +231,7 @@ noremap k gk
 " Folding {{{
 set foldmethod=marker
 set foldminlines=0
+set foldlevelstart=99
 nnoremap <silent> <leader>zj :call NextClosedFold('j')<cr>
 nnoremap <silent> <leader>zk :call NextClosedFold('k')<cr>
 function! NextClosedFold(dir)
