@@ -24,8 +24,13 @@ docker() {
 
     # Use perl to modify the argument list, avoiding bashisms
     perl -e '
+my $re = qr/^(?:attach|exec|run|start)$/;
 for my $i (0 .. $#ARGV) {
-    if ($ARGV[$i] =~ /^(?:attach|exec|run|start)$/) {
+    if ($ARGV[$i] eq "compose") {
+        $re = qr/^attach$/;
+        next;
+    }
+    if ($ARGV[$i] =~ $re) {
         splice(@ARGV, $i + 1, 0, "--detach-keys", $ENV{"DOCKER_DETACH_KEYS"});
         last;
     }
