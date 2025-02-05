@@ -96,7 +96,7 @@ autocmd BufNewFile,BufRead *.{master,as[pc]x,snippet} set
     \ syntax=html filetype=html
 " }}}
 " Bash {{{
-autocmd BufNewFile,BufRead /tmp/bash-fc.*,bash_{profile,logout},*.cygport
+autocmd BufNewFile,BufRead /tmp/bash-fc.*,bash_{profile,logout},*.cygport,.envrc
     \ let g:is_bash=1 | set
     \ syntax=sh filetype=sh
 " }}}
