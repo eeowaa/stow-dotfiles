@@ -1,4 +1,5 @@
-# Local Makefile configuration
+# Local configuration for stow-dotfiles
+.envrc.private
 /local.mk
 
 # Machine-specific user config

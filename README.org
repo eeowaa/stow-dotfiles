@@ -58,6 +58,17 @@ cat "${HOME}/.ssh/github/id_ed25519.pub"
 make submodules
 #+end_src
 
+The =.bin/make= wrapper script intelligently automates the process of building
+a ~stow-dotfiles~ Docker image and running =make= inside of a container when
+the ~STOW_DOTFILES_DOCKERIZED~ environment variable is non-empty. If you have
+=direnv= installed on your host, you can create a =.envrc.private= file to
+locally configure this behavior. Just run the following commands:
+
+#+begin_src sh :eval no
+echo 'export STOW_DOTFILES_DOCKERIZED=1' >> .envrc.private
+direnv allow .
+#+end_src
+
 * Discussion
 ** Package-specific documentation
 Each package can have a top-level ~README.*~ file which will not get stowed.

@@ -1,0 +1,54 @@
+#!/bin/sh
+## Run in a Docker container upon request
+
+status=0
+error() {
+    echo >&2 "stow-dotfiles: $*"
+    status=1
+}
+
+# There is never a good reason to run `make` from within a subdirectory
+toplevel=`pwd | sed 's#\(/stow-dotfiles\)/.*#\1#'`
+cd "$toplevel"
+
+# Run `make` normally if STOW_DOTFILES_DOCKERIZED is unset
+[ "X$STOW_DOTFILES_DOCKERIZED" = X ] && {
+
+    # Ignore this wrapper script
+    bindir=$toplevel/.bin
+    make=`which -a make | grep -vxF "$bindir/make" | head -n 1`
+
+    # Exit if any required commands are missing
+    [ "X$make" = X ] && error 'command not found: make'
+    which stow >/dev/null 2>&1 || error 'command not found: stow'
+    which git >/dev/null 2>&1 || error 'command not found: git'
+    editorbin=`printf '%s\n' "${EDITOR:-vim}" | awk '{print $1}'`
+    which $editorbin >/dev/null 2>&1 || error "command not found: $editorbin"
+    [ $status -eq 0 ] || {
+        echo 'hint: try again with STOW_DOTFILES_DOCKERIZED=1'
+        exit $status
+    }
+
+    # Run `make` on the host system
+    exec $make ${1+"$@"}
+}
+
+# Ensure we have docker when STOW_DOTFILES_DOCKERIZED is set
+which docker >/dev/null 2>&1 || error 'command not found: docker'
+[ $status -eq 0 ] || {
+    echo 'hint: install docker or try again with STOW_DOTFILES_DOCKERIZED=0'
+    exit $status
+}
+
+# Build the stow-dotfiles image if missing
+docker images --format '{{.Repository}}' | grep -qxF stow-dotfiles ||
+docker build -t stow-dotfiles .
+
+# Run the desired `make` command in an interactive Docker container
+# with appropriate host access and permissions
+exec docker run --rm -it \
+    --volume "$HOME:/mnt/rootfs$HOME" \
+    --volume "$toplevel:/mnt/rootfs$toplevel" \
+    --workdir "/mnt/rootfs$toplevel" \
+    --env "HOME=/mnt/rootfs$HOME" \
+    --user "`id -u`:`id -g`" stow-dotfiles make ${1+"$@"}
