@@ -1,7 +1,16 @@
 #!/bin/sh
 ## Requires: tree
 
-# Grab the second `tree` in the $PATH (this script is the first)
-tree=`which -a tree | sed -n 2p`
+# Ignore this wrapper script
+bindir=`pwd | sed 's#\(/stow-dotfiles\)/.*#\1#'`/.bin
+tree=`which -a tree | grep -vxF "$bindir/tree" | head -n 1`
 
-$tree --dirsfirst -a ${1+"$@"}
+# Exit if there is no other tree executable on $PATH
+[ "X$tree" = X ] && {
+    echo >&2 'command not found: tree'
+    exit 1
+}
+
+# Output a directory tree with directories first, showing hidden files
+[ -t 0 ] && set -- -C ${1+"$@"}
+exec $tree --dirsfirst -a ${1+"$@"}

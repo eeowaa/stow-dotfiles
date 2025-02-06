@@ -1,8 +1,15 @@
 #!/bin/sh
 ## Requires: coreutils
 
-# Grab the second `ls` in the $PATH (this script is the first)
-ls=`which -a ls | sed -n 2p`
+# Ignore this wrapper script
+bindir=`pwd | sed 's#\(/stow-dotfiles\)/.*#\1#'`/.bin
+ls=`which -a ls | grep -vxF "$bindir/ls" | head -n 1`
 
-# Assume GNU `ls`
-$ls --color=auto --group-directories-first -A ${1+"$@"}
+# Exit if there is no other ls executable on $PATH
+[ "X$ls" = X ] && {
+    echo >&2 'command not found: ls'
+    exit 1
+}
+
+# Output a directory listing with directories first, showing hidden files
+exec $ls --color=auto --group-directories-first -A ${1+"$@"}
