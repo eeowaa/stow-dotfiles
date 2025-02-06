@@ -1,0 +1,28 @@
+#!/bin/sh
+## Interactively select an object from docker command output
+## Requires: fzf
+
+# Check for obvious errors.
+[ $# -eq 0 ] && {
+    echo >&2 'Usage: docker fzf <command>'
+    exit 1
+}
+[ "X$1" = 'Xfzf' ] && {
+    echo >&2 'docker-fzf: aborting: infinite loop detected'
+    exit 1
+}
+
+# Normalize output format to ensure that object IDs are in the first column.
+# When listing images, the ID is in the 3rd column by default, which is non-standard.
+image_format='table {{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.CreatedSince}}\t{{.Size}}'
+if [ "X$1" = 'Ximages' ]; then
+    shift
+    set -- images --format="$image_format" ${1+"$@"}
+elif [ "X$1" = 'Ximage' ] && [ "X$2" = 'Xlist' ]; then
+    shift; shift
+    set -- image list --format="$image_format" ${1+"$@"}
+fi
+
+# Run a docker command to output a listing of objects in tabular format.
+# Interactively select an object and pass the ID to standard output.
+docker "$@" | fzf --header-lines=1 | awk '{ print $1 }'
