@@ -29,7 +29,9 @@ done
 }
 
 # Prettify and colorize JSON with jq(1), piping to less(1)
-if [ "X$input" = X ]
-then jq -C .
-else jq -C . "$input"
-fi | less -R
+[ "X$input" = X ] && {
+    input=`mktemp`
+    trap "rm -f '$input'" 0 1 2 3 15
+    cat >"$input"
+}
+jq -C . "$input" | less -R
