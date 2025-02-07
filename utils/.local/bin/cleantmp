@@ -29,7 +29,7 @@ inittime=`uptime -s`
 
 # Remove stale files and directories in $TMPDIR (last modified before system
 # initialization), but keep stale directories if they contain fresh files
-find "$TMPDIR" -depth \
+find "$TMPDIR" -depth -writable \
      \! -newermt "$inittime" \( \
          \( \! -type d -printf '%t %p\n' \) -o \
          \( -empty -printf '%t %p/\n' \) \
