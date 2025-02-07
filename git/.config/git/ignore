@@ -49,6 +49,9 @@ __pycache__/
 # Python virtual environments
 *venv/
 
+# Direnv directory
+.direnv/
+
 # Directory metadata cache
 .DS_Store
 Thumbs.db
