@@ -1,6 +1,12 @@
 # Automatically activate a Python virtualenv
 activate() {
-    for venv in "$VIRTUAL_ENV" "`pipenv --venv 2>/dev/null`" .venv venv
+    # Check for virtual environment directories via environment variable,
+    # direnv, pipenv, and implicit convention, in that order.  Ignores some
+    # tooling like virtualenvwrapper and pyvenv.
+    for venv in "$VIRTUAL_ENV" \
+                .direnv/python-?* .direnv/virtualenv \
+                "`pipenv --venv 2>/dev/null`" \
+                .venv venv
     do
         if [ -d "$venv" ] && [ -f "$venv/bin/activate" ]
         then
