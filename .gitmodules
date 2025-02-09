@@ -34,7 +34,7 @@
 [submodule "vanilla-emacs"]
 	path = .stash/.config/emacs
 	url = git@github.com:eeowaa/vanilla-emacs.git
-	branch = master
+	branch = doom-migration
 
 # Reference Doom Emacs configurations
 [submodule "hlissner/doom-emacs-private"]
