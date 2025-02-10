@@ -26,6 +26,9 @@ desktop-save.*
 /scratch*
 *.scratch*
 
+# Temporary files
+*.tmp.*
+
 # CTags and CScope
 TAGS
 cscope.*
