@@ -2,13 +2,43 @@
 ## Interactively select and run a shell in a local Docker container
 ## Requires: fzf
 
-image=`docker image list --format '{{.Repository}}:{{.Tag}}' | sort | fzf`
-[ "$image" ] && {
-    cmdline="\
-if which bash >/dev/null 2>&1; then bash; \
-elif which ash >/dev/null 2>&1; then ash; \
-else /bin/sh; \
-fi"
-    docker run --rm --detach-keys "$DOCKER_DETACH_KEYS" -it "$image" \
-    /bin/sh -c "$cmdline"
+# Interactively select an image if not provided on the command line
+case $1 in
+''|-*)
+    # docker shell [OPTION]...
+    image=`docker image list --format '{{.Repository}}:{{.Tag}}' | sort | fzf`
+    [ "$image" ] || exit 1 ;;
+*)
+    # docker shell IMAGE [OPTION]...
+    image=$1
+    shift ;;
+esac
+
+# Ensure that we have a volume populated with basic shell utilities.
+# The musl variant of busybox (but not the default glibc variant) has
+# statically-compiled utilities that we copy into a volume that can be mounted
+# to any x86-64 container. <https://hub.docker.com/_/busybox/>
+volume='utils-busybox'
+docker volume ls --format '{{.Name}}' | grep -qxF "$volume" || {
+    docker volume create "$volume"
+    docker run \
+        --rm --interactive \
+        --volume "$volume":/mnt/utils busybox:musl <<\EOF
+mkdir /mnt/utils/usr
+cp -a /usr/bin /mnt/utils/usr
+cp -a /bin /mnt/utils/bin
+EOF
 }
+
+# Run an interactive shell in an ephemeral container
+cmdline="\
+PATH=\${PATH:+\$PATH:}/mnt/utils/usr/bin:/mnt/utils/bin; \
+export PATH; \
+if which bash >/dev/null 2>&1; then exec bash; \
+elif which ash >/dev/null 2>&1; then exec ash; \
+else exec sh; \
+fi"
+exec docker run \
+    --rm --interactive --tty --detach-keys "$DOCKER_DETACH_KEYS" \
+    --volume "$volume":/mnt/utils:ro --entrypoint /mnt/utils/bin/sh \
+    ${1+"$@"} "$image" -c "$cmdline"
