@@ -32,13 +32,15 @@ EOF
 
 # Run an interactive shell in an ephemeral container
 cmdline="\
-PATH=\${PATH:+\$PATH:}/mnt/utils/usr/bin:/mnt/utils/bin; \
-export PATH; \
-if which bash >/dev/null 2>&1; then exec bash; \
+PATH=\${PATH:+\$PATH:}/mnt/utils/usr/bin:/mnt/utils/bin; export PATH; \
+ENV=/mnt/tmpfs/env; export ENV; \
+echo \"alias ls='ls --color=auto --group-directories-first -v'\" >\"\$ENV\"; \
+if which bash >/dev/null 2>&1; then exec bash --rcfile \"\$ENV\"; \
 elif which ash >/dev/null 2>&1; then exec ash; \
 else exec sh; \
 fi"
 exec docker run \
     --rm --interactive --tty --detach-keys "$DOCKER_DETACH_KEYS" \
-    --volume "$volume":/mnt/utils:ro --entrypoint /mnt/utils/bin/sh \
+    --volume "$volume":/mnt/utils:ro --tmpfs /mnt/tmpfs \
+    --entrypoint /mnt/utils/bin/sh \
     ${1+"$@"} "$image" -c "$cmdline"
