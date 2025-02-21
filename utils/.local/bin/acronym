@@ -7,6 +7,10 @@ cd "$XDG_DATA_HOME/acronyms"
 
 # Ignore problems with character encoding and separate by tabs
 awk 2>/dev/null -F'\t' '
+# Ignore comment lines
+/^[ 	]*#/ {
+    next
+}
 
 # Match acronyms case-insensitively [2]
 tolower($1) == tolower(SYM) {

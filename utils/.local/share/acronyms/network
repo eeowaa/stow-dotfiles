@@ -1,3 +1,5 @@
+# -*- indent-tabs-mode: t; tab-width: 8 -*-
+# vim: noexpandtab tabstop=8
 HTTP	Hypertext Transfer Protocol
 DNS	Domain Name System
 TCP	Transmission Control Protocol
