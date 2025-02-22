@@ -1,0 +1,34 @@
+#!/bin/sh
+## Simulate the fakeroot command with the help of docker
+
+[ $# -eq 0 ] && {
+    cat >&2 <<\EOF
+Usage: docker-fakeroot PROGRAM [ARG]...
+Run a program simulating root:root permissions.
+
+This command can be used by unprivileged users to remove files on the
+host that were created as a root user inside a container, e.g.,
+
+  $ docker-fakeroot rm -rf /tmp/some-bind-mounted-directory
+
+PROGRAM can be an interactive shell such as bash. It may be wise to
+poke around before doing anything destructive, for example:
+
+  $ docker-fakeroot bash
+  > pwd              # confirm the working directory
+  > ls               # confirm directory contents
+  > rm -rf ./subdir  # remove a directory
+
+Note that $PATH will be that of the root user.
+EOF
+    exit 1
+}
+
+image='alpine'
+exec docker run \
+    --rm --interactive --tty --detach-keys "$DOCKER_DETACH_KEYS" \
+    --volume /:/mnt/rootfs --pid host \
+    --entrypoint /usr/sbin/chroot \
+    "$image" /mnt/rootfs /bin/sh -c "\
+cd \$(su $(whoami) -c 'cd -P /proc/$$/cwd && pwd')
+exec \"\$@\"" -- "$@"
