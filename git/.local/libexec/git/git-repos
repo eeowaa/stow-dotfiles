@@ -10,22 +10,26 @@ rc=0
 # Output a nice header to separate this command from the others
 cat <<EOF
 -------------------------------------------------------------------------------
-GIT BULK COMMAND STARTED: `date`
+GIT-REPOS COMMAND STARTED: `date`
 -------------------------------------------------------------------------------
 EOF
 
-# For each child directory containing a `.git' entry
-ls -d */.git | while read x
+# For each subdirectory that is the toplevel of a git worktree (without
+# traversing into subprojects found within those worktrees)
+find . -name .git \( -path ./.git -prune -o -print \) |
+sed -e 's|^\./\(.*\)/\.git$|\1|' |
+awk 'index($0, x "/") == 1 { next } { print x = $0 }' |
+while read repo
 do
     # This handles both repo directories and gitlink files
-    git rev-parse --resolve-git-dir "$x" >/dev/null 2>&1 || continue
-    repo=`dirname "$x"`
+    git rev-parse --resolve-git-dir "$repo/.git" >/dev/null 2>&1 || continue
     echo >&2 "=== $repo ==="
 
     # Navigate to that directory and do something!
-    cd "$repo" && {
-        git "$@" || rc=1
-        cd ..
-    } || rc=1
+    (
+        set -e
+        cd "$repo"
+        git "$@"
+    ) || rc=1
 done
 exit $rc
