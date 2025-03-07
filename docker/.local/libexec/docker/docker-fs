@@ -1,0 +1,186 @@
+#!/bin/sh
+## Perform operations on Docker image/container filesystems
+## Requires: jq
+
+# Create a temporary file to be freely used by this script
+: "${TMPDIR:=/tmp}"
+export TMPDIR
+tmpfile=`mktemp`
+trap "rm -f '$tmpfile'" 0 1 2 3 15
+
+# Directory path to custom Docker utilities
+libexecdir=$HOME/.local/libexec/docker
+
+# Extract root filesystems from Docker images
+docker_fs_extract() {
+
+    # Display help text if requested or required.
+    local utility='docker fs extract'
+    local usage="Usage: $utility [-h | --help] IMAGE..."
+    for arg
+    do
+        case $arg in
+        -h|--help)
+            cat <<EOF
+$usage
+Extract root filesystems from Docker images.
+EOF
+            return 0 ;;
+        esac
+    done
+    [ $# -gt 0 ] || {
+        echo >&2 "$usage"
+        return 1
+    }
+
+    # Loop through each image supplied.
+    local rc=0
+    for image
+    do
+        # Fail if we don't have the target image.
+        docker inspect "$image" >"$tmpfile" || {
+            echo >&2 "$utility: missing image: $image"
+            rc=1
+            continue
+        }
+
+        # Obtain the 12-character ID and name (repo:tag) of the image.
+        local id=`jq -r '.[0].Id | split(":") | .[1][:12]' "$tmpfile"` name=''
+        case $image in
+        *:*) name=$image ;;
+        *)   name=`jq -r '.[0].RepoTags[0]' "$tmpfile"` ;;
+        esac
+
+        # Append the ID to a global list of IDs (for potential use elsewhere).
+        idlist=${idlist:+"$idlist "}$id
+
+        # Create a directory for the image based on its ID. If the directory
+        # already exists, remove its contents. The "fakeroot" command may be
+        # necessary to remove the directory contents; we use "docker-fakeroot"
+        # because it should always be installed along with this script.
+        if [ -d "$TMPDIR/docker-fs/images/$id" ]; then
+            "$libexecdir/docker-fakeroot" rm -rf "$TMPDIR/docker-fs/images/$id"
+        fi
+        mkdir -p "$TMPDIR/docker-fs/images/$id"
+
+        # Copy the "docker inspect" output into that directory.
+        cp "$tmpfile" "$TMPDIR/docker-fs/images/$id/docker-inspect.json"
+
+        # Map the image ID to its name in a global index file.
+        {
+            if [ -f "$TMPDIR/docker-fs/index.txt" ]; then
+                cat "$TMPDIR/docker-fs/index.txt"
+            fi
+            printf '%s %s\n' "$id" "$name"
+        } | sort -u >"$tmpfile"
+        cp "$tmpfile" "$TMPDIR/docker-fs/index.txt"
+
+        # Create a container layer from the image to unpack the filesystem.
+        # Note that although "docker create" creates a stopped container
+        # (that can later be started using "docker start"), it fails to create
+        # a container unless a command is specified. Because the container will
+        # never be started, we can supply any command string, even if it does
+        # not correspond to anything within the image. This works even for
+        # "distroless" images without any executable files.
+        local container=`docker create "$id" dummy-command | cut -c1-12`
+
+        # Extract the container filesystem to the host.
+        echo >&2 "$utility: writing to $TMPDIR/docker-fs/images/$id"
+        mkdir "$TMPDIR/docker-fs/images/$id/rootfs"
+        docker export $container \
+            | tar -C "$TMPDIR/docker-fs/images/$id/rootfs" -xf-
+
+        # Remove the container layer.
+        docker rm $container >/dev/null
+    done
+    return $rc
+}
+
+# Diff filesystems extracted from two Docker images
+docker_fs_diff() {
+
+    # Display help text if requested or required.
+    local utility='docker fs diff'
+    local usage="Usage: $utility [-h | --help] IMAGE_1 IMAGE_2"
+    for arg
+    do
+        case $arg in
+        -h|--help)
+            cat <<EOF
+$usage
+Diff filesystems extracted from two Docker images.
+EOF
+            return 0 ;;
+        esac
+    done
+    [ $# -eq 2 ] || {
+        echo >&2 "$usage"
+        return 1
+    }
+
+    # Extract image filesystems and obtain image IDs.
+    docker_fs_extract "$@" || {
+        echo >&2 "$utility: failed to extract filesystems"
+        return 1
+    }
+    if [ "$ZSH_VERSION" ] && [[ ! -o shwordsplit ]]; then
+        setopt shwordsplit
+    fi
+    set -- $idlist
+
+    # Create a file in which to store a diff between image filesystems.
+    # Write a header comment mapping image IDs to image names.
+    mkdir -p "$TMPDIR/docker-fs/diffs"
+    {
+        sed -n "s/^$1 /# --- &/p" "$TMPDIR/docker-fs/index.txt"
+        sed -n "s/^$2 /# +++ &/p" "$TMPDIR/docker-fs/index.txt"
+    } >"$TMPDIR/docker-fs/diffs/$1-$2.diff"
+
+    # Diff images filesystems and output/store the diff. We do not follow
+    # symlinks extracted from image filesystems for a few reasons: (1) we do not
+    # want to diff the contents of absolute symlinks pointing to files on the
+    # host, (2) absolute symlinks might be broken on the host, (3) we do not
+    # want to duplicate diffs.
+    diff -ru --no-dereference "$TMPDIR/docker-fs/images/$1/rootfs" \
+                              "$TMPDIR/docker-fs/images/$2/rootfs" \
+        | tee -a "$TMPDIR/docker-fs/diffs/$1-$2.diff"
+    echo >&2 "$utility: output stored in $TMPDIR/docker-fs/diffs/$1-$2.diff"
+}
+
+# Display help text if requested or required
+utility='docker fs'
+usage="Usage: $utility [-h | --help] COMMAND ARG..."
+for arg
+do
+    case $arg in
+    -h|--help)
+        cat <<EOF
+$usage
+Perform operations on Docker image/container filesystems.
+Each command outputs help text when passed a "--help" argument.
+
+COMMANDS:
+  extract   Wrapper around "docker export" and "docker inspect"
+  diff      Wrapper around "docker fs extract" and "diff"
+EOF
+        exit 0 ;;
+    extract)
+        shift
+        docker_fs_extract ${1+"$@"}
+        exit $? ;;
+    diff)
+        shift
+        docker_fs_diff ${1+"$@"}
+        exit $? ;;
+    *)
+        cat >&2 <<EOF
+$utility: invalid command: $1
+$usage
+EOF
+        exit 1 ;;
+    esac
+done
+[ $# -gt 0 ] || {
+    echo >&2 "$usage"
+    exit 1
+}

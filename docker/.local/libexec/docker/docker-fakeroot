@@ -1,9 +1,7 @@
 #!/bin/sh
 ## Simulate the fakeroot command with the help of docker
 
-[ $# -eq 0 ] && {
-    cat >&2 <<\EOF
-Usage: docker-fakeroot PROGRAM [ARG]...
+usage='Usage: docker-fakeroot PROGRAM [ARG]...
 Run a program simulating root:root permissions.
 
 This command can be used by unprivileged users to remove files on the
@@ -19,10 +17,14 @@ poke around before doing anything destructive, for example:
   > ls               # confirm directory contents
   > rm -rf ./subdir  # remove a directory
 
-Note that $PATH will be that of the root user.
-EOF
+Note that $PATH will be that of the root user.'
+if [ $# -eq 0 ]; then
+    echo >&2 "$usage"
     exit 1
-}
+elif [ "X$1" = 'X-h' ] || [ "X$1" = 'X--help' ]; then
+    echo "$usage"
+    exit 0
+fi
 
 image='alpine'
 exec docker run \
