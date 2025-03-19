@@ -8,6 +8,7 @@ fi
 # Bash-specific profile
 export INPUTRC=$XDG_CONFIG_HOME/readline/inputrc
 export HISTFILE=$XDG_CACHE_HOME/bash/history
+export BASH_COMPLETION_USER_DIR=$XDG_DATA_HOME/bash-completion
 
 # When running interactively, spruce up the experience
 case $- in
@@ -26,25 +27,6 @@ case $- in
     export -f my_ps1
     export PROMPT_COMMAND=my_ps1
     export PROMPT_DIRTRIM=2
-
-    # TODO: Initialize command completion
-    # NOTE: These are the paths to look at:
-    # /etc/profile.d/bash_completion.sh
-    #   . /usr/share/bash-completion/bash_completion
-    #       . ${BASH_COMPLETION_COMPAT_DIR:-/etc/bash_completion.d}/*
-    # /usr/share/bash-completion/completions/{kompose}
-    # ~/.local/share/bash-completion/completions/
-    # ~/.profile.d/
-
-    # Source bash completion
-    export BASH_COMPLETION_USER_DIR=$XDG_DATA_HOME/bash-completion
-    for prefix in /usr/local ''
-    do
-        [[ -f $prefix/etc/profile.d/bash_completion.sh ]] && {
-            source $prefix/etc/profile.d/bash_completion.sh
-            break
-        }
-    done
 
     # Load other user preferences
     [[ -f ~/.bashrc ]] && source ~/.bashrc
