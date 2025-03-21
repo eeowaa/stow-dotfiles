@@ -1,0 +1,23 @@
+#!/bin/bash -m
+## Run a bash REPL server
+
+# Make a temporary directory and files
+tmpdir=$(mktemp --tmpdir -d repl.XXXXXXXXXX)
+cd "$tmpdir"
+mkfifo stdin
+touch log stdout stderr
+
+# Log all script stderr to a separate log file
+exec 2>>log
+cat >&2 <<EOF
+INFO: End the session by sending SIGINT to PID $$
+INFO: Send commands to $tmpdir/stdin
+EOF
+
+# Output logged messages to the console
+tail -f log stdout stderr &
+pid=$!
+trap "kill $pid" 0 1 2 3 15
+
+# Interpret commands from a named pipe and log to files
+/bin/bash -x <>stdin >>stdout 2>>stderr
