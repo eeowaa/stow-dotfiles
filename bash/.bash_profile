@@ -20,8 +20,8 @@ case $- in
         # This could be much more readable, but this function must be optimized
         # in order to avoid delay on slower platforms (read: Cygwin)
         if [ $? -eq 0 ]
-        then export PS1='\[\033[1;35m\][\j] \[\033[2;37m\]\w \[\033[00m\]\$ '
-        else export PS1='\[\033[1;35m\][\j] \[\033[2;37m\]\w \[\033[1;31m\]\$\[\033[00m\] '
+        then export PS1='\[\033[1;35m\][\j] \[\033[2;37m\]\w \[\033[00m\]\$ '"$PS1_EXTRA"
+        else export PS1='\[\033[1;35m\][\j] \[\033[2;37m\]\w \[\033[1;31m\]\$\[\033[00m\] '"$PS1_EXTRA"
         fi
     }
     export -f my_ps1

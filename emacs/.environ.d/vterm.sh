@@ -62,11 +62,11 @@ vterm_prompt_end() {
 }
 if [ "$BASH_VERSION" ]
 then
-    PS1=$PS1'\[$(vterm_prompt_end)\]'
+    export PS1_EXTRA='\[$(vterm_prompt_end)\]'
     PROMPT_COMMAND=$(
         printf '%secho -ne "\033]0;%s\007"' \
-            "${PROMPT_COMMAND:+$PROMPT_COMMAND; }" \
-            "${VTERM_BUFFER_NAME:-*vterm \$HOSTNAME:\$PWD*}"
+            "${PROMPT_COMMAND:+$PROMPT_COMMAND;}" \
+            "${VTERM_BUFFER_NAME:-*vterm \$HOSTNAME:\${PWD/\$HOME/\~\}*}"
     )
 elif [ "$ZSH_VERSION" ]
 then
