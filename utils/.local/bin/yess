@@ -1,0 +1,37 @@
+#!/bin/sh
+## Display prettified and colorized YAML in less(1)
+## Requires: yq less
+progname=`basename "$0"`
+usage="Usage: $progname [FILE]"
+
+# Parse command line arguments
+input= error=0
+while [ $# -gt 0 ]
+do
+    case $1 in
+    -h|--help)
+        echo "$usage"
+        exit 0 ;;
+    *)  {
+            [ "X$input" = X ] &&
+            [ -f "$1" ]
+        } || {
+            error=1
+            continue
+        }
+        input=$1 ;;
+    esac
+    shift
+done
+[ $error -eq 0 ] || {
+    echo >&2 "$usage"
+    exit 1
+}
+
+# Prettify and colorize YAML with yq(1), piping to less(1)
+[ "X$input" = X ] && {
+    input=`mktemp`
+    trap "rm -f '$input'" 0 1 2 3 15
+    cat >"$input"
+}
+yq -CP "$input" | less -R
