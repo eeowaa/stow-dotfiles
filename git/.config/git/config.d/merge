@@ -22,6 +22,12 @@
 	# Automatically push/pop a stash before/after a rebase
 	autoStash = true
 
+	# Automatically modify the todo list of interactive rebases when commit
+	# messages begin with "fixup!", "amend!", or "squash!" (created by passing
+	# --fixup=[reword:]<commit>, --fixup=amend:<commit>, or --squash=<commit>
+	# to git-commit, respectively).
+	autoSquash = true
+
 [rerere]
 	# Record manual merge conflict resolutions in $GIT_DIR/rr-cache/;
 	# when an idential merge conflict hunk is encountered later on (especially
