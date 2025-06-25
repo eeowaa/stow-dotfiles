@@ -38,6 +38,9 @@ gitlinks := $(srcdir)/cygwin/.local/opt/cygtools/.git
 cygwin: linux $(srcdir)/cygwin/.local/opt/cygtools/.git
 endif
 
+# Device Types
+packages += laptop
+
 # Graphics
 packages += X11
 
