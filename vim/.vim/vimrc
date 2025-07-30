@@ -118,6 +118,10 @@ autocmd BufNewFile,BufRead *.{json,ipynb} set
     \ tabstop=2 shiftwidth=2 expandtab
     \ foldmethod=indent foldenable
 " }}}
+" Makefile {{{
+autocmd BufNewFile,BufRead *.make set
+    \ syntax=make filetype=make
+" }}}
 " Markdown {{{
 " let g:markdown_folding=1
 autocmd BufNewFile,BufRead *.{md,markdown} set
