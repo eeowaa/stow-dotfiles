@@ -1,5 +1,6 @@
 #!/bin/sh -e
 ## Requires: curl
+
 progname=`basename "$0"`
 : "${BROWSER:=firefox}"
 
@@ -17,8 +18,7 @@ Commands:
 Environment:
   BROWSER           Interactive web browser (default = firefox)
   JIRA_BASE_URL     Base URL for Jira server
-  JIRA_NETRC_FILE   Path to netrc-formatted file containing user credentials
-                    for server authentication (default = \$HOME/.netrc)
+  JIRA_TOKEN_FILE   Path to local file containing personal access token
   JIRA_PROJECT_KEY  Optional project key (prepended to ISSUE arguments)
 
 Examples:
@@ -31,14 +31,14 @@ EOF
     ;;
 search)
     shift
-    : "${JIRA_NETRC_FILE:=$HOME/.netrc}"
-    [ -f "$JIRA_NETRC_FILE" ] || {
-        echo >&2 "$progname: file not found: $JIRA_NETRC_FILE"
+    [ -f "${JIRA_TOKEN_FILE:?}" ] || {
+        echo >&2 "$progname: file not found: $JIRA_TOKEN_FILE"
         exit 1
     }
-    exec curl --netrc-file "$JIRA_NETRC_FILE" \
-        -X GET -H 'Content-Type: application/json' \
-        "${JIRA_BASE_URL:?}/rest/api/2/search?jql=`echo $* | tr ' ' +`"
+    exec curl -X GET \
+        -H "Authorization: Bearer $(cat "$JIRA_TOKEN_FILE")" \
+        -H 'Content-Type: application/json' \
+        "${JIRA_BASE_URL:?}/rest/api/2/search?jql=$(echo $* | tr ' ' +)"
     ;;
 reference)
     exec $BROWSER https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
