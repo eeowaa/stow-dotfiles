@@ -19,6 +19,9 @@
 	cmd = code --wait \"$MERGED\"
 
 [rebase]
+	# Use single-character commands in the todo list
+    abbreviateCommands = true
+
 	# Automatically push/pop a stash before/after a rebase
 	autoStash = true
 
