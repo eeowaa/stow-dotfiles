@@ -17,7 +17,7 @@ increment() {
 }
 
 progname=`basename "$0"`
-usage="Usage: $progname [-n | -a nested-session | -l]"
+usage="Usage: $progname [-n | -a <nested-session> | -l]"
 
 case $1 in
 -n|'')
@@ -55,8 +55,11 @@ case $1 in
     exit $? ;;
 -a)
     # Attach to the specified session if requested
-    session_name=$OPTARG
-    env -u TMUX tmux attach -t "$session_name" || die "Try \`$progname -l'?" ;;
+    case $2 in
+    [A-Z])
+        env -u TMUX tmux attach -t "$2" || die "Try \`$progname -l'?" ;;
+    *)  die "ERROR: the \`-a' flag requires an argument between \`A' and \`Z'" ;;
+    esac ;;
 -l)
     # Display list of nested sessions
     nested=$(tmux list-sessions -F '#{session_name}' | grep -x '[A-Z]' | sort)
