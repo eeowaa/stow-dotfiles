@@ -6,9 +6,9 @@ fi
 [[ -f ~/.profile ]] && source ~/.profile
 
 # Bash-specific profile
-export INPUTRC=$XDG_CONFIG_HOME/readline/inputrc
-export HISTFILE=$XDG_CACHE_HOME/bash/history
-export BASH_COMPLETION_USER_DIR=$XDG_DATA_HOME/bash-completion
+export INPUTRC="$XDG_CONFIG_HOME"/readline/inputrc
+export HISTFILE="$XDG_CACHE_HOME"/bash/history
+export BASH_COMPLETION_USER_DIR="$XDG_DATA_HOME"/bash-completion
 
 # When running interactively, spruce up the experience
 case $- in

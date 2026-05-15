@@ -70,3 +70,5 @@
 	path = config.d/diff
 	path = config.d/merge
 	path = config.d/pretty
+[safe]
+	directory = *
