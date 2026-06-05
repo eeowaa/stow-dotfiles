@@ -3,7 +3,8 @@
 ## Requires: acpi
 {
     case `uname -s` in
-    Linux)  acpi -b ;;
+    Linux)  sed 's/.*/ &%/' /sys/class/power_supply/battery/capacity ||
+            acpi -b ;;
     Darwin) pmset -g batt ;;
     *)      false ;;
     esac 2>/dev/null || echo ' ??%'
