@@ -25,6 +25,7 @@ case $- in
         fi
     }
     export -f my_ps1
+    unset PROMPT_COMMAND  # XXX: PROMPT_COMMAND must be a string, not an array, for direnv to work
     export PROMPT_COMMAND=my_ps1
     export PROMPT_DIRTRIM=2
 
