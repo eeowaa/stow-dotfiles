@@ -5,4 +5,4 @@ updatedb() {
       . "$HOME/.local/libexec/updatedb/updatedb-root.sh" &
     } 2>&1 | grep --color=auto -iv 'permission denied'
     wait
-}
+}; _exportf updatedb

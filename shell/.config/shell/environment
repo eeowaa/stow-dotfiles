@@ -8,6 +8,11 @@ if [ "$DEBUG" ]; then
     fi >&2
 fi
 
+###############################################################################
+# Shell and terminal settings must be explicitly defined in each interactive
+# shell and tmux pane (pty device). For performance reasons on slow systems,
+# ~/.bashrc should duplicate these settings rather than sourcing them:
+
 # Use Emacs-style line editing
 set +o vi
 set -o emacs
@@ -15,18 +20,42 @@ set -o emacs
 # Terminal settings
 stty -ixon
 
-# Aliases (OK to use in POSIX shells for interactive use)
-alias p='pwd'
-alias j='jobs'
-alias e='echo $?'
-alias grep='grep --color=auto'
-alias ls='ls --color=auto --group-directories-first -v'
-alias ll='ls --color=auto --group-directories-first -vl'
+###############################################################################
+
+# Cut startup time for non-login shells by exporting functions when possible.
+# If a shell can export functions, but not aliases, define aliases as functions.
+_exportf() {
+    if [ "$BASH_VERSION" ]; then
+        export -f "$1"
+    fi
+}
+_alias() {
+    if [ "$BASH_VERSION" ]; then
+        local args=$(
+            printf '%s' "$2" |
+            sed -e "s#\\([;(| 	]\\)$1\\>#\\1command $1#g" \
+                -e "s#^$1#command $1#"
+        )
+        eval "function $1 { $args \"\$@\"; }"
+        export -f "$1"
+    else
+        alias ${1+"$@"}
+    fi
+}
+
+# Aliases for interactive use
+_alias p 'pwd'
+_alias j 'jobs'
+_alias e 'echo $?'
+_alias grep 'grep --color=auto'
+_alias ls 'ls --color=auto --group-directories-first -v'
+_alias ll 'command ls --color=auto --group-directories-first -vl'
 
 # Functions for interactive use
 f() {
     cd ${1+"$@"} && ls
-}
+}; _exportf f
+
 g() {
     # URL-encoded query string
     local query='q='`echo "$*" | sed 's/ /%20/g'`
@@ -39,7 +68,8 @@ g() {
 
     # Perform the query
     $BROWSER "https://duckduckgo.com?$query"
-}
+}; _exportf g
+
 up() {
     [ $# -eq 0 ] && {
         cd ..
@@ -52,18 +82,21 @@ up() {
         count=`expr $count - 1`
     done
     OLDPWD=$startdir
-}
+}; _exportf up
+
 goto() {
     local target=`readlink -f "$1"`
     [ -d "$target" ] || target=${target%/*}
     [ -d "$target" ] && cd "$target"
     pwd
-}
+}; _exportf goto
+
 cdsed() {
     local dest=`pwd | sed "s|$1|$2|"`
     cd "$dest"
     pwd
-}
+}; _exportf cdsed
+
 fixpath() {
     # Remove duplicate and nonexistent entries from `PATH'
     PATH=`echo "$PATH" | tr : '\n' | awk '
@@ -83,7 +116,8 @@ fixpath() {
         print x[n]
     }'`
     export PATH
-}
+}; _exportf fixpath
+
 editpath() {
     local tmpfile=`mktemp`
     echo "$PATH" | tr : '\n' >"$tmpfile"
@@ -92,7 +126,7 @@ editpath() {
         fixpath
     }
     rm -f "$tmpfile"
-}
+}; _exportf editpath
 
 # Source each environment script
 for environ in "$HOME/.environ.d"/*.sh
@@ -103,4 +137,8 @@ do
     . "$environ"
 done
 
-# vim: set syntax=sh:
+# Shells with function export capability only need to define functions once
+# within a process tree (functions are stored in environment variables)
+if [ "$BASH_VERSION" ]; then
+    export __ENVIRON_SOURCED=1
+fi

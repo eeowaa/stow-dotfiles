@@ -1,6 +1,13 @@
 ## Requires: nvm npm
 # The first time any one of these commands are run in the current shell, the
 # `nvm_init` function will run and lazy-load the NVM environment
+
+# TODO: Replace aliases with functions if possible (for performance reasons
+# when using bash on WSL 1). See also:
+#
+#   ~/.bashrc
+#   ~/.config/direnv/direnvrc
+#
 alias nvm='nvm_init nvm'
 alias npm='nvm_init npm'
 alias node='nvm_init node'

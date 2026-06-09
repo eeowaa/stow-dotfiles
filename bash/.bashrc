@@ -3,7 +3,14 @@ if [ "$DEBUG" ]; then
 fi
 
 # Source generic Bourne Shell environment
-[[ -f "$ENV" ]] && source "$ENV"
+if [[ ! -v __ENVIRON_SOURCED && -f "$ENV" ]]; then
+    source "$ENV"
+else
+    # Shell and terminal settings copied from "$ENV"
+    set +o vi
+    set -o emacs
+    stty -ixon
+fi
 
 # Source bash completion
 #
@@ -24,8 +31,13 @@ fi
 #
 for prefix in /usr/local ''
 do
-    [[ -f $prefix/etc/profile.d/bash_completion.sh ]] && {
-        source $prefix/etc/profile.d/bash_completion.sh
+    completion=$prefix/etc/profile.d/bash_completion.sh
+    if [[ -f "$completion" ]]; then
+        if [ "$DEBUG" ]; then
+            echo "Sourcing: $completion" >&2
+        fi
+        source "$completion"
         break
-    }
+    fi
 done
+unset completion

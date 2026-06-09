@@ -1,3 +1,4 @@
+# TODO: Source this regardless of __ENVIRON_SOURCED (see ~/.bashrc)
 [ "X$INSIDE_EMACS" = Xvterm ] && [ "X$JPY_PARENT_PID" = X ] && {
 
 # Helper function used to send escape sequences to vterm.

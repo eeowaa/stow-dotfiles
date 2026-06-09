@@ -1,4 +1,6 @@
 ## Requires: fd-find fzf parallel
+
+# Comfortably jump between directories in favorite/targeted directory trees.
 jump() {
     case $1 in
     -l)
@@ -53,4 +55,4 @@ jump() {
     # Jump to the directory
     cd "$JUMP_DIR"
     echo "$JUMP_DIR"
-}
+}; _exportf jump

@@ -1,4 +1,3 @@
-#!/bin/sh
 ## Requires: fzf
 
 # Thin wrapper for git command
@@ -13,7 +12,7 @@ git() {
     *)
         command git ${1+"$@"} ;;
     esac
-}
+}; _exportf git
 
 # Wrapper for cd with useful git-related shortcuts
 git_cd() {
@@ -119,7 +118,7 @@ usage: git cd [jump]
         return 1
     }
     cd "$target"
-}
+}; _exportf git_cd
 
 # Enable or disable git integration features in the current shell
 git_shopt() {
@@ -147,7 +146,8 @@ options: alias
             echo >&2 "Invalid option: $optname" ;;
         esac
     done
-}
+}; _exportf git_shopt
+
 git_shopt_alias() {
     case $1 in
     set)
@@ -186,4 +186,4 @@ EOF
         # Restore setting for word splitting
         [ "$nosplit" ] && unsetopt shwordsplit ;;
     esac
-}
+}; _exportf git_shopt_alias

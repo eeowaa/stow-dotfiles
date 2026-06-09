@@ -103,13 +103,13 @@ s/ \e[ #%()*+\-.\/]. |
             rm "$tmpfile"
         fi ;;
     esac
-}
+}; _exportf aws
 
-alias aws_prompt='aws --cli-auto-prompt'
-alias aws_whoami='aws sts get-caller-identity'
+_alias aws_prompt 'aws --cli-auto-prompt'
+_alias aws_whoami 'aws sts get-caller-identity'
 
 # For some reason, `aws iam list-account-aliases` doesn't work (should it?)
-alias aws_hostname='aws account-name `aws whoami --query Account --output text`'
+_alias aws_hostname 'aws account-name `aws whoami --query Account --output text`'
 
 aws_log() {
     local logfile=$XDG_CACHE_HOME/aws/log/${AWS_PROFILE:-'default'}.log
@@ -139,7 +139,7 @@ EOF
     *)
         tail "$@" "$logfile" ;;
     esac
-}
+}; _exportf aws_log
 
 aws_download_lambda() {
     # Interactively select a lambda function if one wasn't supplied
@@ -160,7 +160,7 @@ aws_download_lambda() {
     unzip -d "$lambda" "$lambda".zip
     rm "$lambda".zip
     echo "Downloaded to directory: $lambda"
-}
+}; _exportf aws_download_lambda
 
 # Wrapper for `aws sso login`
 aws_login() {
@@ -182,7 +182,7 @@ aws_login() {
         echo "+ aws sts get-caller-identity"
         aws sts get-caller-identity
     }
-}
+}; _exportf aws_login
 
 # Output credentials for an SSO session into environment variables
 aws_creds() {
@@ -233,7 +233,7 @@ EOF
   (setenv "AWS_SESSION_TOKEN" "$3"))
 EOF
     esac
-}
+}; _exportf aws_creds
 
 # Translate an exact account ID into its name (as stored in the global AWS
 # config file). This command relies on the following assumptions and conventions:
@@ -254,4 +254,4 @@ aws_account_name() {
         $1 == "sso_account_id" && $3 == ID { x = 1 }
         x && /\[profile / { print $2; exit }
     ' ID="$account_id" | sed 's/\(.*\)-.*/\1/'
-}
+}; _exportf aws_account_name

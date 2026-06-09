@@ -1,4 +1,6 @@
-alias a='acronym'
+_alias a acronym
+
+# Open a file or link in a default application
 open() {
     case "$(uname -r)" in
     *-Microsoft|*-microsoft-standard-WSL2)
@@ -17,4 +19,4 @@ open() {
         *)  ${BROWSER:?} "$1" ;;
         esac ;;
     esac
-}
+}; _exportf open

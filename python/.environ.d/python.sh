@@ -16,7 +16,7 @@ activate() {
     done
     echo >&2 'Could not find virtualenv activation script'
     return 1
-}
+}; _exportf activate
 
 # FIXME
-alias pyref='$BROWSER file:///usr/share/doc/python2/html/index.html'
+_alias pyref '$BROWSER file:///usr/share/doc/python2/html/index.html'

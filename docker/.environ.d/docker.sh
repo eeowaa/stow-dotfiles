@@ -36,4 +36,4 @@ for my $i (0 .. $#ARGV) {
     }
 }
 exec "docker", @ARGV;' -- ${1+"$@"}
-}
+}; _exportf docker
