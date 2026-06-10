@@ -16,6 +16,14 @@ $HOME/AppData/LocalLow/Temp
     cygdirs= ;;
 esac
 
-/usr/bin/env updatedb $private --prunefs= ${findopts:+"$findopts"} "$dbroot" \
-    --prunepaths="$cygdirs\
-$XDG_DOCUMENTS_DIR" --output="$XDG_CACHE_HOME/locate/locatedb.home"
+pruning="--prunefs= --prunepaths='$cygdirs\
+$XDG_DOCUMENTS_DIR'"
+
+# plocate's updatedb only references updatedb.conf (no environment variables)
+if /usr/bin/env updatedb --version | grep plocate >/dev/null
+then pruning="$pruning --prunenames='$PRUNENAMES'"
+fi
+
+eval "\
+/usr/bin/env updatedb $private $pruning ${findopts:+"$findopts"} $dbroot \
+    --output='$XDG_CACHE_HOME/locate/locatedb.home'"

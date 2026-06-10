@@ -9,6 +9,13 @@ CYGWIN_NT*)
     cygdrive=`echo "$HOME" | sed 's/[ 	]/\\&/g'` ;;
 esac
 
-/usr/bin/env updatedb $private --prunefs= \
-    --prunepaths="$cygdrive /tmp /usr/tmp /var/tmp /var/lock /var/run /run /media /mnt /proc" \
-    ${findopts:+"$findopts"} --output="$XDG_CACHE_HOME/locate/locatedb.root"
+pruning="--prunefs= --prunepaths='$cygdrive $PRUNEPATHS'"
+
+# plocate's updatedb only references updatedb.conf (no environment variables)
+if /usr/bin/env updatedb --version | grep plocate >/dev/null
+then pruning="$pruning --prunenames='$PRUNENAMES'"
+fi
+
+eval "\
+/usr/bin/env updatedb $private $pruning ${findopts:+"$findopts"} \
+    --output='$XDG_CACHE_HOME/locate/locatedb.root'"
