@@ -19,9 +19,9 @@ MACOS := 1
 packages := macos
 else ifeq ($(UNAME_S),Linux)
 UNAME_R := $(shell uname -r)
-ifneq (,$(findstring WSL2,$(UNAME_R))) # e.g. 5.10.16.3-microsoft-standard-WSL2
-WSL2 := 1
-packages := wsl2
+ifneq (,$(findstring icrosoft,$(UNAME_R))) # e.g. 4.4.0-26100-Microsoft, 5.10.16.3-microsoft-standard-WSL2
+WSL := 1
+packages := wsl
 else
 LINUX := 1
 packages := linux
