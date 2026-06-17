@@ -7,6 +7,6 @@
 #   $ diff -s <(register-python-argcomplete pipx) /usr/share/bash-completion/completions/pipx.bash
 #   Files /proc/self/fd/11 and /usr/share/bash-completion/completions/pipx.bash are identical
 #
-{ [ "$BASH_VERSION" ] || [ "$ZSH_VERSION" ]; } \
-    && eval "`register-python-argcomplete pipx`" \
-    || echo >&2 'pipx completion not available for current shell'
+if [ "$BASH_VERSION" ] || [ "$ZSH_VERSION" ]; then
+    eval "`register-python-argcomplete pipx`"
+fi
