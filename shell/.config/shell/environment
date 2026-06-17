@@ -39,7 +39,7 @@ _alias() {
         eval "function $1 { $args \"\$@\"; }"
         export -f "$1"
     else
-        alias ${1+"$@"}
+        alias "$1=$2"
     fi
 }
 
