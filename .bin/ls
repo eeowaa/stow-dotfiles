@@ -2,7 +2,7 @@
 ## Requires: coreutils
 
 # Ignore this wrapper script
-bindir=`pwd | sed 's#\(/stow-dotfiles\)/.*#\1#'`/.bin
+bindir=`pwd -P | sed 's#\(/stow-dotfiles\)/.*#\1#'`/.bin
 ls=`which -a ls | grep -vxF "$bindir/ls" | head -n 1`
 
 # Exit if there is no other ls executable on $PATH
