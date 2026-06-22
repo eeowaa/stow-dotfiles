@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Ensure the shell environment gets sourced in subshells
+args=(--unset '__ENVIRON_SOURCED')
+
+# Remove bash functions from the environment
+for var in $(env | sed -n 's/^\(BASH_FUNC_.*%%\)=().*/\1/p')
+do args+=(--unset "$var")
+done
+
+# Run Emacs in a modified environment
+exec env "${args[@]}" /usr/bin/emacs "$@"

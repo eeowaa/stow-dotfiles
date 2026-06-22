@@ -1,4 +1,3 @@
-# TODO: Source this regardless of __ENVIRON_SOURCED (see ~/.bashrc)
 [ "X$INSIDE_EMACS" = Xvterm ] && [ "X$JPY_PARENT_PID" = X ] && {
 
 # Helper function used to send escape sequences to vterm.
@@ -82,6 +81,13 @@ then
 else
     echo >&2 'vterm directory tracking and prompt tracking not available for current shell'
 fi
+
+# Export function definitions (where possible) to decreate subshell startup time
+_exportf vterm_printf
+_exportf vterm_cmd
+_exportf vterm_load_aliases
+_exportf vterm_help
+_exportf vterm_prompt_end
 
 # End block
 }
