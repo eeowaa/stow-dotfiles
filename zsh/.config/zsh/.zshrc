@@ -48,6 +48,13 @@ autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
+# Clear the screen while preserving scrollback in Emacs terminal emulators
+# (eterm_clear is defined in ~/.environ.d/emacs.sh)
+case $INSIDE_EMACS in *term*)
+    zle -N eterm_clear
+    bindkey '^L' eterm_clear ;;
+esac
+
 ### The following can go anywhere in .zshrc:
 
 # Set the history file

@@ -28,6 +28,12 @@ else
     stty -ixon
 fi
 
+# Clear the screen while preserving scrollback in Emacs terminal emulators
+# (eterm_clear is defined in ~/.environ.d/emacs.sh)
+case $INSIDE_EMACS in *term*)
+    bind -x '"\C-l": eterm_clear' ;;
+esac
+
 # Source bash completion
 #
 # NOTE: This is an expensive and slow operation, so it would be better to do in
