@@ -28,7 +28,7 @@ _exportf() {
     if [ "$BASH_VERSION" ]; then
         export -f "$1"
     fi
-}
+}; _exportf _exportf
 _alias() {
     if [ "$BASH_VERSION" ]; then
         local args=$(
@@ -41,7 +41,7 @@ _alias() {
     else
         alias "$1=$2"
     fi
-}
+}; _exportf _alias
 
 # Aliases for interactive use
 _alias p 'pwd'
