@@ -5,7 +5,8 @@ open() {
     case "$(uname -r)" in
     *-Microsoft|*-microsoft-standard-WSL2)
         if [ -e "$1" ]; then set -- "$(wslpath -w "$1")"; fi
-        powershell.exe -NoProfile Start-Process "$1" ;;
+        powershell.exe -NoProfile -Command \
+            "Start-Process '$(printf '%s' "$1" | sed "s/'/''/g")'" ;;
     *)
         case "$(uname -s)" in
         Linux)
