@@ -3,9 +3,9 @@
 	ff = merge --ff-only
 	consider = update-index --no-assume-unchanged
 	empty-tree-sha1 = hash-object -t tree /dev/null
-	pushnew = -c push.autoSetupRemote=true push
 
 	# External commands
+	pushnew = !~/.local/libexec/git/git-pushnew
 	graph = !~/.local/libexec/git/git-graph
 	repos = !~/.local/libexec/git/git-repos
 	grab = !~/.local/libexec/git/git-grab

@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+branch=$(git symbolic-ref --short HEAD)
+if [ "X$branch" = X ]; then exit 1; fi  # for shell compatibility
+exec git -c push.autoSetupRemote=true push -u origin "$branch"
