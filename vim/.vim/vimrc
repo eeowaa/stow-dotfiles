@@ -229,6 +229,7 @@ nmap ]3 :s/### \(.*\) ###/\1/<cr>
 " }}}
 " Wrapping {{{
 set nowrap
+set breakindent breakindentopt=list:-1
 noremap j gj
 noremap k gk
 " }}}
