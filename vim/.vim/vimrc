@@ -218,6 +218,7 @@ set smartindent autoindent
 set linebreak textwidth=79
 set formatoptions+=nj " formatoptions+=a
 set scrolloff=0
+set nofixeol " preserve missing <EOL> before <EOF> when saving existing files
 " Headers {{{
 nmap [1 yyPv$r=
 nmap ]1 yypv$r=
