@@ -114,6 +114,9 @@ redis: docker
 # Automation
 packages += ansible parallel topgrade
 
+# AI
+packages += claude
+
 # Reference and Documentation
 packages += info locate markdown org
 gitlinks += $(srcdir)/org/org/.git

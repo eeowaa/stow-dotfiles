@@ -1,0 +1,168 @@
+#!/bin/bash
+## Requires: jq bash
+
+# Claude Code currently requires bash (not just /bin/sh), so we can safely
+# assume that bash exists on a system using Claude Code. However, macOS uses an
+# older GPLv2-licensed bash (version 3.2), so we must avoid certain features.
+# If things look a bit odd or janky, that is why.
+
+: "${CLAUDE_CONFIG_DIR:=$HOME/.claude}"
+
+###############################################################################
+echo >&2 "$0: merging settings..."
+
+# Merge JSON settings (appending array elements) into generated-settings.json
+settings=$(mktemp "${CLAUDE_CONFIG_DIR}/generated-settings.json.XXXXXX")
+test -f "${settings}" && {
+    trap "rm -f '${settings}'" 0 1 2 3 15
+    ( set --
+      shopt -s nullglob
+      for f in "${CLAUDE_CONFIG_DIR}/settings.d"/*.json "${CLAUDE_CONFIG_DIR}/settings.json"
+      do test -f "$f" && set -- "$@" "$f"
+      done
+
+      jq --null-input '
+        def merge($a; $b):
+          if ($a | type) == "object" and ($b | type) == "object" then
+            reduce ((($a | keys_unsorted) + ($b | keys_unsorted)) | unique[]) as $key
+              ({};
+                if ($a | has($key)) and ($b | has($key)) then
+                  .[$key] = merge($a[$key]; $b[$key])
+                elif ($b | has($key)) then
+                  .[$key] = $b[$key]
+                else
+                  .[$key] = $a[$key]
+                end
+              )
+          elif ($a | type) == "array" and ($b | type) == "array" then
+            $a + $b
+          else
+            $b
+          end;
+
+        (reduce inputs as $file ({}; merge(.; $file)))
+        | if type == "object" then . else {} end
+      ' "$@"
+    ) > "${settings}" && mv "${settings}" "${CLAUDE_CONFIG_DIR}/generated-settings.json"
+} || echo >&2 "$0: failed to merge settings"
+
+# Read from generated-settings.json if it exists
+test -f "${CLAUDE_CONFIG_DIR}/generated-settings.json" &&
+    set -- --settings "${CLAUDE_CONFIG_DIR}/generated-settings.json" "$@"
+
+###############################################################################
+echo >&2 "$0: canonicalizing current working directory path..."
+
+# Portable case conversion functions optimized for speed.
+case_upper() {
+    if (( BASH_VERSINFO[0] > 3 ))
+    then printf '%s' "${1^^}"
+    else tr '[:lower:]' '[:upper:]' <<< "$1"
+    fi
+}
+case_lower() {
+    if (( BASH_VERSINFO[0] > 3 ))
+    then printf '%s' "${1,,}"
+    else tr '[:upper:]' '[:lower:]' <<< "$1"
+    fi
+}
+
+# Report the case-sensitivity of a directory's entries.
+# 0: directory entries are case-sensitive
+# 1: directory entries are case-insensitive
+# 2: unable to determine
+directory_case_sensitive_p() {
+    local dir="${1:-.}"
+
+    # Enumerate directory entries (a.k.a. "dentries").
+    pushd "${dir}" >/dev/null || return 2
+    shopt -s nullglob
+    shopt -u dotglob
+    local -a listing=(* .[!.]* ..?*)
+    popd >/dev/null
+
+    # Perform case-insensitive comparison of dentries.
+    # If there are any matches, then dentries are case-sensitive.
+    local i j count=${#listing[@]} keys=()
+    for ((i = 0; i < count - 1; ++i))
+    do [[ -n "${keys[i]+x}" ]] || keys[i]=$(case_lower "${listing[i]}")
+       for ((j = i + 1; j < count; ++j))
+       do [[ -n "${keys[j]+x}" ]] || keys[j]=$(case_lower "${listing[j]}")
+          [[ "${keys[i]}" == "${keys[j]}" ]] && return 0
+       done
+    done
+
+    # Find a dentry with at least one alphabetic character.
+    # Check case-folded variations to determine case-sensitivity of dentries.
+    local upper lower
+    for member in "${listing[@]}"
+    do upper=${dir}/$(case_upper "${member}")
+       lower=${dir}/$(case_lower "${member}")
+       [[ "${upper}" == "${lower}" ]] && continue
+       [[ -e "${upper}" || -L "${upper}" ]] || return 0
+       [[ -e "${lower}" || -L "${lower}" ]] || return 0
+       return 1
+    done
+
+    # No dentries exist with alphabetic characters, so we create one.
+    # Check case-folded variations to determine case-sensitivity of dentries.
+    local status tmpfile="$(mktemp "${dir}/.case-test-XXXXXX" 2>/dev/null)"
+    test -f "${tmpfile}" || return 2
+    if [ -f "${dir}$(case_upper "${tmpfile:${#dir}}")" ]
+    then status=1
+    else status=0
+    fi
+    rm -f "${tmpfile}"
+    return ${status}
+}
+
+# Output the mountpoint of the filesystem of a path argument.
+filesystem_mountpoint() {
+    df -P "${1:-.}" | awk 'END { print $NF }'
+}
+
+# Report the case-sensitivity of the root directory of the filesystem
+# of a path argument; return codes are the same as directory_case_sensitive_p.
+# Can be used as a portable method to determine filesystem case-sensitivity.
+# Note that some filesystems (e.g., NTFS, ext4, F2FS, bcachefs) support
+# per-directory case-sensitivity, which this function completely ignores.
+filesystem_case_sensitive_p() {
+    directory_case_sensitive_p "$(filesystem_mountpoint "$@")"
+}
+
+# Output a canonicalized path (default is for the current working directory).
+# Symbolic links are fully resolved, and path components on case-insensitive
+# filesystems are lowercased. The path must already exist.
+path_canonicalize() {
+    local directory="$(realpath "${1:-.}")"
+    local result='' mountpoint='' component
+    while [ "${mountpoint}" != / ]
+    do mountpoint=$(filesystem_mountpoint "${directory}")
+       if [ "${directory}" = "${mountpoint}" ]
+       then component=/${directory##*/}
+            directory=${mountpoint%/*}
+       else component=${directory:${#mountpoint}}
+            directory=${directory:0:${#mountpoint}}
+       fi
+       directory_case_sensitive_p "${mountpoint}"
+       case $? in
+       0) ;;
+       1) component=$(case_lower "${component}")
+          ;;
+       2) echo >&2 "${FUNCNAME}: cannot determine canonical path: $1"
+          return 2
+          ;;
+       esac
+       result="${component}${result}"
+    done
+    printf '%s\n' "/${result}"
+}
+
+directory=$(path_canonicalize)
+if [ -n "${directory}" ]
+then cd "${directory}"
+else echo >&2 "$0: failed to canonicalize path: ${PWD}"
+fi
+
+# Execute Claude Code
+exec "$HOME/.local/bin/claude" "$@"
