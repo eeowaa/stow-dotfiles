@@ -11,13 +11,17 @@
 ###############################################################################
 echo >&2 "$0: merging settings..."
 
-# Merge JSON settings (appending array elements) into generated-settings.json
+# Merge JSON settings from ~/.claude/settings.d/*.json (appending array elements)
+# into ~/.claude/generated-settings.json, passing that file to claude --settings.
+# Overrides local project settings (.claude/settings.local.json), project settings
+# (.claude/settings.json), and global settings (~/.claude/settings.json).
+# Claude Code will still read those files, though, and might edit them, as well.
 settings=$(mktemp "${CLAUDE_CONFIG_DIR}/generated-settings.json.XXXXXX")
 test -f "${settings}" && {
     trap "rm -f '${settings}'" 0 1 2 3 15
     ( set --
       shopt -s nullglob
-      for f in "${CLAUDE_CONFIG_DIR}/settings.d"/*.json "${CLAUDE_CONFIG_DIR}/settings.json"
+      for f in "${CLAUDE_CONFIG_DIR}/settings.d"/*.json
       do test -f "$f" && set -- "$@" "$f"
       done
 
@@ -158,11 +162,11 @@ path_canonicalize() {
     printf '%s\n' "/${result}"
 }
 
-directory=$(path_canonicalize)
-if [ -n "${directory}" ]
-then cd "${directory}"
-else echo >&2 "$0: failed to canonicalize path: ${PWD}"
-fi
+## directory=$(path_canonicalize)
+## if [ -n "${directory}" ]
+## then cd "${directory}"
+## else echo >&2 "$0: failed to canonicalize path: ${PWD}"
+## fi
 
 # Execute Claude Code
 exec "$HOME/.local/bin/claude" "$@"
