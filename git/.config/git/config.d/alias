@@ -19,6 +19,7 @@
 	ls-dupes = !~/.local/libexec/git/git-ls-dupes
 	newest-tag = !~/.local/libexec/git/git-newest-tag
 	submodule-add = !~/.local/libexec/git/git-submodule-add
+	rebase-subs = !~/.local/libexec/git/git-rebase-subs
 
 	# Compound commands
 	overview = graph --all --simplify-by-decoration
