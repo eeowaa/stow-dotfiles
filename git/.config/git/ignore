@@ -58,3 +58,7 @@ __pycache__/
 # Directory metadata cache
 .DS_Store
 Thumbs.db
+
+# Claude instructions and settings
+**/CLAUDE.local.md
+**/.claude/settings.local.json
