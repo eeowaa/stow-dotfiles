@@ -22,10 +22,14 @@ if [[ ! -v __ENVIRON_SOURCED ]]; then
     # Source generic Bourne Shell environment (also sets __ENVIRON_SOURCED)
     [[ -f "$ENV" ]] && source "$ENV"
 else
-    # Shell and terminal settings copied from "$ENV"
-    set +o vi
-    set -o emacs
-    stty -ixon
+    # Source each static environment script (aliases and non-exported functions)
+    for environ in "$XDG_CONFIG_HOME/shell/environ.d"/*.sh
+    do
+        if [ "$DEBUG" ]; then
+            echo >&2 "Sourcing: $environ"
+        fi
+        . "$environ"
+    done
 fi
 
 # Clear the screen while preserving scrollback in Emacs terminal emulators

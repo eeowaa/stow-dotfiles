@@ -8,19 +8,14 @@ if [ "$DEBUG" ]; then
     fi >&2
 fi
 
-###############################################################################
-# Shell and terminal settings must be explicitly defined in each interactive
-# shell and tmux pane (pty device). For performance reasons on slow systems,
-# ~/.bashrc should duplicate these settings rather than sourcing them:
-
-# Use Emacs-style line editing
-set +o vi
-set -o emacs
-
-# Terminal settings
-stty -ixon
-
-###############################################################################
+# Source each static environment script (aliases and non-exported functions)
+for environ in "$XDG_CONFIG_HOME/shell/environ.d"/*.sh
+do
+    if [ "$DEBUG" ]; then
+        echo >&2 "Sourcing: $environ"
+    fi
+    . "$environ"
+done
 
 # Cut startup time for non-login shells by exporting functions when possible.
 # If a shell can export functions, but not aliases, define aliases as functions.
@@ -42,6 +37,13 @@ _alias() {
         alias "$1=$2"
     fi
 }; _exportf _alias
+_unalias() {
+    if [ "$BASH_VERSION" ]; then
+        unset -f "$1"
+    else
+        unalias "$1"
+    fi
+}; _exportf _unalias
 
 # Aliases for interactive use
 _alias p 'pwd'
